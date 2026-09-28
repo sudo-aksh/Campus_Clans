@@ -1,0 +1,2171 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    ```
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Profile - Campus Clans</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f6f8;
+            color: #111827;
+        }
+
+        .current-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .current-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .default-avatar {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e5e7eb;
+            font-size: 60px;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            height: 70px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 35px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: 800;
+            color: #111827;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #4b5563;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .nav-links a:hover {
+            color: #111827;
+        }
+
+        /* ================= MAIN ================= */
+
+        .container {
+            max-width: 950px;
+            margin: auto;
+            padding: 35px 20px 60px;
+        }
+
+        .page-title {
+            margin-bottom: 25px;
+        }
+
+        .page-title h1 {
+            font-size: 28px;
+            margin-bottom: 7px;
+        }
+
+        .page-title p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* ================= CARD ================= */
+
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 28px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        /* ================= FORM ================= */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 11px 12px;
+            font-size: 14px;
+            outline: none;
+            background: white;
+            color: #111827;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #4f46e5;
+        }
+
+        input:disabled {
+            background: #f3f4f6;
+            color: #6b7280;
+            cursor: not-allowed;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* ================= EMAIL ================= */
+
+        .email-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .email-row input {
+            flex: 1;
+        }
+
+        .email-change-box {
+            display: none;
+            margin-top: 15px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .email-change-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .email-change-row input {
+            flex: 1;
+        }
+
+        .email-message {
+            margin-top: 10px;
+            font-size: 13px;
+            min-height: 18px;
+        }
+
+        .verified-email {
+            display: none;
+            margin-top: 10px;
+            padding: 9px 12px;
+            border-radius: 7px;
+            background: #dcfce7;
+            color: #166534;
+            font-size: 13px;
+        }
+
+        /* ================= PROFILE PICTURE ================= */
+
+        .picture-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .current-picture {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-size: 40px;
+            flex-shrink: 0;
+        }
+
+        .current-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .picture-controls {
+            flex: 1;
+        }
+
+        .picture-controls p {
+            color: #6b7280;
+            font-size: 12px;
+            margin-top: 7px;
+        }
+
+        /* ================= SKILLS ================= */
+
+        .skill-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .skill-list {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 330px;
+            overflow-y: auto;
+            background: #fafafa;
+        }
+
+        .skill-list-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .skill-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 4px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .skill-option input {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .selected-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 50px;
+            padding: 10px;
+            border: 1px dashed #d1d5db;
+            border-radius: 9px;
+            margin-top: 12px;
+        }
+
+        .selected-skill {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            background: #111827;
+            color: white;
+            padding: 7px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .remove-skill {
+            border: none;
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+            padding: 0;
+        }
+
+        .skill-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .skill-info strong {
+            color: #111827;
+        }
+
+        .highlight-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .highlight-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .highlight-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 11px;
+            background: #f3f4f6;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .highlight-item input {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .empty {
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        /* ================= ERROR ================= */
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        /* ================= BUTTONS ================= */
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 11px 18px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .cancel {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .save {
+            background: #111827;
+            color: white;
+        }
+
+        .save:hover {
+            background: #374151;
+        }
+
+        .small-btn {
+            border: none;
+            background: #111827;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .small-btn:hover {
+            background: #374151;
+        }
+
+        .small-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 700px) {
+
+            .navbar {
+                padding: 0 15px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .container {
+                padding: 25px 15px 50px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .skill-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .picture-section {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .email-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .email-change-row {
+                flex-direction: column;
+            }
+
+            .actions {
+                flex-direction: column-reverse;
+            }
+
+            .actions .btn {
+                text-align: center;
+                width: 100%;
+            }
+        }
+    </style>
+    ```
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        ```
+        <a href="{% url 'home' %}" class="logo">
+            Campus Clans
+        </a>
+
+        <div class="nav-links">
+
+            <a href="{% url 'home' %}">
+                Home
+            </a>
+
+            <a href="{% url 'profile' %}">
+                Profile
+            </a>
+
+        </div>
+        ```
+
+    </nav>
+
+    <main class="container">
+
+        ```
+        <div class="page-title">
+
+            <h1>
+                Edit Profile
+            </h1>
+
+            <p>
+                Update your Campus Clans profile.
+            </p>
+
+        </div>
+
+
+        {% if error %}
+
+        <div class="error">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        <form method="POST" enctype="multipart/form-data" id="profileForm">
+
+            {% csrf_token %}
+
+
+            <!-- =================================================
+         BASIC INFORMATION
+    ================================================== -->
+
+            <section class="card">
+
+                <h2>
+                    Basic Information
+                </h2>
+
+                <div class="form-grid">
+
+                    <!-- NAME -->
+
+                    <div class="field">
+
+                        <label for="name">
+                            Name
+                        </label>
+
+                        <input type="text" id="name" name="name" value="{{ profile.name }}" required>
+
+                    </div>
+
+
+                    <!-- USERNAME -->
+
+                    <div class="field">
+
+                        <label>
+                            Username
+                        </label>
+
+                        <input type="text" value="{{ profile.user.username }}" disabled>
+
+                    </div>
+
+
+                    <!-- DEPARTMENT -->
+                    <div class="field">
+
+                        <label for="department">
+                            Department
+                        </label>
+
+                        <select id="department" name="department" required>
+
+                            <option value="">
+                                Select Department
+                            </option>
+
+                            <option value="B.C.A.">B.C.A.</option>
+                            <option value="B.B.A.">B.B.A.</option>
+                            <option value="B.Com">B.Com</option>
+                            <option value="B.Ed.">B.Ed.</option>
+                            <option value="B.P.E.S.">B.P.E.S.</option>
+                            <option value="B.A.">B.A.</option>
+                            <option value="B.Lib.">B.Lib.</option>
+                            <option value="BFA">BFA</option>
+                            <option value="B.Sc.">B.Sc.</option>
+                            <option value="B.Tech.">B.Tech.</option>
+                            <option value="Diploma">Diploma</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- BRANCH -->
+
+                    <div class="field">
+
+                        <label for="branch">
+                            Branch
+                        </label>
+
+                        <select id="branch" name="branch" required disabled>
+
+                            <option value="">
+                                Select Department First
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+
+                    <div class="field full">
+
+                        <label>
+                            Email
+                        </label>
+
+                        <div class="email-row">
+
+                            <input type="email" id="currentEmail" value="{{ profile.email }}" disabled>
+
+                            <button type="button" class="small-btn" onclick="showEmailChange()">
+                                Change Email
+                            </button>
+
+                        </div>
+
+                        <small style="
+                    color:#6b7280;
+                    font-size:12px;
+                ">
+                            Changing your email requires OTP verification.
+                        </small>
+
+
+                        <div class="email-change-box" id="emailChangeBox">
+
+                            <label for="newEmail" style="margin-bottom:7px;display:block;">
+                                New Email
+                            </label>
+
+                            <div class="email-change-row">
+
+                                <input type="email" id="newEmail" placeholder="Enter new email" autocomplete="email">
+
+                                <button type="button" class="small-btn" id="sendOtpButton" onclick="sendEmailOTP()">
+                                    Send OTP
+                                </button>
+
+                            </div>
+
+
+                            <div id="otpBox" style="
+                            display:none;
+                            margin-top:15px;
+                        ">
+
+                                <label for="emailOTP" style="
+                                display:block;
+                                margin-bottom:7px;
+                            ">
+                                    Verification OTP
+                                </label>
+
+                                <div class="email-change-row">
+
+                                    <input type="text" id="emailOTP" maxlength="6" inputmode="numeric"
+                                        placeholder="Enter 6-digit OTP">
+
+                                    <button type="button" class="small-btn" id="verifyOtpButton"
+                                        onclick="verifyEmailOTP()">
+                                        Verify OTP
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <div id="emailMessage" class="email-message"></div>
+
+
+                            <div id="verifiedEmail" class="verified-email">
+                                ✓ New email verified
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ABOUT -->
+
+                    <div class="field full">
+
+                        <label for="about">
+                            About
+                        </label>
+
+                        <textarea id="about" name="about" maxlength="1000"
+                            placeholder="Tell other students about yourself...">{{ profile.about }}</textarea>
+
+                        <small style="
+                    color:#6b7280;
+                    font-size:12px;
+                ">
+                            Maximum 1000 characters.
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+     PROFILE PICTURE
+================================================== -->
+
+            <section class="card">
+
+                <h2>
+                    Profile Picture
+                </h2>
+
+                <div class="picture-section">
+
+                    <div class="current-picture" id="profilePicturePreview">
+
+                        {% if profile.profile_picture %}
+
+                        <img src="{{ profile.profile_picture.url }}" alt="Profile picture" id="previewImage">
+
+                        {% else %}
+
+                        <div class="default-avatar" id="defaultAvatar">
+                            👤
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="picture-controls">
+
+                        <input type="file" name="profile_picture" id="profilePicture" accept="image/*">
+
+                        <p>
+                            Recommended: square image.
+                            JPG, PNG or WebP.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+         SOCIAL LINKS
+    ================================================== -->
+
+            <section class="card">
+
+                <h2>
+                    Social Links
+                </h2>
+
+                <div class="form-grid">
+
+                    <div class="field">
+
+                        <label for="github">
+                            GitHub
+                        </label>
+
+                        <input type="url" id="github" name="github" value="{{ profile.github }}"
+                            placeholder="https://github.com/username">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="linkedin">
+                            LinkedIn
+                        </label>
+
+                        <input type="url" id="linkedin" name="linkedin" value="{{ profile.linkedin }}"
+                            placeholder="https://linkedin.com/in/username">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="instagram">
+                            Instagram
+                        </label>
+
+                        <input type="url" id="instagram" name="instagram" value="{{ profile.instagram }}"
+                            placeholder="https://instagram.com/username">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="youtube">
+                            YouTube
+                        </label>
+
+                        <input type="url" id="youtube" name="youtube" value="{{ profile.youtube }}"
+                            placeholder="https://youtube.com/@username">
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+         SKILLS
+    ================================================== -->
+
+            <section class="card">
+
+                <h2>
+                    Skills
+                </h2>
+
+                <p style="
+            color:#6b7280;
+            font-size:13px;
+            margin-bottom:18px;
+        ">
+                    Select up to
+                    <strong>35 skills</strong>.
+                    You can highlight up to
+                    <strong>10</strong>
+                    of your selected skills.
+                </p>
+
+
+                <div class="skill-selector">
+
+                    <div class="skill-list">
+
+                        <div class="skill-list-title">
+                            Skill Type
+                        </div>
+
+                        {% for skill_type in skill_types %}
+
+                        <label class="skill-option">
+
+                            <input type="radio" name="skill_type_selector" value="{{ skill_type.id }}"
+                                onchange="loadSkills({{ skill_type.id }})">
+
+                            <span>
+                                {{ skill_type.name }}
+                            </span>
+
+                        </label>
+
+                        {% empty %}
+
+                        <p class="empty">
+                            No skill types available.
+                        </p>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="skill-list">
+
+                        <div class="skill-list-title">
+                            Skills
+                        </div>
+
+                        <div id="skillsContainer">
+
+                            <p class="empty">
+                                Select a skill type first.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="skill-list-title">
+                    Selected Skills
+                </div>
+
+                <div class="selected-skills" id="selectedSkills">
+
+                    <span class="empty" id="noSkillsText">
+                        No skills selected yet.
+                    </span>
+
+                </div>
+
+
+                <div class="skill-info">
+
+                    <span>
+                        Selected:
+                        <strong id="selectedCount">
+                            0
+                        </strong>
+                        / 35
+                    </span>
+
+                    <span>
+                        Highlighted:
+                        <strong id="highlightedCount">
+                            0
+                        </strong>
+                        / 10
+                    </span>
+
+                </div>
+
+
+                <div class="highlight-section">
+
+                    <div class="skill-list-title">
+                        ⭐ Highlight Skills
+                    </div>
+
+                    <p style="
+                color:#6b7280;
+                font-size:12px;
+            ">
+                        Choose up to 10 skills that you want
+                        to display prominently on your profile.
+                    </p>
+
+                    <div class="highlight-list" id="highlightList">
+
+                        <span class="empty">
+                            Select skills above first.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+         ACTIONS
+    ================================================== -->
+
+            <div class="actions">
+
+                <a href="{% url 'profile' %}" class="btn cancel">
+                    Cancel
+                </a>
+
+                <button type="submit" class="btn save">
+                    Save Changes
+                </button>
+
+            </div>
+
+        </form>
+        ```
+
+    </main>
+
+    <script>
+
+        /* =========================================================
+           DEPARTMENT → BRANCH
+        ========================================================= */
+        const branchData = {
+
+            "B.C.A.": [
+                "AI-ML (GoG)",
+                "Cyber Security",
+                "Information Technology"
+            ],
+
+            "B.B.A.": [
+                "All",
+                "Event Management (NIEM)",
+                "Hos. & Rest. Mange (NRAI)"
+            ],
+
+            "B.Com": [
+                "All"
+            ],
+
+            "B.Ed.": [
+                "All"
+            ],
+
+            "B.P.E.S.": [
+                "Physical Education & Sports"
+            ],
+
+            "B.A.": [
+                "Fashion Design",
+                "Interior Design",
+                "FTP",
+                "Journalism",
+                "Hindi Literature",
+                "English Literature",
+                "History",
+                "Political Science",
+                "Psychology",
+                "Economy"
+            ],
+
+            "B.Lib.": [
+                "Library Science"
+            ],
+
+            "BFA": [
+                "Fine Arts"
+            ],
+
+            "B.Sc.": [
+                "Ani. & VFX",
+                "Game Design & Dev.",
+                "Agriculture",
+                "Mathematics",
+                "Physics",
+                "Chemistry",
+                "Forensic Science",
+                "Botany",
+                "Zoology",
+                "Biotechnology",
+                "Microbiology",
+                "Environmental Science",
+                "Food & Nutrition"
+            ],
+
+            "B.Tech.": [
+                "CSE - Cloud Computing (Google)",
+                "CSE - AI-DS (GoG)",
+                "CSE - AI-ML (IBM)",
+                "Mech. Engg.",
+                "EX (Google)",
+                "EC (Google)"
+            ],
+
+            "Diploma": [
+                "Automotive (Hyundai)",
+                "ME",
+                "EX (VVDN)",
+                "EX",
+                "Pharmacy"
+            ]
+        };
+
+
+        const departmentSelect =
+            document.getElementById("department");
+
+        const branchSelect =
+            document.getElementById("branch");
+
+
+        function loadBranches() {
+
+            const department =
+                departmentSelect.value;
+
+            branchSelect.innerHTML = "";
+
+            if (!department) {
+
+                branchSelect.disabled = true;
+
+                const option =
+                    document.createElement("option");
+
+                option.value = "";
+
+                option.textContent =
+                    "Select Department First";
+
+                branchSelect.appendChild(option);
+
+                return;
+            }
+
+
+            branchSelect.disabled = false;
+
+            const defaultOption =
+                document.createElement("option");
+
+            defaultOption.value = "";
+
+            defaultOption.textContent =
+                "Select Branch";
+
+            branchSelect.appendChild(
+                defaultOption
+            );
+
+
+            const branches =
+                branchData[department] || [];
+
+
+            branches.forEach(branch => {
+
+                const option =
+                    document.createElement("option");
+
+                option.value = branch;
+
+                option.textContent = branch;
+
+                branchSelect.appendChild(option);
+
+            });
+
+        }
+
+
+        departmentSelect.addEventListener(
+            "change",
+            loadBranches
+        );
+
+
+        /* Existing department and branch */
+
+        const existingDepartment =
+            "{{ profile.department|escapejs }}";
+
+        const existingBranch =
+            "{{ profile.branch|escapejs }}";
+
+
+        if (existingDepartment) {
+
+            departmentSelect.value =
+                existingDepartment;
+
+            loadBranches();
+
+            if (existingBranch) {
+
+                branchSelect.value =
+                    existingBranch;
+
+            }
+
+        }
+
+
+        /* =========================================================
+           CONFIGURATION
+        ========================================================= */
+
+        const MAX_SKILLS = 35;
+
+        const MAX_HIGHLIGHTED = 10;
+
+
+        /* =========================================================
+           STATE
+        ========================================================= */
+
+        const selectedSkills = new Map();
+
+        const highlightedSkills = new Set();
+
+        let verifiedNewEmail = null;
+
+
+        /* =========================================================
+           EXISTING SKILLS FROM DJANGO
+        ========================================================= */
+
+        {% for item in profile.student_skills.all %}
+
+        selectedSkills.set(
+            "{{ item.skill.id }}",
+            {
+                id: "{{ item.skill.id }}",
+                name: "{{ item.skill.name|escapejs }}"
+            }
+        );
+
+        {% if item.is_highlighted %}
+
+        highlightedSkills.add(
+            "{{ item.skill.id }}"
+        );
+
+        {% endif %}
+
+        {% endfor %}
+
+
+        /* =========================================================
+           EMAIL CHANGE
+        ========================================================= */
+
+        function showEmailChange() {
+
+            document.getElementById(
+                "emailChangeBox"
+            ).style.display = "block";
+
+        }
+
+
+        /* =========================================================
+           SEND EMAIL OTP
+        ========================================================= */
+
+        function sendEmailOTP() {
+
+            const email =
+                document.getElementById(
+                    "newEmail"
+                ).value.trim().toLowerCase();
+
+
+            const message =
+                document.getElementById(
+                    "emailMessage"
+                );
+
+
+            const sendButton =
+                document.getElementById(
+                    "sendOtpButton"
+                );
+
+
+            if (!email) {
+
+                message.textContent =
+                    "Please enter a new email address.";
+
+                message.style.color =
+                    "#dc2626";
+
+                return;
+            }
+
+
+            /*
+             * If the user requests another OTP,
+             * previous verification is no longer valid.
+             */
+
+            verifiedNewEmail = null;
+
+
+            const csrfToken =
+                document.querySelector(
+                    "[name=csrfmiddlewaretoken]"
+                ).value;
+
+
+            const formData =
+                new FormData();
+
+            formData.append(
+                "email",
+                email
+            );
+
+
+            sendButton.disabled = true;
+
+            sendButton.textContent =
+                "Sending...";
+
+
+            fetch(
+                "{% url 'send_email_change_otp' %}",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "X-CSRFToken": csrfToken
+                    },
+
+                    body: formData
+                }
+            )
+
+                .then(response => response.json())
+
+                .then(data => {
+
+                    if (data.success) {
+
+                        message.textContent =
+                            "OTP sent to your new email.";
+
+                        message.style.color =
+                            "#15803d";
+
+
+                        document.getElementById(
+                            "otpBox"
+                        ).style.display = "block";
+
+
+                        document.getElementById(
+                            "emailOTP"
+                        ).disabled = false;
+
+
+                        document.getElementById(
+                            "emailOTP"
+                        ).value = "";
+
+
+                        document.getElementById(
+                            "verifiedEmail"
+                        ).style.display = "none";
+
+
+                        document.getElementById(
+                            "emailOTP"
+                        ).focus();
+
+                    } else {
+
+                        message.textContent =
+                            data.error ||
+                            "Unable to send OTP.";
+
+                        message.style.color =
+                            "#dc2626";
+
+                    }
+
+                })
+
+                .catch(() => {
+
+                    message.textContent =
+                        "Something went wrong while sending the OTP.";
+
+                    message.style.color =
+                        "#dc2626";
+
+                })
+
+                .finally(() => {
+
+                    sendButton.disabled = false;
+
+                    sendButton.textContent =
+                        "Send OTP";
+
+                });
+
+        }
+
+
+        /* =========================================================
+           VERIFY EMAIL OTP
+        ========================================================= */
+
+        function verifyEmailOTP() {
+
+            const otp =
+                document.getElementById(
+                    "emailOTP"
+                ).value.trim();
+
+
+            const message =
+                document.getElementById(
+                    "emailMessage"
+                );
+
+
+            const verifyButton =
+                document.getElementById(
+                    "verifyOtpButton"
+                );
+
+
+            if (!otp) {
+
+                message.textContent =
+                    "Please enter the OTP.";
+
+                message.style.color =
+                    "#dc2626";
+
+                return;
+            }
+
+
+            if (!/^\d{6}$/.test(otp)) {
+
+                message.textContent =
+                    "OTP must contain 6 digits.";
+
+                message.style.color =
+                    "#dc2626";
+
+                return;
+            }
+
+
+            const csrfToken =
+                document.querySelector(
+                    "[name=csrfmiddlewaretoken]"
+                ).value;
+
+
+            const formData =
+                new FormData();
+
+            formData.append(
+                "otp",
+                otp
+            );
+
+
+            verifyButton.disabled = true;
+
+            verifyButton.textContent =
+                "Verifying...";
+
+
+            fetch(
+                "{% url 'verify_email_change_otp' %}",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "X-CSRFToken": csrfToken
+                    },
+
+                    body: formData
+                }
+            )
+
+                .then(response => response.json())
+
+                .then(data => {
+
+                    if (data.success) {
+
+                        verifiedNewEmail =
+                            data.email;
+
+
+                        document.getElementById(
+                            "currentEmail"
+                        ).value =
+                            data.email;
+
+
+                        document.getElementById(
+                            "verifiedEmail"
+                        ).style.display =
+                            "block";
+
+
+                        document.getElementById(
+                            "verifiedEmail"
+                        ).textContent =
+                            "✓ " +
+                            data.email +
+                            " verified";
+
+
+                        message.textContent =
+                            "Email verified successfully.";
+
+                        message.style.color =
+                            "#15803d";
+
+
+                        document.getElementById(
+                            "newEmail"
+                        ).disabled = true;
+
+
+                        document.getElementById(
+                            "emailOTP"
+                        ).disabled = true;
+
+
+                        verifyButton.disabled = true;
+
+                        verifyButton.textContent =
+                            "Verified";
+
+                    } else {
+
+                        message.textContent =
+                            data.error ||
+                            "Invalid OTP.";
+
+                        message.style.color =
+                            "#dc2626";
+
+                    }
+
+                })
+
+                .catch(() => {
+
+                    message.textContent =
+                        "Something went wrong while verifying the OTP.";
+
+                    message.style.color =
+                        "#dc2626";
+
+                })
+
+                .finally(() => {
+
+                    if (!verifiedNewEmail) {
+
+                        verifyButton.disabled =
+                            false;
+
+                        verifyButton.textContent =
+                            "Verify OTP";
+
+                    }
+
+                });
+
+        }
+
+
+        /* =========================================================
+           LOAD SKILLS
+        ========================================================= */
+
+        function loadSkills(skillTypeId) {
+
+            const container =
+                document.getElementById(
+                    "skillsContainer"
+                );
+
+
+            container.innerHTML =
+                "<p class='empty'>Loading...</p>";
+
+
+            const url =
+                "{% url 'get_skills' 0 %}"
+                    .replace(
+                        "/0/",
+                        "/" + skillTypeId + "/"
+                    );
+
+
+            fetch(url)
+
+                .then(response => {
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Failed to load skills"
+                        );
+
+                    }
+
+                    return response.json();
+
+                })
+
+                .then(data => {
+
+                    container.innerHTML = "";
+
+
+                    if (!data.skills ||
+                        data.skills.length === 0) {
+
+                        container.innerHTML =
+                            "<p class='empty'>No skills found.</p>";
+
+                        return;
+                    }
+
+
+                    data.skills.forEach(skill => {
+
+                        const label =
+                            document.createElement(
+                                "label"
+                            );
+
+                        label.className =
+                            "skill-option";
+
+
+                        const checkbox =
+                            document.createElement(
+                                "input"
+                            );
+
+                        checkbox.type =
+                            "checkbox";
+
+
+                        checkbox.value =
+                            skill.id;
+
+
+                        checkbox.checked =
+                            selectedSkills.has(
+                                String(skill.id)
+                            );
+
+
+                        checkbox.addEventListener(
+                            "change",
+                            function () {
+
+                                toggleSkill(
+                                    skill,
+                                    checkbox.checked
+                                );
+
+                            }
+                        );
+
+
+                        const span =
+                            document.createElement(
+                                "span"
+                            );
+
+                        span.textContent =
+                            skill.name;
+
+
+                        label.appendChild(
+                            checkbox
+                        );
+
+                        label.appendChild(
+                            span
+                        );
+
+
+                        container.appendChild(
+                            label
+                        );
+
+                    });
+
+                })
+
+                .catch(() => {
+
+                    container.innerHTML =
+                        "<p class='empty'>Unable to load skills.</p>";
+
+                });
+
+        }
+
+
+        /* =========================================================
+           TOGGLE SKILL
+        ========================================================= */
+
+        function toggleSkill(
+            skill,
+            checked
+        ) {
+
+            const id =
+                String(skill.id);
+
+
+            if (checked) {
+
+                if (
+                    selectedSkills.size >=
+                    MAX_SKILLS
+                ) {
+
+                    alert(
+                        "You can select a maximum of 35 skills."
+                    );
+
+                    refreshSkillLists();
+
+                    return;
+                }
+
+
+                selectedSkills.set(
+                    id,
+                    {
+                        id: id,
+                        name: skill.name
+                    }
+                );
+
+            } else {
+
+                selectedSkills.delete(id);
+
+                highlightedSkills.delete(id);
+
+            }
+
+
+            refreshSkillLists();
+
+        }
+
+
+        /* =========================================================
+           REFRESH SELECTED / HIGHLIGHTED SKILLS
+        ========================================================= */
+
+        function refreshSkillLists() {
+
+            const selectedContainer =
+                document.getElementById(
+                    "selectedSkills"
+                );
+
+
+            const highlightContainer =
+                document.getElementById(
+                    "highlightList"
+                );
+
+
+            selectedContainer.innerHTML = "";
+
+            highlightContainer.innerHTML = "";
+
+
+            if (selectedSkills.size === 0) {
+
+                selectedContainer.innerHTML =
+                    '<span class="empty">No skills selected yet.</span>';
+
+                highlightContainer.innerHTML =
+                    '<span class="empty">Select skills above first.</span>';
+
+            }
+
+
+            selectedSkills.forEach(
+                (skill, id) => {
+
+                    const chip =
+                        document.createElement(
+                            "span"
+                        );
+
+                    chip.className =
+                        "selected-skill";
+
+
+                    const skillName =
+                        document.createElement(
+                            "span"
+                        );
+
+                    skillName.textContent =
+                        skill.name;
+
+
+                    const removeButton =
+                        document.createElement(
+                            "button"
+                        );
+
+                    removeButton.type =
+                        "button";
+
+                    removeButton.className =
+                        "remove-skill";
+
+                    removeButton.textContent =
+                        "×";
+
+                    removeButton.title =
+                        "Remove skill";
+
+
+                    removeButton.addEventListener(
+                        "click",
+                        function () {
+
+                            selectedSkills.delete(
+                                id
+                            );
+
+                            highlightedSkills.delete(
+                                id
+                            );
+
+                            refreshSkillLists();
+
+                        }
+                    );
+
+
+                    chip.appendChild(
+                        skillName
+                    );
+
+                    chip.appendChild(
+                        removeButton
+                    );
+
+
+                    selectedContainer.appendChild(
+                        chip
+                    );
+
+
+                    const highlight =
+                        document.createElement(
+                            "label"
+                        );
+
+                    highlight.className =
+                        "highlight-item";
+
+
+                    const checkbox =
+                        document.createElement(
+                            "input"
+                        );
+
+                    checkbox.type =
+                        "checkbox";
+
+                    checkbox.value =
+                        id;
+
+
+                    checkbox.checked =
+                        highlightedSkills.has(id);
+
+
+                    checkbox.addEventListener(
+                        "change",
+                        function () {
+
+                            if (checkbox.checked) {
+
+                                if (
+                                    highlightedSkills.size >=
+                                    MAX_HIGHLIGHTED
+                                ) {
+
+                                    alert(
+                                        "You can highlight a maximum of 10 skills."
+                                    );
+
+                                    checkbox.checked =
+                                        false;
+
+                                    return;
+                                }
+
+
+                                highlightedSkills.add(
+                                    id
+                                );
+
+                            } else {
+
+                                highlightedSkills.delete(
+                                    id
+                                );
+
+                            }
+
+
+                            updateCounts();
+
+                        }
+                    );
+
+
+                    const text =
+                        document.createElement(
+                            "span"
+                        );
+
+                    text.textContent =
+                        skill.name;
+
+
+                    highlight.appendChild(
+                        checkbox
+                    );
+
+                    highlight.appendChild(
+                        text
+                    );
+
+
+                    highlightContainer.appendChild(
+                        highlight
+                    );
+
+                }
+            );
+
+
+            updateCounts();
+
+        }
+
+
+        /* =========================================================
+           UPDATE COUNTERS
+        ========================================================= */
+
+        function updateCounts() {
+
+            document.getElementById(
+                "selectedCount"
+            ).textContent =
+                selectedSkills.size;
+
+
+            document.getElementById(
+                "highlightedCount"
+            ).textContent =
+                highlightedSkills.size;
+
+        }
+
+
+        /* =========================================================
+           FORM SUBMISSION
+        ========================================================= */
+
+        document
+            .getElementById("profileForm")
+            .addEventListener(
+                "submit",
+                function (event) {
+
+                    const newEmailInput =
+                        document.getElementById(
+                            "newEmail"
+                        );
+
+
+                    const newEmail =
+                        newEmailInput.value
+                            .trim()
+                            .toLowerCase();
+
+
+                    if (
+                        newEmail &&
+                        newEmail !==
+                        "{{ profile.email|escapejs }}"
+                    ) {
+
+                        if (
+                            !verifiedNewEmail ||
+                            verifiedNewEmail !== newEmail
+                        ) {
+
+                            event.preventDefault();
+
+
+                            alert(
+                                "Please verify your new email with OTP before saving."
+                            );
+
+
+                            return;
+
+                        }
+
+                    }
+
+
+                    document
+                        .querySelectorAll(
+                            ".generated-skill"
+                        )
+                        .forEach(
+                            element =>
+                                element.remove()
+                        );
+
+
+                    selectedSkills.forEach(
+                        (skill, id) => {
+
+                            const input =
+                                document.createElement(
+                                    "input"
+                                );
+
+
+                            input.type =
+                                "hidden";
+
+                            input.name =
+                                "skills";
+
+                            input.value =
+                                id;
+
+                            input.className =
+                                "generated-skill";
+
+
+                            this.appendChild(
+                                input
+                            );
+
+                        }
+                    );
+
+
+                    highlightedSkills.forEach(
+                        id => {
+
+                            const input =
+                                document.createElement(
+                                    "input"
+                                );
+
+
+                            input.type =
+                                "hidden";
+
+                            input.name =
+                                "highlighted_skills";
+
+                            input.value =
+                                id;
+
+                            input.className =
+                                "generated-skill";
+
+
+                            this.appendChild(
+                                input
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+
+        /* =========================================================
+           INITIALIZE
+        ========================================================= */
+
+        refreshSkillLists();
+
+        const profilePictureInput =
+            document.getElementById("profilePicture");
+
+        const profilePicturePreview =
+            document.getElementById("profilePicturePreview");
+
+
+        profilePictureInput.addEventListener("change", function () {
+
+            const file = this.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            // Make sure the selected file is an image
+            if (!file.type.startsWith("image/")) {
+
+                alert("Please select an image file.");
+
+                this.value = "";
+
+                return;
+            }
+
+
+            const reader = new FileReader();
+
+
+            reader.onload = function (event) {
+
+                profilePicturePreview.innerHTML = `
+            <img
+                src="${event.target.result}"
+                alt="Profile picture preview"
+            >
+        `;
+
+            };
+
+
+            reader.readAsDataURL(file);
+
+        });
+
+    </script>
+
+</body>
+
+</html>

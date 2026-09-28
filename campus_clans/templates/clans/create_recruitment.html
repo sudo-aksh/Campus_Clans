@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Create Global Recruitment</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            background: #f5f7fb;
+            font-family: Arial, sans-serif;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            border-color: #6366f1;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* -------------------------------------------------- */
+
+        .field-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .field-option {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #fafafa;
+        }
+
+        .field-option:hover {
+            background: #f3f4f6;
+        }
+
+        /* -------------------------------------------------- */
+
+        .skills-section {
+            margin-top: 15px;
+        }
+
+        .skills-container {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fill, minmax(180px, 1fr));
+
+            gap: 8px;
+
+            margin-top: 10px;
+
+            padding: 15px;
+
+            background: #f9fafb;
+
+            border-radius: 10px;
+
+            border: 1px solid #e5e7eb;
+        }
+
+        .skill-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 7px;
+        }
+
+        .skill-option:hover {
+            background: #eef2ff;
+        }
+
+        /* -------------------------------------------------- */
+
+        .selected-box {
+            margin-top: 18px;
+            padding: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+        }
+
+        .selected-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .selected-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .selected-skill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 10px;
+            background: #eef2ff;
+            color: #3730a3;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .remove-skill {
+            border: none;
+            background: transparent;
+            color: #dc2626;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+        }
+
+        /* -------------------------------------------------- */
+
+        .counter {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .counter strong {
+            color: #111827;
+        }
+
+        .empty {
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        /* -------------------------------------------------- */
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 28px;
+        }
+
+        .btn {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        @media (max-width: 600px) {
+
+            .card {
+                padding: 20px;
+            }
+
+            .skills-container {
+                grid-template-columns: 1fr;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>
+            Global Clan Recruitment
+        </h1>
+
+        <div class="subtitle">
+            {{ clan.name }} is looking for new members.
+            This recruitment will remain active for 7 days.
+        </div>
+
+
+        {% if error %}
+
+        <div class="error">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        <form
+            method="POST"
+            id="recruitmentForm"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- =========================================
+                 TITLE
+            ========================================== -->
+
+            <div class="form-group">
+
+                <label for="title">
+                    Recruitment Title
+                </label>
+
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    maxlength="150"
+                    placeholder="Example: Looking for AI/ML Team Members"
+                    required
+                >
+
+            </div>
+
+
+            <!-- =========================================
+                 DESCRIPTION
+            ========================================== -->
+
+            <div class="form-group">
+
+                <label for="description">
+                    Description
+                </label>
+
+                <textarea
+                    id="description"
+                    name="description"
+                    placeholder="Describe what your clan is looking for..."
+                ></textarea>
+
+            </div>
+
+
+            <!-- =========================================
+                 FIELDS
+            ========================================== -->
+
+            <div class="form-group">
+
+                <label>
+                    Select Fields
+                </label>
+
+                <div class="field-list">
+
+                    {% for skill_type in skill_types %}
+
+                    <label class="field-option">
+
+                        <input
+                            type="checkbox"
+                            name="fields"
+                            value="{{ skill_type.id }}"
+                            class="field-checkbox"
+                        >
+
+                        <span>
+                            {{ skill_type.name }}
+                        </span>
+
+                    </label>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================================
+                 SKILLS
+            ========================================== -->
+
+            <div class="skills-section">
+
+                <label>
+                    Required Skills
+                </label>
+
+                <div class="counter">
+
+                    Selected:
+                    <strong id="selectedCount">
+                        0
+                    </strong>
+                    / 35
+
+                </div>
+
+
+                <div
+                    id="skillsContainer"
+                    class="skills-container"
+                >
+
+                    <p class="empty">
+                        Select one or more fields first.
+                    </p>
+
+                </div>
+
+
+                <!-- SELECTED SKILLS -->
+
+                <div class="selected-box">
+
+                    <div class="selected-title">
+                        Selected Required Skills
+                    </div>
+
+                    <div
+                        id="selectedSkills"
+                        class="selected-skills"
+                    >
+
+                        <span class="empty">
+                            No skills selected yet.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================================
+                 ACTIONS
+            ========================================== -->
+
+            <div class="actions">
+
+                <a
+                    href="{% url 'clan_profile' clan.id %}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Publish Recruitment
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* =========================================================
+       CONFIGURATION
+    ========================================================= */
+
+    const MAX_SKILLS = 35;
+
+
+    /* =========================================================
+       STATE
+    ========================================================= */
+
+    const selectedSkills = new Map();
+
+
+    /* =========================================================
+       FIELD CHECKBOXES
+    ========================================================= */
+
+    const fieldCheckboxes =
+        document.querySelectorAll(
+            ".field-checkbox"
+        );
+
+
+    fieldCheckboxes.forEach(
+        checkbox => {
+
+            checkbox.addEventListener(
+                "change",
+                loadSelectedFields
+            );
+
+        }
+    );
+
+
+    /* =========================================================
+       LOAD SKILLS FOR SELECTED FIELDS
+    ========================================================= */
+
+    function loadSelectedFields() {
+
+        const selectedFields = [];
+
+
+        fieldCheckboxes.forEach(
+            checkbox => {
+
+                if (checkbox.checked) {
+
+                    selectedFields.push(
+                        checkbox.value
+                    );
+
+                }
+
+            }
+        );
+
+
+        const container =
+            document.getElementById(
+                "skillsContainer"
+            );
+
+
+        if (
+            selectedFields.length === 0
+        ) {
+
+            container.innerHTML =
+                `
+                <p class="empty">
+                    Select one or more fields first.
+                </p>
+                `;
+
+            return;
+        }
+
+
+        container.innerHTML =
+            `
+            <p class="empty">
+                Loading skills...
+            </p>
+            `;
+
+
+        /*
+         * Load every selected SkillType.
+         */
+
+        const requests =
+            selectedFields.map(
+                fieldId => {
+
+                    const url =
+                        "{% url 'get_skills' 0 %}"
+                            .replace(
+                                "/0/",
+                                "/" + fieldId + "/"
+                            );
+
+
+                    return fetch(url)
+                        .then(
+                            response =>
+                                response.json()
+                        )
+                        .then(
+                            data => ({
+                                fieldId:
+                                    fieldId,
+                                skills:
+                                    data.skills || []
+                            })
+                        );
+
+                }
+            );
+
+
+        Promise.all(requests)
+
+            .then(results => {
+
+                container.innerHTML = "";
+
+
+                results.forEach(
+                    result => {
+
+                        if (
+                            result.skills.length === 0
+                        ) {
+                            return;
+                        }
+
+
+                        result.skills.forEach(
+                            skill => {
+
+                                const label =
+                                    document.createElement(
+                                        "label"
+                                    );
+
+                                label.className =
+                                    "skill-option";
+
+
+                                const checkbox =
+                                    document.createElement(
+                                        "input"
+                                    );
+
+                                checkbox.type =
+                                    "checkbox";
+
+                                checkbox.value =
+                                    skill.id;
+
+
+                                checkbox.checked =
+                                    selectedSkills.has(
+                                        String(skill.id)
+                                    );
+
+
+                                checkbox.addEventListener(
+                                    "change",
+                                    function () {
+
+                                        toggleSkill(
+                                            skill,
+                                            checkbox.checked
+                                        );
+
+                                    }
+                                );
+
+
+                                const span =
+                                    document.createElement(
+                                        "span"
+                                    );
+
+                                span.textContent =
+                                    skill.name;
+
+
+                                label.appendChild(
+                                    checkbox
+                                );
+
+                                label.appendChild(
+                                    span
+                                );
+
+
+                                container.appendChild(
+                                    label
+                                );
+
+                            }
+
+                        );
+
+                    }
+                );
+
+
+                if (
+                    container.children.length === 0
+                ) {
+
+                    container.innerHTML =
+                        `
+                        <p class="empty">
+                            No skills found.
+                        </p>
+                        `;
+
+                }
+
+            })
+
+            .catch(() => {
+
+                container.innerHTML =
+                    `
+                    <p class="empty">
+                        Unable to load skills.
+                    </p>
+                    `;
+
+            });
+
+    }
+
+
+    /* =========================================================
+       TOGGLE SKILL
+    ========================================================= */
+
+    function toggleSkill(
+        skill,
+        checked
+    ) {
+
+        const id =
+            String(skill.id);
+
+
+        if (checked) {
+
+            if (
+                selectedSkills.size >=
+                MAX_SKILLS
+            ) {
+
+                alert(
+                    "You can select a maximum of 35 skills."
+                );
+
+                loadSelectedFields();
+
+                return;
+            }
+
+
+            selectedSkills.set(
+                id,
+                {
+                    id: id,
+                    name: skill.name
+                }
+            );
+
+        } else {
+
+            selectedSkills.delete(id);
+
+        }
+
+
+        refreshSelectedSkills();
+
+    }
+
+
+    /* =========================================================
+       REFRESH SELECTED SKILLS
+    ========================================================= */
+
+    function refreshSelectedSkills() {
+
+        const container =
+            document.getElementById(
+                "selectedSkills"
+            );
+
+
+        container.innerHTML = "";
+
+
+        if (
+            selectedSkills.size === 0
+        ) {
+
+            container.innerHTML =
+                `
+                <span class="empty">
+                    No skills selected yet.
+                </span>
+                `;
+
+        }
+
+
+        selectedSkills.forEach(
+            (skill, id) => {
+
+                const chip =
+                    document.createElement(
+                        "span"
+                    );
+
+                chip.className =
+                    "selected-skill";
+
+
+                const name =
+                    document.createElement(
+                        "span"
+                    );
+
+                name.textContent =
+                    skill.name;
+
+
+                const removeButton =
+                    document.createElement(
+                        "button"
+                    );
+
+                removeButton.type =
+                    "button";
+
+                removeButton.className =
+                    "remove-skill";
+
+                removeButton.textContent =
+                    "×";
+
+
+                removeButton.addEventListener(
+                    "click",
+                    function () {
+
+                        selectedSkills.delete(
+                            id
+                        );
+
+                        refreshSelectedSkills();
+
+                        loadSelectedFields();
+
+                    }
+                );
+
+
+                chip.appendChild(name);
+
+                chip.appendChild(
+                    removeButton
+                );
+
+                container.appendChild(
+                    chip
+                );
+
+            }
+        );
+
+
+        document.getElementById(
+            "selectedCount"
+        ).textContent =
+            selectedSkills.size;
+
+    }
+
+
+    /* =========================================================
+       FORM SUBMISSION
+    ========================================================= */
+
+    document
+        .getElementById("recruitmentForm")
+        .addEventListener(
+            "submit",
+            function(event) {
+
+                if (
+                    selectedSkills.size === 0
+                ) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please select at least one required skill."
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    selectedSkills.size > MAX_SKILLS
+                ) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "You can select a maximum of 35 skills."
+                    );
+
+                    return;
+                }
+
+
+                /*
+                 * Remove previously generated inputs.
+                 */
+
+                document
+                    .querySelectorAll(
+                        ".generated-skill"
+                    )
+                    .forEach(
+                        element =>
+                            element.remove()
+                    );
+
+
+                /*
+                 * Send selected skills.
+                 */
+
+                selectedSkills.forEach(
+                    (skill, id) => {
+
+                        const input =
+                            document.createElement(
+                                "input"
+                            );
+
+                        input.type =
+                            "hidden";
+
+                        input.name =
+                            "skills";
+
+                        input.value =
+                            id;
+
+                        input.className =
+                            "generated-skill";
+
+                        this.appendChild(
+                            input
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+</script>
+
+</body>
+
+</html>

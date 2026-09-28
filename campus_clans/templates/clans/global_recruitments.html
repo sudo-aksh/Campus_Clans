@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Recruitment | Campus Clans</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f7fb;color:#1f2937}
+.navbar{height:65px;background:white;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;padding:0 30px}
+.logo{font-size:21px;font-weight:700;color:#4f46e5;text-decoration:none}
+.nav-links{display:flex;align-items:center;gap:20px}
+.nav-links a{text-decoration:none;color:#374151;font-size:14px}
+.nav-links a:hover{color:#4f46e5}
+.profile-btn{background:#4f46e5;color:white!important;padding:9px 16px;border-radius:8px}
+.container{max-width:1050px;margin:30px auto;padding:0 20px}
+.page-header{margin-bottom:30px}
+.page-header h1{font-size:30px;margin-bottom:8px}
+.page-header p{color:#6b7280;line-height:1.6}
+.recruitment-section{margin-bottom:45px}
+.section-heading{font-size:23px;margin-bottom:8px}
+.section-description{color:#6b7280;font-size:14px;margin-bottom:18px;line-height:1.6}
+.recruitment-list{display:flex;flex-direction:column;gap:18px}
+.recruitment-card,.student-card{background:white;border:1px solid #e5e7eb;border-radius:15px;padding:22px;box-shadow:0 5px 20px rgba(0,0,0,.04)}
+.recruitment-header{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:15px}
+.clan-info{display:flex;align-items:center;gap:12px}
+.clan-logo{width:50px;height:50px;border-radius:50%;overflow:hidden;background:#e5e7eb;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px}
+.clan-logo img{width:100%;height:100%;object-fit:cover}
+.clan-name{font-size:14px;font-weight:600}
+.recruitment-date{color:#9ca3af;font-size:11px}
+.recruitment-title{font-size:21px;margin-bottom:8px}
+.recruitment-description{color:#4b5563;line-height:1.6;margin-bottom:18px;white-space:pre-line}
+.section-label{font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;margin-bottom:8px}
+.field-list,.skill-list{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}
+.field-tag{background:#eef2ff;color:#4338ca;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.skill-tag{background:#f3f4f6;color:#374151;padding:6px 10px;border-radius:8px;font-size:12px}
+.matched-skill{background:#dcfce7;color:#166534;font-weight:600}
+.match-box{background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin-top:5px;margin-bottom:18px}
+.match-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.match-title{font-weight:700;font-size:14px}
+.match-count{font-weight:700;color:#4f46e5}
+.match-bar{width:100%;height:8px;background:#e5e7eb;border-radius:10px;overflow:hidden}
+.match-fill{height:100%;background:#4f46e5;border-radius:10px}
+.matched-text{color:#166534;font-size:12px;margin-top:8px}
+.recruitment-footer,.student-footer{border-top:1px solid #f3f4f6;padding-top:15px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.expiry,.student-expiry{color:#6b7280;font-size:12px}
+.request-btn,.invite-btn,.manage-btn,.delete-btn{border:none;color:white;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+.request-btn{background:#4f46e5}
+.request-btn:hover,.invite-btn:hover{background:#4338ca}
+.pending-btn{background:#e5e7eb;color:#374151;cursor:pointer}
+.member-btn{background:#dcfce7;color:#166534;cursor:default}
+.management-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.manage-btn{background:#2563eb}
+.manage-btn:hover{background:#1d4ed8}
+.delete-btn{background:#dc2626}
+.delete-btn:hover{background:#b91c1c}
+.student-header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.student-picture{width:58px;height:58px;border-radius:50%;overflow:hidden;background:#eef2ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:24px;color:#4f46e5;font-weight:700}
+.student-picture img{width:100%;height:100%;object-fit:cover}
+.student-name{font-size:18px;font-weight:700;margin-bottom:4px}
+.student-username{color:#6b7280;font-size:12px;margin-bottom:4px}
+.student-academic{color:#6b7280;font-size:12px}
+.message-box{background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:15px;margin-bottom:18px}
+.message-label{font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;margin-bottom:7px}
+.student-message{color:#374151;line-height:1.6;white-space:pre-line}
+.student-info{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.info-tag{background:#eef2ff;color:#4338ca;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.invite-btn{background:#4f46e5}
+.own-recruitment-btn{background:#e5e7eb;color:#374151;cursor:default}
+.empty{background:white;border:1px solid #e5e7eb;border-radius:15px;padding:45px 20px;text-align:center;color:#6b7280}
+@media(max-width:600px){
+.navbar{padding:0 15px}
+.nav-links a:not(.profile-btn){display:none}
+.container{margin-top:20px;padding:0 15px}
+.recruitment-header{align-items:flex-start;flex-direction:column}
+.recruitment-footer,.student-footer{align-items:flex-start;flex-direction:column}
+.request-btn,.invite-btn,.manage-btn,.delete-btn{width:100%;text-align:center}
+.management-actions{width:100%;flex-direction:column}
+.management-actions form,.management-actions a{width:100%}
+.student-header{align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<nav class="navbar">
+<a href="{% url 'home' %}" class="logo">Campus Clans</a>
+<div class="nav-links">
+<a href="{% url 'home' %}">Home</a>
+<a href="{% url 'global_recruitments' %}">Recruitment</a>
+<a href="#">Events</a>
+<a href="#">Clans</a>
+<a href="{% url 'profile' %}" class="profile-btn">Profile</a>
+</div>
+</nav>
+<main class="container">
+<div class="page-header">
+<h1>Global Recruitment</h1>
+<p>Find clans looking for students and students looking for clans.</p>
+</div>
+<section class="recruitment-section">
+<h2 class="section-heading">Clans Looking for Members</h2>
+<p class="section-description">Find clans looking for students with specific skills and interests.</p>
+{% if recruitments %}
+<div class="recruitment-list">
+{% for item in recruitments %}
+{% with recruitment=item.recruitment %}
+<article class="recruitment-card">
+<div class="recruitment-header">
+<div class="clan-info">
+<div class="clan-logo">
+{% if recruitment.clan.logo %}
+<img src="{{ recruitment.clan.logo.url }}" alt="{{ recruitment.clan.name }}">
+{% else %}
+🏆
+{% endif %}
+</div>
+<div>
+<div class="clan-name">{{ recruitment.clan.name }}</div>
+<div class="recruitment-date">Posted {{ recruitment.created_at|date:"d M Y" }}</div>
+</div>
+</div>
+</div>
+<h2 class="recruitment-title">{{ recruitment.title }}</h2>
+{% if recruitment.description %}
+<div class="recruitment-description">{{ recruitment.description }}</div>
+{% endif %}
+<div class="section-label">Fields</div>
+<div class="field-list">
+{% for field in recruitment.fields.all %}
+<span class="field-tag">{{ field.name }}</span>
+{% empty %}
+<span class="skill-tag">No fields listed</span>
+{% endfor %}
+</div>
+<div class="section-label">Required Skills</div>
+<div class="skill-list">
+{% for required in item.required_skills %}
+<span class="skill-tag {% if required.skill_id in item.matched_skill_ids %}matched-skill{% endif %}">{{ required.skill.name }}</span>
+{% empty %}
+<span class="skill-tag">No specific skills listed</span>
+{% endfor %}
+</div>
+<div class="match-box">
+<div class="match-top">
+<span class="match-title">Your Skill Match</span>
+<span class="match-count">{{ item.match_count }} / {{ item.total_required }}</span>
+</div>
+<div class="match-bar">
+<div class="match-fill" style="width:{{ item.match_percentage }}%;"></div>
+</div>
+{% if item.matched_skills %}
+<div class="matched-text">Matched skills:
+{% for skill in item.matched_skills %}
+{{ skill.name }}{% if not forloop.last %}, {% endif %}
+{% endfor %}
+</div>
+{% else %}
+<div class="matched-text">No matching skills found in your profile.</div>
+{% endif %}
+</div>
+<div class="recruitment-footer">
+<div class="expiry">Expires: {{ recruitment.expires_at|date:"d M Y, h:i A" }}</div>
+{% if item.can_manage %}
+<div class="management-actions">
+<a href="{% url 'edit_clan_recruitment' recruitment.id %}" class="manage-btn">Edit</a>
+<form method="POST" action="{% url 'delete_clan_recruitment' recruitment.id %}" onsubmit="return confirm('Delete this recruitment?');">
+{% csrf_token %}
+<button type="submit" class="delete-btn">Delete</button>
+</form>
+</div>
+{% elif item.is_member %}
+<button type="button" class="request-btn member-btn" disabled>✓ Already a member of this clan</button>
+{% elif item.existing_request %}
+<form method="POST" action="{% url 'cancel_clan_join_request' item.existing_request.id %}">
+{% csrf_token %}
+<button type="submit" class="request-btn pending-btn" onclick="return confirm('Cancel your request to join this clan?');">Cancel Request</button>
+</form>
+{% else %}
+<form method="POST" action="{% url 'send_global_clan_join_request' recruitment.id %}">
+{% csrf_token %}
+<button type="submit" class="request-btn">Request to Join</button>
+</form>
+{% endif %}
+</div>
+</article>
+{% endwith %}
+{% endfor %}
+</div>
+{% else %}
+<div class="empty">
+<h3>No active clan recruitments</h3>
+<p style="margin-top:8px;">There are currently no clans looking for new members.</p>
+</div>
+{% endif %}
+</section>
+<section class="recruitment-section">
+<h2 class="section-heading">Students Looking for Clans</h2>
+<p class="section-description">Students who are currently looking for a clan are shown here with their message and existing profile skills.</p>
+{% if student_recruitments %}
+<div class="recruitment-list">
+{% for student_recruitment in student_recruitments %}
+<article class="student-card">
+<div class="student-header">
+<div class="student-picture">
+{% if student_recruitment.student.profile_picture %}
+<img src="{{ student_recruitment.student.profile_picture.url }}" alt="{{ student_recruitment.student.name }}">
+{% else %}
+{{ student_recruitment.student.name|first|upper }}
+{% endif %}
+</div>
+<div>
+<div class="student-name">{{ student_recruitment.student.name }}</div>
+<div class="student-username">@{{ student_recruitment.student.user.username }}</div>
+<div class="student-academic">
+{{ student_recruitment.student.department }}{% if student_recruitment.student.branch %} • {{ student_recruitment.student.branch }}{% endif %}
+</div>
+</div>
+</div>
+<div class="message-box">
+<div class="message-label">Looking for a Clan</div>
+<div class="student-message">{{ student_recruitment.message }}</div>
+</div>
+<div class="section-label">Profile</div>
+<div class="student-info">
+<span class="info-tag">{{ student_recruitment.student.department }}</span>
+{% if student_recruitment.student.branch %}
+<span class="info-tag">{{ student_recruitment.student.branch }}</span>
+{% endif %}
+</div>
+<div class="section-label">Skills</div>
+<div class="skill-list">
+{% for student_skill in student_recruitment.student.student_skills.all %}
+<span class="skill-tag {% if student_skill.is_highlighted %}matched-skill{% endif %}">{{ student_skill.skill.name }}</span>
+{% empty %}
+<span class="skill-tag">No skills added to profile</span>
+{% endfor %}
+</div>
+<div class="student-footer">
+<div class="student-expiry">Expires: {{ student_recruitment.expires_at|date:"d M Y, h:i A" }}</div>
+{% if student_recruitment.student == current_profile %}
+<button type="button" class="request-btn own-recruitment-btn" disabled>Your Recruitment</button>
+{% elif can_invite_students %}
+<form method="POST" action="{% url 'invite_student_to_clan' student_recruitment.id %}">
+{% csrf_token %}
+<button type="submit" class="invite-btn">Invite to My Clan</button>
+</form>
+{% endif %}
+</div>
+</article>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty">
+<h3>No students looking for clans</h3>
+<p style="margin-top:8px;">There are currently no students looking for a clan.</p>
+</div>
+{% endif %}
+</section>
+</main>
+</body>
+</html>

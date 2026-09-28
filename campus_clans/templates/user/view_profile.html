@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {{ profile.name }} | Campus Clans
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+        }
+
+        /* =========================================
+           PROFILE HEADER
+        ========================================= */
+
+        .profile-header {
+            text-align: center;
+        }
+
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            overflow: hidden;
+            background: #eef2ff;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 45px;
+        }
+
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-header h1 {
+            margin-bottom: 6px;
+        }
+
+        .username {
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .department {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* =========================================
+           CLAN ACTION SECTION
+        ========================================= */
+
+        .invite-section {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+        }
+
+        .invite-section p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .invite-form {
+            display: inline-block;
+        }
+
+        /* Invite */
+
+        .invite-btn {
+            border: none;
+            background: #4f46e5;
+            color: white;
+
+            padding: 10px 20px;
+            border-radius: 8px;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .invite-btn:hover {
+            background: #4338ca;
+        }
+
+        /* Cancel invitation */
+
+        .cancel-invite-btn {
+            border: none;
+            background: #f3f4f6;
+            color: #374151;
+
+            padding: 9px 15px;
+            border-radius: 8px;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .cancel-invite-btn:hover {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        /* Pending status */
+
+        .pending-message {
+            display: inline-block;
+
+            background: #fef3c7;
+            color: #92400e;
+
+            padding: 9px 15px;
+            border-radius: 8px;
+
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Join request pending */
+
+        .join-request-message {
+            display: inline-block;
+
+            background: #eff6ff;
+            color: #1d4ed8;
+
+            padding: 9px 15px;
+            border-radius: 8px;
+
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* =========================================
+           SECTIONS
+        ========================================= */
+
+        .section {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .section h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .about {
+            color: #4b5563;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        /* =========================================
+           SKILLS
+        ========================================= */
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skill {
+            background: #eef2ff;
+            color: #4338ca;
+
+            padding: 7px 11px;
+            border-radius: 20px;
+
+            font-size: 13px;
+        }
+
+        .highlighted {
+            background: #e0e7ff;
+            font-weight: 600;
+        }
+
+        /* =========================================
+           CLAN
+        ========================================= */
+
+        .clan-box {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .clan-box a {
+            color: #4f46e5;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .clan-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================================
+           LINKS
+        ========================================= */
+
+        .links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .links a {
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================================
+           BACK
+        ========================================= */
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 600px) {
+
+            .container {
+                margin: 25px auto;
+                padding: 15px;
+            }
+
+            .card {
+                padding: 22px;
+            }
+
+            .profile-picture {
+                width: 100px;
+                height: 100px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="container">
+
+        <!-- BACK -->
+
+        <a href="{% url 'home' %}" class="back">
+            ← Back to Home
+        </a>
+
+
+        <div class="card">
+
+            <!-- =========================================
+                 PROFILE HEADER
+            ========================================= -->
+
+            <div class="profile-header">
+
+                <div class="profile-picture">
+
+                    {% if profile.profile_picture %}
+
+                        <img
+                            src="{{ profile.profile_picture.url }}"
+                            alt="{{ profile.name }}"
+                        >
+
+                    {% else %}
+
+                        👤
+
+                    {% endif %}
+
+                </div>
+
+
+                <h1>
+                    {{ profile.name }}
+                </h1>
+
+
+                <p class="username">
+                    @{{ profile.user.username }}
+                </p>
+
+
+                <p class="department">
+
+                    {{ profile.department }}
+
+                    {% if profile.branch %}
+                        • {{ profile.branch }}
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+
+            <!-- =========================================
+                 CLAN ACTIONS
+            ========================================= -->
+
+            {% if can_invite %}
+
+                <!-- Can invite -->
+
+                <div class="invite-section">
+
+                    <p>
+                        Invite {{ profile.name }} to your clan.
+                    </p>
+
+                    <form
+                        method="POST"
+                        action="{% url 'send_clan_invitation' profile.id %}"
+                        class="invite-form"
+                    >
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="invite-btn"
+                        >
+                            Invite to Clan
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+            {% elif pending_invitation %}
+
+                <!-- Invitation already sent -->
+
+                <div class="invite-section">
+
+                    <p>
+                        You have already invited
+                        {{ profile.name }}
+                        to your clan.
+                    </p>
+
+                    <form
+                        method="POST"
+                        action="{% url 'cancel_clan_invitation' pending_invitation.id %}"
+                        class="invite-form"
+                    >
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="cancel-invite-btn"
+                        >
+                            Cancel Invitation
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+            {% elif pending_join_request %}
+
+                <!-- Student requested to join your clan -->
+
+                <div class="invite-section">
+
+                    <p>
+                        {{ profile.name }}
+                        has requested to join your clan.
+                    </p>
+
+                    <span class="join-request-message">
+                        Join Request Pending
+                    </span>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- =========================================
+                 ABOUT
+            ========================================= -->
+
+            {% if profile.about %}
+
+                <div class="section">
+
+                    <h2>
+                        About
+                    </h2>
+
+                    <p class="about">
+                        {{ profile.about }}
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- =========================================
+                 HIGHLIGHTED SKILLS
+            ========================================= -->
+
+            {% if highlighted_skills %}
+
+                <div class="section">
+
+                    <h2>
+                        Highlighted Skills
+                    </h2>
+
+                    <div class="skills">
+
+                        {% for item in highlighted_skills %}
+
+                            <span class="skill highlighted">
+                                {{ item.skill.name }}
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- =========================================
+                 ALL SKILLS
+            ========================================= -->
+
+            {% if skills %}
+
+                <div class="section">
+
+                    <h2>
+                        Skills
+                    </h2>
+
+                    <div class="skills">
+
+                        {% for item in skills %}
+
+                            <span class="skill">
+                                {{ item.skill.name }}
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- =========================================
+                 CLAN
+            ========================================= -->
+
+            {% if my_clan %}
+
+                <div class="section">
+
+                    <h2>
+                        Clan
+                    </h2>
+
+                    <div class="clan-box">
+
+                        <a href="{% url 'clan_profile' my_clan.id %}">
+                            {{ my_clan.name }}
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- =========================================
+                 SOCIAL LINKS
+            ========================================= -->
+
+            {% if profile.github or profile.linkedin or profile.instagram or profile.youtube %}
+
+                <div class="section">
+
+                    <h2>
+                        Links
+                    </h2>
+
+                    <div class="links">
+
+                        {% if profile.github %}
+
+                            <a
+                                href="{{ profile.github }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                GitHub
+                            </a>
+
+                        {% endif %}
+
+
+                        {% if profile.linkedin %}
+
+                            <a
+                                href="{{ profile.linkedin }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                LinkedIn
+                            </a>
+
+                        {% endif %}
+
+
+                        {% if profile.instagram %}
+
+                            <a
+                                href="{{ profile.instagram }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Instagram
+                            </a>
+
+                        {% endif %}
+
+
+                        {% if profile.youtube %}
+
+                            <a
+                                href="{{ profile.youtube }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                YouTube
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

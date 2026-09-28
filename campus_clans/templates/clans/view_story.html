@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clan Story</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #111;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .story {
+            width: min(600px, 92%);
+            background: #222;
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        .story-header {
+            padding: 15px;
+        }
+
+        .story-header strong {
+            display: block;
+        }
+
+        .story-time {
+            color: #aaa;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .story-image {
+            width: 100%;
+            max-height: 650px;
+            object-fit: contain;
+            background: #000;
+        }
+
+        .story-content {
+            padding: 20px;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .caption {
+            color: #ccc;
+            margin-top: 10px;
+        }
+
+        .back {
+            display: inline-block;
+            margin: 15px;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="story">
+
+    <div class="story-header">
+
+        <strong>
+            {{ story.clan.name }}
+        </strong>
+
+        <div class="story-time">
+            {{ story.created_at|timesince }} ago
+        </div>
+
+    </div>
+
+    {% if story.image %}
+        <img
+            src="{{ story.image.url }}"
+            class="story-image"
+            alt="Clan story"
+        >
+    {% endif %}
+
+    {% if story.content %}
+        <div class="story-content">
+            {{ story.content|linebreaks }}
+        </div>
+    {% endif %}
+
+    {% if story.caption %}
+        <div class="story-content caption">
+            {{ story.caption }}
+        </div>
+    {% endif %}
+
+    <a
+        href="{% url 'clan_profile' story.clan.id %}"
+        class="back"
+    >
+        ← Back to Clan
+    </a>
+
+</div>
+
+</body>
+</html>

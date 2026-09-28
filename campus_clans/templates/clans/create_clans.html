@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Create Clan | Campus Clans</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .header {
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #6b7280;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #4f46e5;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .help-text {
+            margin-top: 6px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        /* =========================================
+           STUDENT SEARCH
+        ========================================= */
+
+        .student-search-wrapper {
+            position: relative;
+        }
+
+        .student-search {
+            width: 100%;
+        }
+
+        .student-results {
+            display: none;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(100% + 5px);
+
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+
+            max-height: 280px;
+            overflow-y: auto;
+
+            z-index: 20;
+
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .student-result {
+            width: 100%;
+            border: none;
+            background: white;
+
+            padding: 12px 14px;
+
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .student-result:hover {
+            background: #f3f4f6;
+        }
+
+        .student-result-picture {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+
+            background: #e5e7eb;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+            overflow: hidden;
+
+            font-size: 20px;
+        }
+
+        .student-result-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .student-result-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .student-result-name {
+            font-weight: 600;
+        }
+
+        .student-result-username {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .student-result-department {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        .no-results {
+            padding: 15px;
+            color: #6b7280;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* =========================================
+           SELECTED STUDENT
+        ========================================= */
+
+        .selected-student {
+            display: none;
+
+            margin-top: 15px;
+
+            border: 1px solid #c7d2fe;
+            background: #eef2ff;
+
+            border-radius: 10px;
+            padding: 12px;
+
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .selected-student-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .selected-student-picture {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+
+            background: #e5e7eb;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .selected-student-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .selected-student-name {
+            font-weight: 600;
+        }
+
+        .selected-student-username {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+        .remove-student {
+            border: none;
+            background: #fee2e2;
+            color: #b91c1c;
+
+            padding: 7px 11px;
+
+            border-radius: 7px;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+        .remove-student:hover {
+            background: #fecaca;
+        }
+
+        /* =========================================
+           ERROR / SUCCESS
+        ========================================= */
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* =========================================
+           ACTIONS
+        ========================================= */
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 13px 22px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        /* =========================================
+           IMAGE PREVIEW
+        ========================================= */
+
+        .image-preview {
+            margin-top: 10px;
+            display: none;
+        }
+
+        .image-preview img {
+            max-width: 180px;
+            max-height: 180px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .selected-student {
+                align-items: flex-start;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+
+    <!-- =========================================
+         HEADER
+    ========================================= -->
+
+    <div class="header">
+
+        <h1>
+            Create Your Clan
+        </h1>
+
+        <p>
+            Build a team, bring students together and compete on Campus Clans.
+        </p>
+
+    </div>
+
+
+    {% if error %}
+
+        <div class="error">
+            {{ error }}
+        </div>
+
+    {% endif %}
+
+
+    {% if success %}
+
+        <div class="success">
+            {{ success }}
+        </div>
+
+    {% endif %}
+
+
+    <form
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+        {% csrf_token %}
+
+
+        <!-- =========================================
+             BASIC INFORMATION
+        ========================================== -->
+
+        <section class="card">
+
+            <h2>
+                Basic Information
+            </h2>
+
+
+            <div class="form-group">
+
+                <label for="clanName">
+                    Clan Name
+                </label>
+
+                <input
+                    type="text"
+                    id="clanName"
+                    name="name"
+                    maxlength="100"
+                    required
+                    placeholder="Enter your clan name"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="speciality">
+                    Speciality
+                </label>
+
+                <input
+                    type="text"
+                    id="speciality"
+                    name="speciality"
+                    maxlength="150"
+                    required
+                    placeholder="Example: Web Development, AI/ML, Gaming"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="profileDescription">
+                    Profile Description
+                </label>
+
+                <input
+                    type="text"
+                    id="profileDescription"
+                    name="profile_description"
+                    maxlength="50"
+                    required
+                    placeholder="Short description of your clan"
+                >
+
+                <div class="help-text">
+                    Maximum 50 characters.
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="description">
+                    About the Clan
+                </label>
+
+                <textarea
+                    id="description"
+                    name="description"
+                    maxlength="1500"
+                    required
+                    placeholder="Tell students about your clan..."
+                ></textarea>
+
+                <div class="help-text">
+                    Maximum 250 words.
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             CLAN LOGO
+        ========================================== -->
+
+        <section class="card">
+
+            <h2>
+                Clan Logo
+            </h2>
+
+
+            <div class="form-group">
+
+                <label for="logo">
+                    Upload Logo
+                </label>
+
+                <input
+                    type="file"
+                    id="logo"
+                    name="logo"
+                    accept="image/*"
+                >
+
+
+                <div
+                    class="image-preview"
+                    id="logoPreview"
+                >
+
+                    <img
+                        id="logoPreviewImage"
+                        alt="Logo preview"
+                    >
+
+                </div>
+
+
+                <div class="help-text">
+                    Recommended: square image.
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             CLAN BANNER
+        ========================================== -->
+
+        <section class="card">
+
+            <h2>
+                Clan Banner
+            </h2>
+
+
+            <div class="form-group">
+
+                <label for="banner">
+                    Upload Banner
+                </label>
+
+                <input
+                    type="file"
+                    id="banner"
+                    name="banner"
+                    accept="image/*"
+                >
+
+
+                <div
+                    class="image-preview"
+                    id="bannerPreview"
+                >
+
+                    <img
+                        id="bannerPreviewImage"
+                        alt="Banner preview"
+                    >
+
+                </div>
+
+
+                <div class="help-text">
+                    Banner is optional.
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             INITIAL MEMBER
+        ========================================== -->
+
+        <section class="card">
+
+            <h2>
+                Initial Clan Member
+            </h2>
+
+
+            <p
+                class="help-text"
+                style="margin-bottom: 15px;"
+            >
+                You will automatically become the Leader.
+                Search and select one student to become the first Co-Leader.
+            </p>
+
+
+            <div class="form-group">
+
+                <label for="studentSearch">
+                    Search Student
+                </label>
+
+
+                <div class="student-search-wrapper">
+
+                    <input
+                        type="text"
+                        id="studentSearch"
+                        class="student-search"
+                        autocomplete="off"
+                        placeholder="Search by name or username..."
+                    >
+
+
+                    <div
+                        id="studentResults"
+                        class="student-results"
+                    ></div>
+
+                </div>
+
+
+                <!-- Hidden field submitted to Django -->
+
+                <input
+                    type="hidden"
+                    id="selectedStudent"
+                    name="member"
+                    value=""
+                >
+
+
+                <!-- Selected student -->
+
+                <div
+                    id="selectedStudentBox"
+                    class="selected-student"
+                >
+
+                    <div class="selected-student-info">
+
+
+                        <div
+                            id="selectedStudentPicture"
+                            class="selected-student-picture"
+                        >
+                            👤
+                        </div>
+
+
+                        <div>
+
+                            <div
+                                id="selectedStudentName"
+                                class="selected-student-name"
+                            ></div>
+
+                            <div
+                                id="selectedStudentUsername"
+                                class="selected-student-username"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        id="removeStudent"
+                        class="remove-student"
+                    >
+                        Remove
+                    </button>
+
+                </div>
+
+
+                <div class="help-text">
+                    A clan starts with exactly 2 members:
+                    you + one selected student.
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             ACTIONS
+        ========================================== -->
+
+        <div class="actions">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Create Clan
+            </button>
+
+
+            <a
+                href="{% url 'home' %}"
+                class="btn btn-secondary"
+            >
+                Cancel
+            </a>
+
+        </div>
+
+
+    </form>
+
+</div>
+
+
+<script>
+
+    /* =========================================
+       IMAGE PREVIEW
+    ========================================= */
+
+    function setupImagePreview(
+        inputId,
+        previewId,
+        imageId
+    ) {
+
+        const input =
+            document.getElementById(inputId);
+
+        const preview =
+            document.getElementById(previewId);
+
+        const image =
+            document.getElementById(imageId);
+
+
+        input.addEventListener("change", function () {
+
+            const file = this.files[0];
+
+            if (!file) {
+
+                preview.style.display = "none";
+
+                return;
+            }
+
+
+            if (!file.type.startsWith("image/")) {
+
+                alert(
+                    "Please select an image file."
+                );
+
+                this.value = "";
+
+                preview.style.display = "none";
+
+                return;
+            }
+
+
+            const reader = new FileReader();
+
+
+            reader.onload = function (event) {
+
+                image.src = event.target.result;
+
+                preview.style.display = "block";
+
+            };
+
+
+            reader.readAsDataURL(file);
+
+        });
+
+    }
+
+
+    setupImagePreview(
+        "logo",
+        "logoPreview",
+        "logoPreviewImage"
+    );
+
+
+    setupImagePreview(
+        "banner",
+        "bannerPreview",
+        "bannerPreviewImage"
+    );
+
+
+    /* =========================================
+       STUDENT SEARCH
+    ========================================= */
+
+    const studentSearch =
+        document.getElementById(
+            "studentSearch"
+        );
+
+    const studentResults =
+        document.getElementById(
+            "studentResults"
+        );
+
+    const selectedStudent =
+        document.getElementById(
+            "selectedStudent"
+        );
+
+    const selectedStudentBox =
+        document.getElementById(
+            "selectedStudentBox"
+        );
+
+    const selectedStudentName =
+        document.getElementById(
+            "selectedStudentName"
+        );
+
+    const selectedStudentUsername =
+        document.getElementById(
+            "selectedStudentUsername"
+        );
+
+    const selectedStudentPicture =
+        document.getElementById(
+            "selectedStudentPicture"
+        );
+
+    const removeStudent =
+        document.getElementById(
+            "removeStudent"
+        );
+
+
+    let searchTimeout = null;
+
+
+    studentSearch.addEventListener(
+        "input",
+        function () {
+
+            const query =
+                this.value.trim();
+
+
+            clearTimeout(searchTimeout);
+
+
+            if (query.length < 2) {
+
+                studentResults.innerHTML = "";
+
+                studentResults.style.display = "none";
+
+                return;
+            }
+
+
+            searchTimeout = setTimeout(
+                function () {
+
+                    fetch(
+                        `{% url 'student_search' %}?q=${encodeURIComponent(query)}`,
+                        {
+                            headers: {
+                                "X-Requested-With":
+                                    "XMLHttpRequest"
+                            }
+                        }
+                    )
+                    .then(response => {
+
+                        if (!response.ok) {
+                            throw new Error(
+                                "Search failed"
+                            );
+                        }
+
+                        return response.json();
+
+                    })
+                    .then(data => {
+
+                        studentResults.innerHTML = "";
+
+
+                        if (
+                            !data.students ||
+                            data.students.length === 0
+                        ) {
+
+                            studentResults.innerHTML = `
+                                <div class="no-results">
+                                    No students found.
+                                </div>
+                            `;
+
+                            studentResults.style.display =
+                                "block";
+
+                            return;
+                        }
+
+
+                        data.students.forEach(
+                            function (student) {
+
+                                const button =
+                                    document.createElement(
+                                        "button"
+                                    );
+
+                                button.type = "button";
+
+                                button.className =
+                                    "student-result";
+
+
+                                let pictureHTML = "👤";
+
+
+                                if (
+                                    student.profile_picture
+                                ) {
+
+                                    pictureHTML = `
+                                        <img
+                                            src="${student.profile_picture}"
+                                            alt="${student.name}"
+                                        >
+                                    `;
+
+                                }
+
+
+                                button.innerHTML = `
+
+                                    <div
+                                        class="student-result-picture"
+                                    >
+                                        ${pictureHTML}
+                                    </div>
+
+                                    <div
+                                        class="student-result-info"
+                                    >
+
+                                        <span
+                                            class="student-result-name"
+                                        >
+                                            ${student.name}
+                                        </span>
+
+                                        <span
+                                            class="student-result-username"
+                                        >
+                                            @${student.username}
+                                        </span>
+
+                                        <span
+                                            class="student-result-department"
+                                        >
+                                            ${student.department}
+                                        </span>
+
+                                    </div>
+
+                                `;
+
+
+                                button.addEventListener(
+                                    "click",
+                                    function () {
+
+                                        selectStudent(
+                                            student
+                                        );
+
+                                    }
+                                );
+
+
+                                studentResults.appendChild(
+                                    button
+                                );
+
+                            }
+                        );
+
+
+                        studentResults.style.display =
+                            "block";
+
+                    })
+                    .catch(error => {
+
+                        console.error(
+                            error
+                        );
+
+                        studentResults.innerHTML = `
+                            <div class="no-results">
+                                Unable to search students.
+                            </div>
+                        `;
+
+                        studentResults.style.display =
+                            "block";
+
+                    });
+
+                },
+                300
+            );
+
+        }
+    );
+
+
+    /* =========================================
+       SELECT STUDENT
+    ========================================= */
+
+    function selectStudent(student) {
+
+        selectedStudent.value =
+            student.id;
+
+
+        selectedStudentName.textContent =
+            student.name;
+
+
+        selectedStudentUsername.textContent =
+            "@" + student.username;
+
+
+        if (student.profile_picture) {
+
+            selectedStudentPicture.innerHTML = `
+                <img
+                    src="${student.profile_picture}"
+                    alt="${student.name}"
+                >
+            `;
+
+        } else {
+
+            selectedStudentPicture.innerHTML =
+                "👤";
+
+        }
+
+
+        selectedStudentBox.style.display =
+            "flex";
+
+
+        studentResults.innerHTML = "";
+
+        studentResults.style.display =
+            "none";
+
+
+        studentSearch.value =
+            student.name;
+
+    }
+
+
+    /* =========================================
+       REMOVE SELECTED STUDENT
+    ========================================= */
+
+    removeStudent.addEventListener(
+        "click",
+        function () {
+
+            selectedStudent.value = "";
+
+            selectedStudentName.textContent = "";
+
+            selectedStudentUsername.textContent = "";
+
+            selectedStudentPicture.innerHTML =
+                "👤";
+
+            selectedStudentBox.style.display =
+                "none";
+
+            studentSearch.value = "";
+
+            studentSearch.focus();
+
+        }
+    );
+
+
+    /* =========================================
+       CLOSE SEARCH RESULTS
+       WHEN CLICKING OUTSIDE
+    ========================================= */
+
+    document.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                !studentSearch.contains(event.target) &&
+                !studentResults.contains(event.target)
+            ) {
+
+                studentResults.style.display =
+                    "none";
+
+            }
+
+        }
+    );
+
+
+    /* =========================================
+       FORM VALIDATION
+    ========================================= */
+
+    document.querySelector("form").addEventListener(
+        "submit",
+        function (event) {
+
+            if (!selectedStudent.value) {
+
+                event.preventDefault();
+
+                alert(
+                    "Please search and select one student for your clan."
+                );
+
+                studentSearch.focus();
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+</html>

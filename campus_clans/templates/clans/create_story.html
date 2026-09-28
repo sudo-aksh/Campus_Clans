@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Story - {{ clan.name }}</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #222;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        textarea,
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 15px;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        textarea {
+            min-height: 180px;
+            resize: vertical;
+        }
+
+        textarea:focus,
+        input[type="text"]:focus {
+            border-color: #555;
+        }
+
+        .file-box {
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px dashed #bbb;
+            border-radius: 10px;
+        }
+
+        .hint {
+            font-size: 13px;
+            color: #777;
+            margin-top: -12px;
+            margin-bottom: 20px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 11px 20px;
+            border-radius: 9px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .cancel {
+            background: #eee;
+            color: #333;
+        }
+
+        .publish {
+            background: #111;
+            color: white;
+        }
+
+        .publish:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>Create Clan Story</h1>
+
+        <div class="subtitle">
+            {{ clan.name }}
+        </div>
+
+        <form
+            method="POST"
+            action="{% url 'create_clan_story' clan.id %}"
+            enctype="multipart/form-data"
+        >
+
+            {% csrf_token %}
+
+            <label for="content">
+                Story
+            </label>
+
+            <textarea
+                id="content"
+                name="content"
+                placeholder="Write something for your clan..."
+            ></textarea>
+
+            <div class="hint">
+                You can write a blog/update or upload an image.
+            </div>
+
+
+            <label for="caption">
+                Image Caption
+            </label>
+
+            <input
+                type="text"
+                id="caption"
+                name="caption"
+                maxlength="500"
+                placeholder="Write a caption for your image (optional)"
+            >
+
+
+            <div class="file-box">
+
+                <label for="image">
+                    Image
+                </label>
+
+                <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    accept="image/*"
+                >
+
+            </div>
+
+
+            <div class="actions">
+
+                <a
+                    href="{% url 'clan_profile' clan.id %}"
+                    class="btn cancel"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn publish"
+                >
+                    Publish Story
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

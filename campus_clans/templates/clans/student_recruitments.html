@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Looking for a Clan - Campus Clans</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f7fb;
+        color: #222;
+    }
+
+    /* ================= NAVBAR ================= */
+
+    .navbar {
+        background: #111827;
+
+        padding: 15px 30px;
+
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+    }
+
+    .navbar h2 {
+        color: white;
+
+        margin: 0;
+    }
+
+    .navbar-links {
+        display: flex;
+
+        gap: 20px;
+    }
+
+    .navbar a {
+        color: white;
+
+        text-decoration: none;
+
+        font-size: 14px;
+    }
+
+    .navbar a:hover {
+        opacity: 0.8;
+    }
+
+    /* ================= CONTAINER ================= */
+
+    .container {
+        max-width: 700px;
+
+        margin: 60px auto;
+
+        padding: 0 20px;
+    }
+
+    /* ================= HEADER ================= */
+
+    .header {
+        margin-bottom: 25px;
+    }
+
+    .header h1 {
+        margin-bottom: 8px;
+    }
+
+    .header p {
+        color: #666;
+
+        line-height: 1.6;
+    }
+
+    /* ================= RECRUITMENT BOX ================= */
+
+    .recruitment-box {
+        background: white;
+
+        padding: 30px;
+
+        border-radius: 14px;
+
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .recruitment-box h2 {
+        margin-top: 0;
+
+        margin-bottom: 8px;
+    }
+
+    .recruitment-box > p {
+        color: #666;
+
+        font-size: 14px;
+
+        line-height: 1.6;
+
+        margin-bottom: 20px;
+    }
+
+    /* ================= FORM ================= */
+
+    textarea {
+        width: 100%;
+
+        min-height: 150px;
+
+        padding: 14px;
+
+        border: 1px solid #d1d5db;
+
+        border-radius: 9px;
+
+        resize: vertical;
+
+        font-size: 15px;
+
+        font-family: Arial, sans-serif;
+
+        outline: none;
+    }
+
+    textarea:focus {
+        border-color: #2563eb;
+    }
+
+    .create-btn {
+        margin-top: 15px;
+
+        border: none;
+
+        padding: 11px 20px;
+
+        border-radius: 8px;
+
+        cursor: pointer;
+
+        font-size: 14px;
+
+        font-weight: 600;
+
+        background: #2563eb;
+
+        color: white;
+    }
+
+    .create-btn:hover {
+        background: #1d4ed8;
+    }
+
+    /* ================= ACTIVE RECRUITMENT ================= */
+
+    .active-box {
+        background: #f9fafb;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 10px;
+
+        padding: 20px;
+    }
+
+    .active-box h3 {
+        margin-top: 0;
+
+        margin-bottom: 12px;
+    }
+
+    .message {
+        background: white;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 8px;
+
+        padding: 14px;
+
+        line-height: 1.6;
+
+        margin-bottom: 15px;
+    }
+
+    .expiry {
+        color: #6b7280;
+
+        font-size: 13px;
+
+        margin-bottom: 15px;
+    }
+
+    .delete-btn {
+        border: none;
+
+        padding: 10px 17px;
+
+        border-radius: 7px;
+
+        cursor: pointer;
+
+        background: #dc2626;
+
+        color: white;
+
+        font-size: 14px;
+    }
+
+    .delete-btn:hover {
+        background: #b91c1c;
+    }
+
+    /* ================= INFO ================= */
+
+    .info-box {
+        margin-top: 20px;
+
+        padding: 15px;
+
+        background: #eff6ff;
+
+        border: 1px solid #dbeafe;
+
+        border-radius: 9px;
+
+        color: #1e40af;
+
+        font-size: 13px;
+
+        line-height: 1.6;
+    }
+
+    /* ================= ALREADY IN CLAN ================= */
+
+    .warning-box {
+        background: #f9fafb;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 10px;
+
+        padding: 20px;
+
+        color: #6b7280;
+
+        line-height: 1.6;
+    }
+
+    /* ================= MOBILE ================= */
+
+    @media (max-width: 600px) {
+
+        .navbar {
+            padding: 15px 18px;
+        }
+
+        .navbar-links {
+            gap: 10px;
+        }
+
+        .container {
+            margin: 35px auto;
+        }
+
+        .recruitment-box {
+            padding: 22px;
+        }
+
+    }
+
+</style>
+
+
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="navbar">
+
+
+<h2>
+    Campus Clans
+</h2>
+
+<div class="navbar-links">
+
+    <a href="{% url 'home' %}">
+        Home
+    </a>
+
+    <a href="{% url 'global_recruitments' %}">
+        Global Recruitments
+    </a>
+
+    <a href="{% url 'profile' %}">
+        Profile
+    </a>
+
+</div>
+
+
+</nav>
+
+<!-- ================= MAIN ================= -->
+
+<div class="container">
+
+
+<div class="header">
+
+    <h1>
+        Looking for a Clan?
+    </h1>
+
+    <p>
+        Tell clans that you are looking for a team.
+        Your existing profile skills will automatically
+        be visible to clans in Global Recruitments.
+    </p>
+
+</div>
+
+
+{% if current_student.clan_membership %}
+
+
+    <!-- ================= ALREADY IN CLAN ================= -->
+
+    <div class="warning-box">
+
+        <h3>
+            You are already in a clan
+        </h3>
+
+        <p>
+            You cannot create a student recruitment request
+            while you are already a member of a clan.
+        </p>
+
+        <a href="{% url 'clan_profile' current_student.clan_membership.clan.id %}">
+            View My Clan
+        </a>
+
+    </div>
+
+
+{% elif own_recruitment %}
+
+
+    <!-- ================= ACTIVE RECRUITMENT ================= -->
+
+    <div class="recruitment-box">
+
+        <h2>
+            Your Recruitment Request
+        </h2>
+
+        <p>
+            Your request is currently visible in
+            Global Recruitments.
+        </p>
+
+
+        <div class="active-box">
+
+            <h3>
+                Your Message
+            </h3>
+
+
+            <div class="message">
+
+                {{ own_recruitment.message|linebreaksbr }}
+
+            </div>
+
+
+            <div class="expiry">
+
+                Active until:
+
+                <strong>
+                    {{ own_recruitment.expires_at|date:"d M Y, h:i A" }}
+                </strong>
+
+            </div>
+
+
+            <form
+                method="POST"
+                action="{% url 'delete_student_clan_recruitment' own_recruitment.id %}"
+            >
+
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="delete-btn"
+                >
+                    Delete Recruitment
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <div class="info-box">
+
+            Your profile skills are automatically shown
+            with your recruitment request.
+
+            You do not need to select your skills again.
+
+        </div>
+
+    </div>
+
+
+{% else %}
+
+
+    <!-- ================= CREATE RECRUITMENT ================= -->
+
+    <div class="recruitment-box">
+
+        <h2>
+            Create Recruitment Request
+        </h2>
+
+        <p>
+            Write a short message explaining what kind of
+            clan you are looking for.
+        </p>
+
+
+        <form
+            method="POST"
+            action="{% url 'create_student_clan_recruitment' %}"
+        >
+
+            {% csrf_token %}
+
+
+            <textarea
+                name="message"
+                placeholder="Example: I am looking for a clan focused on AI/ML, hackathons and collaborative projects..."
+                maxlength="1000"
+                required
+            ></textarea>
+
+
+            <button
+                type="submit"
+                class="create-btn"
+            >
+                Post Recruitment
+            </button>
+
+        </form>
+
+
+        <div class="info-box">
+
+            <strong>How it works:</strong>
+
+            <br>
+
+            • Your recruitment stays active for 7 days.
+
+            <br>
+
+            • It will appear in Global Recruitments.
+
+            <br>
+
+            • Clans can see your profile information
+            and existing skills.
+
+            <br>
+
+            • Clan Leaders and Co-Leaders can invite you.
+
+            <br>
+
+            • You can accept or reject their invitation
+            from your Profile.
+
+        </div>
+
+    </div>
+
+{% endif %}
+
+
+</div>
+
+</body>
+
+</html>

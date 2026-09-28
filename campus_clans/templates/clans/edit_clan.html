@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit {{ clan.name }}</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #111827;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .danger-zone {
+            margin-top: 30px;
+            padding: 24px;
+            border: 1px solid #ef4444;
+            border-radius: 14px;
+            background: #fff5f5;
+        }
+
+        .danger-zone h2 {
+            color: #dc2626;
+            margin-bottom: 8px;
+        }
+
+        .danger-zone p {
+            color: #666;
+            margin-bottom: 18px;
+        }
+
+        .delete-clan-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .delete-clan-btn:hover {
+            background: #b91c1c;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 600;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 11px;
+            margin-bottom: 18px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        button,
+        .back-btn {
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .save-btn {
+            background: #111827;
+            color: white;
+        }
+
+        .back-btn {
+            background: #e5e7eb;
+            color: #111827;
+            display: inline-block;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .member {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .member:last-child {
+            border-bottom: none;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .member-username {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .member-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .role-form {
+            display: flex;
+            gap: 8px;
+        }
+
+        .role-form select {
+            width: auto;
+            margin: 0;
+        }
+
+        .role-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .remove-btn {
+            background: #dc2626;
+            color: white;
+        }
+
+        .leader-badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 650px) {
+
+            .member {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .member-actions {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .role-form {
+                width: 100%;
+            }
+
+            .role-form select {
+                flex: 1;
+            }
+
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="container">
+
+        <a href="{% url 'clan_profile' clan.id %}" class="back-btn">
+            ← Back to Clan
+        </a>
+
+
+        <h1>
+            Edit {{ clan.name }}
+        </h1>
+
+
+        {% if error %}
+
+        <div class="error">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        <!-- ================= CLAN DETAILS ================= -->
+
+        <div class="card">
+
+            <h2>
+                Clan Details
+            </h2>
+
+
+            <form method="POST" enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+
+                <label>
+                    Clan Name
+                </label>
+
+                <input type="text" name="name" value="{{ clan.name }}" required>
+
+
+                <label>
+                    Speciality
+                </label>
+
+                <input type="text" name="speciality" value="{{ clan.speciality }}" required>
+
+
+                <label>
+                    Short Description
+                </label>
+
+                <input type="text" name="profile_description" value="{{ clan.profile_description }}" maxlength="50">
+
+
+                <label>
+                    About Clan
+                </label>
+
+                <textarea name="description">{{ clan.description }}</textarea>
+
+
+                <label>
+                    Change Logo
+                </label>
+
+                <input type="file" name="logo" accept="image/*">
+
+
+                <label>
+                    Change Banner
+                </label>
+
+                <input type="file" name="banner" accept="image/*">
+
+
+                <button type="submit" class="save-btn">
+                    Save Changes
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- ================= MEMBERS ================= -->
+
+        <div class="card">
+
+            <h2>
+                Manage Members
+            </h2>
+
+
+            {% for member in members %}
+
+            <div class="member">
+
+                <div class="member-info">
+
+                    <div class="member-name">
+
+                        {{ member.student.name }}
+
+                        {% if member.student_id == clan.created_by_id %}
+
+                        <span class="leader-badge">
+                            Clan Leader
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="member-username">
+
+                        @{{ member.student.user.username }}
+
+                    </div>
+
+                </div>
+
+
+                <div class="member-actions">
+
+
+                    {% if member.student_id == clan.created_by_id %}
+
+                    <span class="leader-badge">
+                        Leader
+                    </span>
+
+                    {% else %}
+
+
+                    <!-- Change Role -->
+
+                    <form method="POST" action="{% url 'change_clan_member_role' clan.id member.id %}"
+                        class="role-form">
+
+                        {% csrf_token %}
+<select name="role">
+
+    <option
+        value="member"
+        {% if member.role == "member" %}selected{% endif %}
+    >
+        Member
+    </option>
+
+    <option
+        value="co_leader"
+        {% if member.role == "co_leader" %}selected{% endif %}
+    >
+        Co-Leader
+    </option>
+
+</select>
+                        <button type="submit" class="role-btn">
+                            Save
+                        </button>
+
+                    </form>
+
+
+                    <!-- Remove Member -->
+
+                    <form method="POST" action="{% url 'remove_clan_member' clan.id member.id %}" onsubmit="return confirm(
+                                'Are you sure you want to remove this member from the clan?'
+                            );">
+
+                        {% csrf_token %}
+
+                        <button type="submit" class="remove-btn">
+                            Remove
+                        </button>
+
+                    </form>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <p>
+                No members found.
+            </p>
+
+            {% endfor %}
+
+        </div>
+        <div class="danger-zone">
+
+            <h2>Danger Zone</h2>
+
+            <p>
+                Deleting this clan is permanent.
+                All clan membership data will be removed.
+            </p>
+
+            <form method="POST" action="{% url 'delete_clan' clan.id %}" onsubmit="return confirm(
+            'Are you sure you want to permanently delete this clan? This cannot be undone.'
+        );">
+
+                {% csrf_token %}
+
+                <button type="submit" class="delete-clan-btn">
+                    Delete Clan
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

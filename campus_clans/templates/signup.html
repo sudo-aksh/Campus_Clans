@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Campus Clans</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background: #f3f4f6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+
+            min-height: 600px;
+
+            display: flex;
+
+            background: white;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.12);
+        }
+
+
+        /* ================= LEFT SIDE ================= */
+
+        .left-panel {
+            width: 45%;
+
+            background: #111827;
+
+            color: white;
+
+            padding: 50px 40px;
+
+            display: flex;
+            flex-direction: column;
+
+            justify-content: center;
+        }
+
+        .logo {
+            font-size: 32px;
+
+            font-weight: bold;
+
+            margin-bottom: 20px;
+        }
+
+        .left-panel h1 {
+            font-size: 38px;
+
+            line-height: 1.15;
+
+            margin-bottom: 20px;
+        }
+
+        .left-panel p {
+            color: #d1d5db;
+
+            line-height: 1.6;
+
+            font-size: 15px;
+        }
+
+
+        /* ================= RIGHT SIDE ================= */
+
+        .right-panel {
+            width: 55%;
+
+            padding: 40px;
+
+            position: relative;
+        }
+
+
+        /* ================= TABS ================= */
+
+        .tabs {
+            display: flex;
+
+            border-bottom: 1px solid #ddd;
+
+            margin-bottom: 30px;
+        }
+
+        .tab {
+            flex: 1;
+
+            padding: 14px;
+
+            border: none;
+
+            background: none;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            color: #777;
+        }
+
+        .tab.active {
+            color: #111827;
+
+            border-bottom: 3px solid #111827;
+        }
+
+
+        /* ================= FORMS ================= */
+
+        .form {
+            display: none;
+        }
+
+        .form.active {
+            display: block;
+        }
+
+        .form h2 {
+            margin-bottom: 8px;
+
+            font-size: 26px;
+        }
+
+        .form-description {
+            color: #777;
+
+            font-size: 14px;
+
+            margin-bottom: 25px;
+        }
+
+
+        /* ================= INPUTS ================= */
+
+        .input-group {
+            margin-bottom: 17px;
+        }
+
+        label {
+            display: block;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            margin-bottom: 7px;
+        }
+
+        input,
+        select {
+            width: 100%;
+
+            padding: 12px 13px;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+
+            outline: none;
+
+            background: white;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #111827;
+        }
+
+
+        /* ================= TWO COLUMNS ================= */
+
+        .two-columns {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 12px;
+        }
+
+
+        /* ================= OTP ================= */
+
+        .otp-row {
+            display: flex;
+
+            gap: 8px;
+        }
+
+        .otp-row input {
+            flex: 1;
+        }
+
+        .otp-button {
+            white-space: nowrap;
+
+            border: none;
+
+            background: #111827;
+
+            color: white;
+
+            padding: 0 15px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+        }
+
+        .otp-button:disabled {
+            background: #9ca3af;
+
+            cursor: not-allowed;
+        }
+
+        .verify-button {
+            width: 100%;
+
+            margin-top: 8px;
+
+            padding: 11px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #16a34a;
+
+            color: white;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .verified {
+            color: #16a34a;
+
+            font-size: 13px;
+
+            margin-top: 6px;
+
+            display: none;
+        }
+
+
+        /* ================= SIGNUP LOCKED FIELDS ================= */
+
+        .signup-fields {
+            display: none;
+        }
+
+        .signup-fields.visible {
+            display: block;
+        }
+
+
+        /* ================= BUTTON ================= */
+
+        .submit-button {
+            width: 100%;
+
+            padding: 13px;
+
+            margin-top: 10px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #111827;
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background: #1f2937;
+        }
+
+
+        /* ================= MESSAGES ================= */
+
+        .message {
+            padding: 11px;
+
+            border-radius: 7px;
+
+            margin-bottom: 18px;
+
+            font-size: 14px;
+
+            display: none;
+        }
+
+        .message.error {
+            background: #fee2e2;
+
+            color: #991b1b;
+        }
+
+        .message.success {
+            background: #dcfce7;
+
+            color: #166534;
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 750px) {
+
+            body {
+                padding: 15px;
+
+                align-items: flex-start;
+            }
+
+            .container {
+                margin-top: 20px;
+
+                flex-direction: column;
+            }
+
+            .left-panel {
+                width: 100%;
+
+                padding: 30px;
+
+                min-height: 220px;
+            }
+
+            .left-panel h1 {
+                font-size: 30px;
+            }
+
+            .right-panel {
+                width: 100%;
+
+                padding: 30px 25px;
+            }
+
+        }
+
+        @media (max-width: 500px) {
+
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+
+            .otp-row {
+                flex-direction: column;
+            }
+
+            .otp-button {
+                padding: 11px;
+            }
+
+        }
+    </style>
+</head>
+
+
+<body>
+
+
+    <div class="container">
+
+
+        <!-- =====================================================
+         LEFT PANEL
+    ====================================================== -->
+
+        <div class="left-panel">
+
+            <div class="logo">
+                Campus Clans
+            </div>
+
+            <h1>
+                Connect.<br>
+                Create.<br>
+                Compete.
+            </h1>
+
+            <p>
+                Build your profile, discover students,
+                join clans, participate in events and
+                showcase your achievements.
+            </p>
+
+        </div>
+
+
+
+        <!-- =====================================================
+         RIGHT PANEL
+    ====================================================== -->
+
+        <div class="right-panel">
+
+
+            <!-- ================= TABS ================= -->
+
+            <div class="tabs">
+
+                <button class="tab active" id="loginTab" type="button">
+                    Login
+                </button>
+
+                <button class="tab" id="signupTab" type="button">
+                    Sign Up
+                </button>
+
+            </div>
+
+
+
+            <!-- =================================================
+             LOGIN FORM
+        ================================================== -->
+
+            <div class="form active" id="loginForm">
+
+                <h2>Welcome Back</h2>
+
+                <p class="form-description">
+                    Login to your Campus Clans account.
+                </p>
+
+
+                {% if message %}
+
+                <div class="message success" style="display:block;">
+                    {{ message }}
+                </div>
+
+                {% endif %}
+
+
+                {% if error %}
+
+                <div class="message error" style="display:block;">
+                    {{ error }}
+                </div>
+
+                {% endif %}
+
+
+                <form method="POST" action="{% url 'login' %}">
+
+                    {% csrf_token %}
+
+
+                    <div class="input-group">
+
+                        <label for="loginUsername">
+                            Username
+                        </label>
+
+                        <input type="text" id="loginUsername" name="username" placeholder="Enter username" required>
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="loginPassword">
+                            Password
+                        </label>
+
+                        <input type="password" id="loginPassword" name="password" placeholder="Enter password" required>
+
+                    </div>
+
+
+                    <button type="submit" class="submit-button">
+                        Login
+                    </button>
+
+                </form>
+
+            </div>
+
+
+
+            <!-- =================================================
+             SIGNUP FORM
+        ================================================== -->
+
+            <div class="form" id="signupForm">
+
+                <h2>Create Account</h2>
+
+                <p class="form-description">
+                    Join Campus Clans and create your student profile.
+                </p>
+
+
+                <div id="signupMessage" class="message"></div>
+
+
+                <!-- =============================================
+                 EMAIL VERIFICATION
+            ============================================== -->
+
+                <div class="input-group">
+
+                    <label for="signupEmail">
+                        Email
+                    </label>
+
+
+                    <div class="otp-row">
+
+                        <input type="email" id="signupEmail" placeholder="Enter your email">
+
+                        <button type="button" class="otp-button" id="sendOtpButton">
+                            Send OTP
+                        </button>
+
+                    </div>
+
+
+                    <div id="otpSection" style="display:none; margin-top:12px;">
+
+                        <div class="otp-row">
+
+                            <input type="text" id="otpInput" placeholder="Enter 6-digit OTP" maxlength="6">
+
+                            <button type="button" class="otp-button" id="verifyOtpButton">
+                                Verify
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="verifiedMessage" class="verified">
+                        ✓ Email verified
+                    </div>
+
+                </div>
+
+
+
+                <!-- =============================================
+                 REGISTRATION FIELDS
+            ============================================== -->
+
+                <div class="signup-fields" id="signupFields">
+
+                    <form method="POST" action="{% url 'register_student' %}" id="registrationForm">
+
+                        {% csrf_token %}
+                        <input type="hidden" name="email" id="verifiedEmail">
+
+
+                        <!-- NAME -->
+
+                        <div class="input-group">
+
+                            <label for="name">
+                                Name
+                            </label>
+
+                            <input type="text" id="name" name="name" placeholder="Your full name" required>
+
+                        </div>
+
+
+
+                        <!-- USERNAME -->
+
+                        <div class="input-group">
+
+                            <label for="username">
+                                Username
+                            </label>
+
+                            <input type="text" id="username" name="username" placeholder="Choose a username" required>
+
+                        </div>
+
+
+
+                        <!-- DEPARTMENT / BRANCH -->
+
+                        <div class="two-columns">
+
+                            <div class="input-group">
+
+                                <label for="department">
+                                    Department
+                                </label>
+
+                                <select id="department" name="department" required>
+
+                                    <option value="">
+                                        Select Department
+                                    </option>
+
+                                    <option value="B.C.A.">
+                                        B.C.A.
+                                    </option>
+
+                                    <option value="B.B.A.">
+                                        B.B.A.
+                                    </option>
+
+                                    <option value="B.Com">
+                                        B.Com
+                                    </option>
+
+                                    <option value="B.Ed.">
+                                        B.Ed.
+                                    </option>
+
+                                    <option value="B.P.E.S.">
+                                        B.P.E.S.
+                                    </option>
+
+                                    <option value="B.A.">
+                                        B.A.
+                                    </option>
+
+                                    <option value="B.Lib.">
+                                        B.Lib.
+                                    </option>
+
+                                    <option value="BFA">
+                                        BFA
+                                    </option>
+
+                                    <option value="B.Sc.">
+                                        B.Sc.
+                                    </option>
+
+                                    <option value="B.Tech.">
+                                        B.Tech.
+                                    </option>
+
+                                    <option value="Diploma">
+                                        Diploma
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="input-group">
+
+                                <label for="branch">
+                                    Branch
+                                </label>
+
+                                <select id="branch" name="branch" required disabled>
+
+                                    <option value="">
+                                        Select Branch
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- PASSWORD -->
+
+                        <div class="two-columns">
+
+                            <div class="input-group">
+
+                                <label for="password">
+                                    Password
+                                </label>
+
+                                <input type="password" id="password" name="password" placeholder="Minimum 8 characters"
+                                    minlength="8" required>
+
+                            </div>
+
+
+                            <div class="input-group">
+
+                                <label for="confirmPassword">
+                                    Confirm Password
+                                </label>
+
+                                <input type="password" id="confirmPassword" name="confirm_password"
+                                    placeholder="Repeat password" minlength="8" required>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- SUBMIT -->
+
+                        <button type="submit" class="submit-button">
+                            Create Account
+                        </button>
+
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <script>
+
+        /* =========================================================
+           TABS
+        ========================================================= */
+
+        const loginTab =
+            document.getElementById("loginTab");
+
+        const signupTab =
+            document.getElementById("signupTab");
+
+        const loginForm =
+            document.getElementById("loginForm");
+
+        const signupForm =
+            document.getElementById("signupForm");
+
+
+        loginTab.addEventListener("click", function () {
+
+            loginTab.classList.add("active");
+
+            signupTab.classList.remove("active");
+
+            loginForm.classList.add("active");
+
+            signupForm.classList.remove("active");
+
+        });
+
+
+        signupTab.addEventListener("click", function () {
+
+            signupTab.classList.add("active");
+
+            loginTab.classList.remove("active");
+
+            signupForm.classList.add("active");
+
+            loginForm.classList.remove("active");
+
+        });
+
+
+
+        /* =========================================================
+           MESSAGE HELPER
+        ========================================================= */
+
+        function showSignupMessage(message, type) {
+
+            const box =
+                document.getElementById("signupMessage");
+
+            box.textContent = message;
+
+            box.className =
+                "message " + type;
+
+            box.style.display = "block";
+
+        }
+
+
+
+        /* =========================================================
+           OTP
+        ========================================================= */
+
+        const sendOtpButton =
+            document.getElementById("sendOtpButton");
+
+        const verifyOtpButton =
+            document.getElementById("verifyOtpButton");
+
+        const signupEmail =
+            document.getElementById("signupEmail");
+
+        const otpSection =
+            document.getElementById("otpSection");
+
+        const otpInput =
+            document.getElementById("otpInput");
+
+        const verifiedMessage =
+            document.getElementById("verifiedMessage");
+
+        const signupFields =
+            document.getElementById("signupFields");
+
+
+        let emailVerified = false;
+
+
+
+        /* ================= SEND OTP ================= */
+
+        sendOtpButton.addEventListener("click", function () {
+
+            const email =
+                signupEmail.value.trim();
+
+
+            if (!email) {
+
+                showSignupMessage(
+                    "Please enter your email address.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            sendOtpButton.disabled = true;
+
+            sendOtpButton.textContent =
+                "Sending...";
+
+
+            const formData =
+                new FormData();
+
+            formData.append(
+                "email",
+                email
+            );
+
+
+            fetch("{% url 'send_otp' %}", {
+
+                method: "POST",
+
+                headers: {
+                    "X-CSRFToken":
+                        getCookie("csrftoken")
+                },
+
+                body: formData
+
+            })
+
+                .then(response =>
+                    response.json()
+                )
+
+                .then(data => {
+
+                    if (data.success) {
+
+                        showSignupMessage(
+                            "OTP sent to your email.",
+                            "success"
+                        );
+
+                        otpSection.style.display =
+                            "block";
+
+                    } else {
+
+                        showSignupMessage(
+                            data.error || "Unable to send OTP.",
+                            "error"
+                        );
+
+                    }
+
+                })
+
+                .catch(error => {
+
+                    console.error(error);
+
+                    showSignupMessage(
+                        "Something went wrong. Please try again.",
+                        "error"
+                    );
+
+                })
+
+                .finally(() => {
+
+                    sendOtpButton.disabled = false;
+
+                    sendOtpButton.textContent =
+                        "Send OTP";
+
+                });
+
+        });
+
+
+
+        /* ================= VERIFY OTP ================= */
+
+        verifyOtpButton.addEventListener("click", function () {
+
+            const email =
+                signupEmail.value.trim();
+
+            const otp =
+                otpInput.value.trim();
+
+
+            if (!email || !otp) {
+
+                showSignupMessage(
+                    "Enter your email and OTP.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            verifyOtpButton.disabled = true;
+
+            verifyOtpButton.textContent =
+                "Verifying...";
+
+
+            const formData =
+                new FormData();
+
+            formData.append(
+                "email",
+                email
+            );
+
+            formData.append(
+                "otp",
+                otp
+            );
+
+
+            fetch("{% url 'verify_otp' %}", {
+
+                method: "POST",
+
+                headers: {
+                    "X-CSRFToken":
+                        getCookie("csrftoken")
+                },
+
+                body: formData
+
+            })
+
+                .then(response =>
+                    response.json()
+                )
+
+                .then(data => {
+
+                    if (data.success) {
+
+                        emailVerified = true;
+
+                        // Store verified email inside registration form
+                        document.getElementById("verifiedEmail").value =
+                            email;
+
+                        verifiedMessage.style.display =
+                            "block";
+
+
+                        signupEmail.disabled =
+                            true;
+
+                        sendOtpButton.disabled =
+                            true;
+
+                        otpSection.style.display =
+                            "none";
+
+
+                        signupFields.classList.add(
+                            "visible"
+                        );
+
+
+                        showSignupMessage(
+                            "Email verified successfully.",
+                            "success"
+                        );
+
+                    } else {
+
+                        showSignupMessage(
+                            data.error || "Invalid OTP.",
+                            "error"
+                        );
+
+                    }
+
+                })
+
+                .catch(error => {
+
+                    console.error(error);
+
+                    showSignupMessage(
+                        "Something went wrong. Please try again.",
+                        "error"
+                    );
+
+                })
+
+                .finally(() => {
+
+                    verifyOtpButton.disabled = false;
+
+                    verifyOtpButton.textContent =
+                        "Verify";
+
+                });
+
+        });
+
+
+
+        /* =========================================================
+           REGISTRATION VALIDATION
+        ========================================================= */
+
+        const registrationForm =
+            document.getElementById("registrationForm");
+
+
+        registrationForm.addEventListener(
+            "submit",
+            function (event) {
+
+                if (!emailVerified) {
+
+                    event.preventDefault();
+
+                    showSignupMessage(
+                        "Please verify your email first.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+
+                const password =
+                    document.getElementById("password").value;
+
+                const confirmPassword =
+                    document.getElementById("confirmPassword").value;
+
+
+                if (password !== confirmPassword) {
+
+                    event.preventDefault();
+
+                    showSignupMessage(
+                        "Passwords do not match.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+            }
+        );
+
+
+
+        /* =========================================================
+           DEPARTMENT → BRANCH
+        ========================================================= */
+
+        const department =
+            document.getElementById("department");
+
+        const branch =
+            document.getElementById("branch");
+
+
+        const branches = {
+
+            "B.C.A.": [
+                "AI-ML (GoG)",
+                "Cyber Security",
+                "Information Technology"
+            ],
+
+            "B.B.A.": [
+                "All",
+                "Event Management (NIEM)",
+                "Hos. & Rest. Mange (NRAI)"
+            ],
+
+            "B.Com": [
+                "All"
+            ],
+
+            "B.Ed.": [
+                "All"
+            ],
+
+            "B.P.E.S.": [
+                "Physical Education & Sports"
+            ],
+
+            "B.A.": [
+                "Fashion Design",
+                "Interior Design",
+                "FTP",
+                "Journalism",
+                "Hindi Literature",
+                "English Literature",
+                "History",
+                "Political Science",
+                "Psychology",
+                "Economy"
+            ],
+
+            "B.Lib.": [
+                "Library Science"
+            ],
+
+            "BFA": [
+                "Fine Arts"
+            ],
+
+            "B.Sc.": [
+                "Ani. & VFX",
+                "Game Design & Dev.",
+                "Agriculture",
+                "Mathematics",
+                "Physics",
+                "Chemistry",
+                "Forensic Science",
+                "Botany",
+                "Zoology",
+                "Biotechnology",
+                "Microbiology",
+                "Environmental Science",
+                "Food & Nutrition"
+            ],
+
+            "B.Tech.": [
+                "CSE - Cloud Computing (Google)",
+                "CSE - AI-DS (GoG)",
+                "CSE - AI-ML (IBM)",
+                "Mech. Engg.",
+                "EX (Google)",
+                "EC (Google)"
+            ],
+
+            "Diploma": [
+                "Automotive (Hyundai)",
+                "ME",
+                "EX (VVDN)",
+                "Pharmacy"
+            ]
+
+        };
+
+
+        department.addEventListener(
+            "change",
+            function () {
+
+                const selected =
+                    this.value;
+
+
+                branch.innerHTML =
+                    '<option value="">Select Branch</option>';
+
+
+                if (!selected) {
+
+                    branch.disabled = true;
+
+                    return;
+                }
+
+
+                if (branches[selected]) {
+
+                    branches[selected].forEach(
+                        function (branchName) {
+
+                            const option =
+                                document.createElement("option");
+
+                            option.value =
+                                branchName;
+
+                            option.textContent =
+                                branchName;
+
+                            branch.appendChild(
+                                option
+                            );
+
+                        }
+                    );
+
+                }
+
+
+                branch.disabled = false;
+
+            }
+        );
+
+
+
+        /* =========================================================
+           CSRF COOKIE
+        ========================================================= */
+
+        function getCookie(name) {
+
+            let cookieValue = null;
+
+
+            if (document.cookie &&
+                document.cookie !== "") {
+
+                const cookies =
+                    document.cookie.split(";");
+
+
+                for (
+                    let i = 0;
+                    i < cookies.length;
+                    i++
+                ) {
+
+                    const cookie =
+                        cookies[i].trim();
+
+
+                    if (
+                        cookie.substring(
+                            0,
+                            name.length + 1
+                        ) ===
+                        (name + "=")
+                    ) {
+
+                        cookieValue =
+                            decodeURIComponent(
+                                cookie.substring(
+                                    name.length + 1
+                                )
+                            );
+
+                        break;
+
+                    }
+
+                }
+
+            }
+
+
+            return cookieValue;
+        }
+
+    </script>
+
+</body>
+
+</html>

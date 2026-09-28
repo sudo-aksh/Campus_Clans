@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Search - Campus Clans</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            margin: 0;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .section h2 {
+            margin-bottom: 15px;
+        }
+
+        .result {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 12px;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            border: 1px solid #e5e7eb;
+        }
+
+        .result:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .result h3 {
+            margin: 0 0 6px;
+        }
+
+        .result p {
+            margin: 4px 0;
+            color: #666;
+        }
+
+        .empty {
+            color: #777;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>
+        Search results for
+        {% if query %}
+            "{{ query }}"
+        {% endif %}
+    </h1>
+
+
+    <!-- ========================= -->
+    <!-- STUDENTS -->
+    <!-- ========================= -->
+
+    {% if students %}
+
+        <div class="section">
+
+            <h2>Students</h2>
+
+            {% for student in students %}
+
+                <a
+                    href="{% url 'profile' %}"
+                    class="result"
+                >
+
+                    <h3>
+                        @{{ student.user.username }}
+                    </h3>
+
+                    <p>
+                        {{ student.name }}
+                    </p>
+
+                    <p>
+                        {{ student.department }}
+                        ·
+                        {{ student.branch }}
+                    </p>
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- ========================= -->
+    <!-- CLANS -->
+    <!-- ========================= -->
+
+    {% if clans %}
+
+        <div class="section">
+
+            <h2>Clans</h2>
+
+            {% for clan in clans %}
+
+                <a
+                    href="{% url 'clan_profile' clan.id %}"
+                    class="result"
+                >
+
+                    <h3>
+                        {{ clan.name }}
+                    </h3>
+
+                    <p>
+                        {{ clan.speciality }}
+                    </p>
+
+                    {% if clan.profile_description %}
+
+                        <p>
+                            {{ clan.profile_description }}
+                        </p>
+
+                    {% endif %}
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    {% if not students and not clans %}
+
+        <div class="empty">
+
+            No results found.
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+
+</html>

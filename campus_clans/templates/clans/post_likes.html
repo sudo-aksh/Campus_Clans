@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Post Likes</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .user a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .username {
+            font-weight: bold;
+        }
+
+        .name {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <a
+        href="{% url 'clan_profile' post.clan.id %}"
+        class="back"
+    >
+        ← Back to Clan
+    </a>
+
+    <h2>
+        ❤️ People who liked this post
+    </h2>
+
+    {% if likes %}
+
+        {% for like in likes %}
+
+            <div class="user">
+
+                <a href="{% url 'view_profile' like.student.id %}">
+
+                    <div>
+                        <div class="username">
+                            @{{ like.student.user.username }}
+                        </div>
+
+                        <div class="name">
+                            {{ like.student.name }}
+                        </div>
+                    </div>
+
+                </a>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>No likes yet.</p>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
