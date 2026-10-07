@@ -489,12 +489,10 @@
 
                     <div class="input-group">
 
-                        <label for="loginUsername">
-                            Username
-                        </label>
+                        <label for="login-username">Username or Email</label>
 
-                        <input type="text" id="loginUsername" name="username" placeholder="Enter username" required>
-
+                        <input type="text" id="login-username" name="username" placeholder="Enter username or email"
+                            required autocomplete="username">
                     </div>
 
 
@@ -514,6 +512,10 @@
                     </button>
 
                 </form>
+
+                <p style="margin-top:12px; text-align:center;">
+                    <a href="{% url 'forgot_password' %}">Forgot password?</a>
+                </p>
 
             </div>
 
@@ -569,8 +571,18 @@
 
                         </div>
 
-                    </div>
+                        <div id="otpTimer" style="margin-top:8px;">
+                            OTP expires in 180 seconds
+                        </div>
 
+                        <button type="button" class="otp-button" id="resendOtpButton"
+                            style="display:none; margin-top:8px;">
+                            Resend OTP
+                        </button>
+
+                        <div id="resendTimer" style="margin-top:6px;"></div>
+
+                    </div>
 
                     <div id="verifiedMessage" class="verified">
                         ✓ Email verified
@@ -608,14 +620,12 @@
 
                         <!-- USERNAME -->
 
-                        <div class="input-group">
+                        <div class="form-group">
+                            <label for="username">Username</label>
 
-                            <label for="username">
-                                Username
-                            </label>
+                            <input type="text" id="username" name="username" required autocomplete="username">
 
-                            <input type="text" id="username" name="username" placeholder="Choose a username" required>
-
+                            <div id="username-status"></div>
                         </div>
 
 
@@ -846,10 +856,80 @@
         const signupFields =
             document.getElementById("signupFields");
 
+        const resendOtpButton =
+            document.getElementById("resendOtpButton");
+
+        const otpTimer =
+            document.getElementById("otpTimer");
+
+        const resendTimer =
+            document.getElementById("resendTimer");
+
+        let otpExpiryInterval = null;
+        let resendInterval = null;
+
 
         let emailVerified = false;
 
 
+        function startOtpTimers() {
+
+            clearInterval(otpExpiryInterval);
+            clearInterval(resendInterval);
+
+            let otpRemaining = 180;
+            let resendRemaining = 120;
+
+            resendOtpButton.style.display = "none";
+
+            otpTimer.textContent =
+                `OTP expires in ${otpRemaining} seconds`;
+
+            resendTimer.textContent =
+                `Resend available in ${resendRemaining} seconds`;
+
+            otpExpiryInterval = setInterval(() => {
+
+                otpRemaining--;
+
+                if (otpRemaining <= 0) {
+
+                    clearInterval(otpExpiryInterval);
+
+                    otpTimer.textContent =
+                        "OTP has expired.";
+
+                } else {
+
+                    otpTimer.textContent =
+                        `OTP expires in ${otpRemaining} seconds`;
+                }
+
+            }, 1000);
+
+
+            resendInterval = setInterval(() => {
+
+                resendRemaining--;
+
+                if (resendRemaining <= 0) {
+
+                    clearInterval(resendInterval);
+
+                    resendOtpButton.style.display =
+                        "inline-block";
+
+                    resendTimer.textContent =
+                        "";
+
+                } else {
+
+                    resendTimer.textContent =
+                        `Resend available in ${resendRemaining} seconds`;
+                }
+
+            }, 1000);
+        }
 
         /* ================= SEND OTP ================= */
 
@@ -914,6 +994,8 @@
                         otpSection.style.display =
                             "block";
 
+                        startOtpTimers();
+
                     } else {
 
                         showSignupMessage(
@@ -946,6 +1028,96 @@
                 });
 
         });
+
+        resendOtpButton.addEventListener(
+            "click",
+            function () {
+
+                const email =
+                    signupEmail.value.trim();
+
+                if (!email) {
+                    showSignupMessage(
+                        "Please enter your email address.",
+                        "error"
+                    );
+                    return;
+                }
+
+                resendOtpButton.disabled = true;
+
+                resendOtpButton.textContent =
+                    "Sending...";
+
+                const formData =
+                    new FormData();
+
+                formData.append(
+                    "email",
+                    email
+                );
+
+                fetch(
+                    "{% url 'send_otp' %}",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "X-CSRFToken":
+                                getCookie("csrftoken")
+                        },
+
+                        body: formData
+                    }
+                )
+                    .then(response =>
+                        response.json()
+                    )
+                    .then(data => {
+
+                        if (data.success) {
+
+                            showSignupMessage(
+                                "New OTP sent to your email.",
+                                "success"
+                            );
+
+                            otpInput.value = "";
+
+                            startOtpTimers();
+
+                        } else {
+
+                            showSignupMessage(
+                                data.error ||
+                                "Unable to resend OTP.",
+                                "error"
+                            );
+
+                            resendOtpButton.disabled =
+                                false;
+                        }
+
+                    })
+                    .catch(error => {
+
+                        console.error(error);
+
+                        showSignupMessage(
+                            "Something went wrong. Please try again.",
+                            "error"
+                        );
+
+                        resendOtpButton.disabled =
+                            false;
+                    })
+                    .finally(() => {
+
+                        resendOtpButton.textContent =
+                            "Resend OTP";
+                    });
+            }
+        );
 
 
 
@@ -1323,6 +1495,54 @@
             return cookieValue;
         }
 
+    </script>
+    <script>
+        const usernameInput = document.getElementById("username");
+        const usernameStatus = document.getElementById("username-status");
+
+        let usernameTimer;
+
+        usernameInput.addEventListener("input", function () {
+
+            const username = this.value.trim();
+
+            clearTimeout(usernameTimer);
+
+            if (!username) {
+                usernameStatus.textContent = "";
+                return;
+            }
+
+            usernameStatus.textContent = "Checking...";
+            usernameStatus.style.color = "#6b7280";
+
+            usernameTimer = setTimeout(() => {
+
+                fetch(`/check-username/?username=${encodeURIComponent(username)}`)
+                    .then(response => response.json())
+                    .then(data => {
+
+                        usernameStatus.textContent = data.message;
+
+                        if (data.available) {
+                            usernameStatus.style.color = "#15803d";
+                        } else {
+                            usernameStatus.style.color = "#dc2626";
+                        }
+
+                    })
+                    .catch(error => {
+
+                        console.error("Username check failed:", error);
+
+                        usernameStatus.textContent =
+                            "Unable to check username.";
+
+                        usernameStatus.style.color = "#dc2626";
+                    });
+
+            }, 400);
+        });
     </script>
 
 </body>

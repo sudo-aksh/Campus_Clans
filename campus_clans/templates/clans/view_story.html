@@ -1,112 +1,818 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Clan Story</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>{{ story.clan.name }} - Stories</title>
 
     <style>
+        * {
+            box-sizing: border-box
+        }
+
         body {
             margin: 0;
             background: #111;
-            color: white;
+            color: #fff;
             font-family: Arial, sans-serif;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            align-items: center
+        }
+
+        .story-wrapper {
+            width: min(600px, 94vw)
         }
 
         .story {
-            width: min(600px, 92%);
+            width: 100%;
+            aspect-ratio: 9/16;
             background: #222;
             border-radius: 18px;
             overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .story-image,
+        .story-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: #000
+        }
+
+        .story-text {
+            width: 100%;
+            height: 100%;
+            padding: 70px 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 22px;
+            line-height: 1.5;
+            overflow-y: auto;
+            background: #222
+        }
+
+        .progress-container {
+            position: absolute;
+            top: 8px;
+            left: 10px;
+            right: 10px;
+            height: 3px;
+            display: flex;
+            gap: 4px;
+            z-index: 20
+        }
+
+        .progress-segment {
+            flex: 1;
+            height: 100%;
+            background: rgba(255, 255, 255, .35);
+            border-radius: 10px;
+            overflow: hidden
+        }
+
+        .progress-fill {
+            width: 0;
+            height: 100%;
+            background: #fff
         }
 
         .story-header {
-            padding: 15px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            padding: 20px 18px 18px;
+            background: linear-gradient(rgba(0, 0, 0, .75), transparent)
         }
 
         .story-header strong {
             display: block;
+            font-size: 16px
         }
 
         .story-time {
-            color: #aaa;
-            font-size: 13px;
-            margin-top: 4px;
-        }
-
-        .story-image {
-            width: 100%;
-            max-height: 650px;
-            object-fit: contain;
-            background: #000;
-        }
-
-        .story-content {
-            padding: 20px;
-            font-size: 18px;
-            line-height: 1.6;
-        }
-
-        .caption {
             color: #ccc;
-            margin-top: 10px;
+            font-size: 12px;
+            margin-top: 4px
+        }
+
+        .story-caption {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 10;
+            padding: 35px 20px 18px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, .85));
+            font-size: 15px;
+            line-height: 1.4
+        }
+
+        .navigation {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 15;
+            display: flex
+        }
+
+        .nav-left,
+        .nav-right {
+            width: 50%;
+            height: 100%;
+            cursor: pointer
+        }
+
+        .bottom-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 14px
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 9px 14px;
+            border-radius: 9px;
+            border: none;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px
         }
 
         .back {
-            display: inline-block;
-            margin: 15px;
-            color: white;
-            text-decoration: none;
+            background: #333;
+            color: #fff
+        }
+
+        .like {
+            background: #e91e63;
+            color: #fff
+        }
+
+        .viewers {
+            background: #444;
+            color: #fff
+        }
+
+        .delete {
+            background: #b00020;
+            color: #fff
+        }
+
+        .stats {
+            color: #bbb;
+            font-size: 13px
+        }
+
+        form {
+            margin: 0
+        }
+
+        @media(max-width:600px) {
+            .story-wrapper {
+                width: 96vw
+            }
+
+            .story {
+                border-radius: 12px
+            }
+
+            .story-text {
+                font-size: 18px;
+                padding: 60px 20px
+            }
+
+            .story-caption {
+                font-size: 14px;
+                padding: 30px 15px 14px
+            }
+
+            .bottom-bar {
+                flex-wrap: wrap;
+                gap: 10px
+            }
         }
     </style>
 </head>
 
 <body>
 
-<div class="story">
+    <div class="story-wrapper">
 
-    <div class="story-header">
+        <div class="story" id="storyContainer">
 
-        <strong>
-            {{ story.clan.name }}
-        </strong>
+            <div class="progress-container" id="progressContainer"></div>
 
-        <div class="story-time">
-            {{ story.created_at|timesince }} ago
+            <div class="story-header">
+                <strong id="clanName">{{ story.clan.name }}</strong>
+                <div class="story-time" id="storyTime">{{ story.created_at|timesince }} ago</div>
+            </div>
+
+            <div id="storyContent"></div>
+
+            <div class="navigation">
+                <div class="nav-left" onclick="previousStory()"></div>
+                <div class="nav-right" onclick="nextStory()"></div>
+            </div>
+
         </div>
 
+        <div class="bottom-bar">
+
+            <div class="actions">
+
+                <a href="{% url 'clan_profile' story.clan.id %}" class="btn back">← Back</a>
+
+                <form method="POST" id="likeForm">
+                    {% csrf_token %}
+                    <button type="submit" class="btn like" id="likeButton">🤍 Like</button>
+                </form>
+
+                {% if can_manage %}
+                <form method="POST" id="deleteForm" onsubmit="return confirm('Delete this story?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn delete">🗑 Delete</button>
+                </form>
+                {% endif %}
+
+                <a href="{% url 'clan_story_viewers' story.id %}" class="btn viewers" id="viewersButton">👥 Viewers</a>
+
+            </div>
+
+            <div class="stats" id="storyStats">
+                👁 {{ viewer_count }} &nbsp;&nbsp; ❤️ {{ like_count }}
+            </div>
+
+        </div>
     </div>
 
-    {% if story.image %}
-        <img
-            src="{{ story.image.url }}"
-            class="story-image"
-            alt="Clan story"
-        >
+<script>
+
+const stories = [
+{% for item in stories %}
+{
+    id: {{ item.id }},
+    type: "{{ item.story_type }}",
+    text: "{{ item.text|default:''|escapejs }}",
+    caption: "{{ item.caption|default:''|escapejs }}",
+    image: "{% if item.image %}{{ item.image.url }}{% endif %}",
+    video: "{% if item.video %}{{ item.video.url }}{% endif %}",
+    createdAt: "{{ item.created_at|timesince }} ago"
+}{% if not forloop.last %},{% endif %}
+{% endfor %}
+];
+
+let currentIndex = {{ current_index }};
+let timer = null;
+let videoElement = null;
+
+const csrfToken = "{{ csrf_token }}";
+
+const storyData = {
+{% for item in stories %}
+"{{ item.id }}": {
+    likeUrl: "{% url 'like_clan_story' item.id %}",
+    viewUrl: "{% url 'record_clan_story_view' item.id %}",
+    viewersUrl: "{% url 'clan_story_viewers' item.id %}",
+    deleteUrl: "{% url 'delete_clan_story' item.id %}",
+    liked: {% if item.id in liked_story_ids %}true{% else %}false{% endif %}
+}{% if not forloop.last %},{% endif %}
+{% endfor %}
+};
+
+const progressContainer =
+    document.getElementById("progressContainer");
+
+
+function createProgressBars() {
+
+    progressContainer.innerHTML = "";
+
+    stories.forEach((story, index) => {
+
+        const segment =
+            document.createElement("div");
+
+        segment.className =
+            "progress-segment";
+
+        const fill =
+            document.createElement("div");
+
+        fill.className =
+            "progress-fill";
+
+        fill.id =
+            "progress-" + index;
+
+        segment.appendChild(fill);
+
+        progressContainer.appendChild(segment);
+    });
+}
+
+
+function showStory(index) {
+
+    clearInterval(timer);
+
+    if (videoElement) {
+        videoElement.pause();
+        videoElement = null;
+    }
+
+    if (index < 0)
+        index = 0;
+
+    if (index >= stories.length) {
+
+        window.location.href =
+            "{% url 'clan_profile' story.clan.id %}";
+
+        return;
+    }
+
+    currentIndex = index;
+
+    const story =
+        stories[currentIndex];
+
+    const content =
+        document.getElementById(
+            "storyContent"
+        );
+
+    content.innerHTML = "";
+
+    document
+        .querySelectorAll(".story-caption")
+        .forEach(el => el.remove());
+
+
+    stories.forEach((item, i) => {
+
+        const fill =
+            document.getElementById(
+                "progress-" + i
+            );
+
+        if (fill) {
+
+            fill.style.width =
+                i < currentIndex
+                    ? "100%"
+                    : "0%";
+        }
+    });
+
+
+    document.getElementById(
+        "storyTime"
+    ).textContent =
+        story.createdAt;
+
+
+    if (story.type === "text") {
+
+        const text =
+            document.createElement("div");
+
+        text.className =
+            "story-text";
+
+        text.textContent =
+            story.text;
+
+        content.appendChild(text);
+
+        startTextImageTimer();
+
+
+    } else if (story.type === "image") {
+
+        const image =
+            document.createElement("img");
+
+        image.className =
+            "story-image";
+
+        image.src =
+            story.image;
+
+        image.alt =
+            "Clan story";
+
+        content.appendChild(image);
+
+
+        if (story.caption) {
+
+            addCaption(
+                story.caption
+            );
+        }
+
+        startTextImageTimer();
+
+
+    } else if (story.type === "video") {
+
+        const video =
+            document.createElement("video");
+
+        video.className =
+            "story-video";
+
+        video.controls =
+            true;
+
+        video.autoplay =
+            true;
+
+        video.playsInline =
+            true;
+
+        video.src =
+            story.video;
+
+        content.appendChild(video);
+
+        videoElement =
+            video;
+
+
+        if (story.caption) {
+
+            addCaption(
+                story.caption
+            );
+        }
+
+
+        video.addEventListener(
+            "ended",
+            nextStory
+        );
+    }
+
+
+    updateStoryActions(
+        story.id
+    );
+
+    markStoryViewed(
+        story.id
+    );
+}
+
+
+function addCaption(text) {
+
+    const caption =
+        document.createElement("div");
+
+    caption.className =
+        "story-caption";
+
+    caption.textContent =
+        text;
+
+    document
+        .getElementById(
+            "storyContainer"
+        )
+        .appendChild(caption);
+}
+
+
+function startTextImageTimer() {
+
+    const duration =
+        10000;
+
+    const start =
+        Date.now();
+
+    const progressBar =
+        document.getElementById(
+            "progress-" + currentIndex
+        );
+
+
+    timer = setInterval(() => {
+
+        const elapsed =
+            Date.now() - start;
+
+        const percentage =
+            Math.min(
+                (elapsed / duration) * 100,
+                100
+            );
+
+
+        if (progressBar) {
+
+            progressBar.style.width =
+                percentage + "%";
+        }
+
+
+        if (elapsed >= duration) {
+
+            clearInterval(timer);
+
+            nextStory();
+        }
+
+    }, 50);
+}
+
+
+function nextStory() {
+
+    clearInterval(timer);
+
+    showStory(
+        currentIndex + 1
+    );
+}
+
+
+function previousStory() {
+
+    clearInterval(timer);
+
+    showStory(
+        currentIndex - 1
+    );
+}
+
+
+function updateStoryActions(storyId) {
+
+    const data =
+        storyData[storyId];
+
+    if (!data)
+        return;
+
+
+    document.getElementById(
+        "likeForm"
+    ).action =
+        data.likeUrl;
+
+
+    document.getElementById(
+        "viewersButton"
+    ).href =
+        data.viewersUrl;
+
+
+    const likeButton =
+        document.getElementById(
+            "likeButton"
+        );
+
+
+    likeButton.textContent =
+        data.liked
+            ? "❤️ Unlike"
+            : "🤍 Like";
+
+
+    {% if can_manage %}
+
+    document.getElementById(
+        "deleteForm"
+    ).action =
+        data.deleteUrl;
+
     {% endif %}
+}
 
-    {% if story.content %}
-        <div class="story-content">
-            {{ story.content|linebreaks }}
-        </div>
-    {% endif %}
 
-    {% if story.caption %}
-        <div class="story-content caption">
-            {{ story.caption }}
-        </div>
-    {% endif %}
+/*
+|--------------------------------------------------------------------------
+| AJAX LIKE / UNLIKE
+|--------------------------------------------------------------------------
+*/
 
-    <a
-        href="{% url 'clan_profile' story.clan.id %}"
-        class="back"
-    >
-        ← Back to Clan
-    </a>
+document.getElementById(
+    "likeForm"
+).addEventListener(
+    "submit",
+    function(event) {
 
-</div>
+        event.preventDefault();
+
+
+        const story =
+            stories[currentIndex];
+
+        const data =
+            storyData[story.id];
+
+
+        if (!data)
+            return;
+
+
+        const button =
+            document.getElementById(
+                "likeButton"
+            );
+
+
+        button.disabled = true;
+
+
+        fetch(
+            data.likeUrl,
+            {
+                method: "POST",
+
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "X-Requested-With":
+                        "XMLHttpRequest"
+                }
+            }
+        )
+        .then(response =>
+            response.json()
+        )
+        .then(result => {
+
+            if (!result.success)
+                return;
+
+
+            data.liked =
+                result.liked;
+
+
+            button.textContent =
+                result.liked
+                    ? "❤️ Unlike"
+                    : "🤍 Like";
+
+
+            const stats =
+                document.getElementById(
+                    "storyStats"
+                );
+
+
+            if (stats) {
+
+                const currentViews =
+                    stats.textContent.match(
+                        /👁\s*(\d+)/
+                    );
+
+
+                const viewerCount =
+                    currentViews
+                        ? currentViews[1]
+                        : "0";
+
+
+                stats.innerHTML =
+                    "👁 " +
+                    viewerCount +
+                    " &nbsp;&nbsp; ❤️ " +
+                    result.like_count;
+            }
+
+        })
+        .catch(error => {
+
+            console.error(
+                "Unable to like story:",
+                error
+            );
+
+        })
+        .finally(() => {
+
+            button.disabled = false;
+
+        });
+
+    }
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| RECORD STORY VIEW
+|--------------------------------------------------------------------------
+*/
+
+function markStoryViewed(storyId) {
+
+    const data =
+        storyData[storyId];
+
+    if (!data)
+        return;
+
+
+    fetch(
+        data.viewUrl,
+        {
+            method: "POST",
+
+            headers: {
+                "X-CSRFToken": csrfToken,
+                "X-Requested-With":
+                    "XMLHttpRequest"
+            }
+        }
+    )
+    .then(response =>
+        response.json()
+    )
+    .then(result => {
+
+        if (!result.success)
+            return;
+
+
+        const stats =
+            document.getElementById(
+                "storyStats"
+            );
+
+
+        if (stats) {
+
+            stats.innerHTML =
+                "👁 " +
+                result.viewer_count +
+                " &nbsp;&nbsp; ❤️ " +
+                result.like_count;
+        }
+
+    })
+    .catch(error => {
+
+        console.error(
+            "Unable to record story view:",
+            error
+        );
+
+    });
+}
+
+
+createProgressBars();
+
+showStory(
+    currentIndex
+);
+
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (event.key === "ArrowRight") {
+
+            nextStory();
+        }
+
+        if (event.key === "ArrowLeft") {
+
+            previousStory();
+        }
+
+    }
+);
+
+</script>
 
 </body>
+
 </html>

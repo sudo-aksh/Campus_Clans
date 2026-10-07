@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Events</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            color: #222;
+        }
+
+        .wrap {
+            max-width: 1200px;
+            margin: auto;
+            padding: 25px;
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .card h2 {
+            margin-top: 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 9px 12px;
+            background: #222;
+            color: #fff;
+            border: 0;
+            border-radius: 7px;
+            text-decoration: none;
+            margin: 3px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
+        .btn-danger {
+            background: #b00020;
+        }
+
+        .btn-success {
+            background: #176b2c;
+        }
+
+        .btn-warning {
+            background: #8a5a00;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .status-active {
+            background: #e4f8e8;
+            color: #176b2c;
+        }
+
+        .status-ended {
+            background: #ffe3e3;
+            color: #a00000;
+        }
+
+        .status-trophy {
+            background: #fff4d6;
+            color: #8a5a00;
+        }
+
+        .actions {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+        }
+
+        .empty {
+            background: #fff;
+            padding: 20px;
+            border-radius: 14px;
+            color: #666;
+        }
+
+        .note {
+            margin-top: 12px;
+            padding: 10px 12px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            .top {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .wrap {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+    <div class="top">
+
+        <h1>Events</h1>
+
+        <div class="top-actions">
+
+            <a
+                class="btn"
+                href="{% url 'campus_admin_dashboard' %}"
+            >
+                Dashboard
+            </a>
+
+            <a
+                class="btn"
+                href="{% url 'campus_admin_create_event' %}"
+            >
+                Create Event
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="grid">
+
+        {% for e in events %}
+
+        <div class="card">
+
+            <h2>{{ e.name }}</h2>
+
+            <p>
+                {{ e.description|truncatechars:180 }}
+            </p>
+
+            <p>
+                <strong>Ends:</strong>
+                {{ e.end_date }}
+            </p>
+
+            <p>
+                <strong>Participating clans:</strong>
+                {{ e.participant_count }}
+            </p>
+
+
+            <!-- EVENT STATUS -->
+
+            {% if e.end_date >= now %}
+
+                <div class="status status-active">
+                    Event Active
+                </div>
+
+            {% else %}
+
+                <div class="status status-ended">
+                    Event Ended
+                </div>
+
+            {% endif %}
+
+
+            <!-- ACTIONS -->
+
+            <div class="actions">
+
+                <!-- Always available -->
+
+                <a
+                    class="btn"
+                    href="{% url 'campus_admin_event_applications' e.id %}"
+                >
+                    Participation
+                </a>
+
+
+                <!-- Trophy window -->
+
+                {% if e.end_date <= now %}
+
+                    {% if now <= e.trophy_deadline %}
+
+                        <a
+                            class="btn btn-warning"
+                            href="{% url 'campus_admin_event_trophies' e.id %}"
+                        >
+                            Trophies
+                        </a>
+
+                    {% endif %}
+
+                {% endif %}
+
+
+                <!-- Edit/Delete only before event ends -->
+
+                {% if e.end_date > now %}
+
+                    <a
+                        class="btn"
+                        href="{% url 'campus_admin_edit_event' e.id %}"
+                    >
+                        Edit
+                    </a>
+
+
+                    <form
+                        style="display:inline"
+                        method="post"
+                        action="{% url 'campus_admin_delete_event' e.id %}"
+                        onsubmit="return confirm('Delete event?')"
+                    >
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger"
+                        >
+                            Delete
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- Information after event -->
+
+            {% if e.end_date <= now %}
+
+                {% if now <= e.trophy_deadline %}
+
+                    <div class="note">
+                        Trophy awarding is available until
+                        {{ e.trophy_deadline }}.
+                    </div>
+
+                {% else %}
+
+                    <div class="note">
+                        The trophy awarding window has ended.
+                    </div>
+
+                {% endif %}
+
+            {% endif %}
+
+        </div>
+
+        {% empty %}
+
+        <div class="empty">
+            No events.
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

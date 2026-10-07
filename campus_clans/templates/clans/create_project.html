@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Create Clan Project</title>
+
+    <style>
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 40px auto;
+            padding: 20px
+        }
+
+        .card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, .06)
+        }
+
+        h1 {
+            margin: 0 0 8px
+        }
+
+        .subtitle,
+        .section-description,
+        .help-text,
+        .image-help,
+        .cover-help {
+            color: #6b7280
+        }
+
+        .subtitle {
+            margin-bottom: 25px
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 18px 0 7px
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #4f46e5
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 9px;
+            margin-bottom: 18px
+        }
+
+        .section-title {
+            margin: 30px 0 5px;
+            font-size: 17px
+        }
+
+        .section-description,
+        .help-text,
+        .image-help,
+        .cover-help {
+            font-size: 13px;
+            margin: 6px 0 12px
+        }
+
+        .member-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fafafa
+        }
+
+        .member-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            margin: 0;
+            border-radius: 8px;
+            cursor: pointer
+        }
+
+        .member-option:hover {
+            background: #f3f4f6
+        }
+
+        .member-option input {
+            width: 16px;
+            height: 16px;
+            margin: 0
+        }
+
+        .link-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr auto;
+            gap: 10px;
+            margin-bottom: 10px
+        }
+
+        .remove-link {
+            border: 0;
+            background: #fee2e2;
+            color: #991b1b;
+            border-radius: 8px;
+            padding: 0 13px;
+            cursor: pointer;
+            font-weight: 600
+        }
+
+        .remove-link:hover {
+            background: #fecaca
+        }
+
+        .add-link {
+            margin-top: 5px;
+            border: 1px solid #4f46e5;
+            background: #fff;
+            color: #4f46e5;
+            padding: 9px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600
+        }
+
+        .add-link:hover {
+            background: #eef2ff
+        }
+
+        .image-section,
+        .cover-section {
+            margin-top: 30px
+        }
+
+        input[type=file] {
+            padding: 9px;
+            background: #fafafa
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 14px;
+            margin-top: 18px
+        }
+
+        .preview-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fafafa
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: block
+        }
+
+        .btn {
+            margin-top: 28px;
+            padding: 12px 20px;
+            border: 0;
+            border-radius: 9px;
+            background: #4f46e5;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px
+        }
+
+        .btn:hover {
+            background: #4338ca
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 15px;
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 600
+        }
+
+        .back:hover {
+            text-decoration: underline
+        }
+
+        @media(max-width:600px) {
+            .container {
+                margin: 20px auto;
+                padding: 12px
+            }
+
+            .card {
+                padding: 20px
+            }
+
+            .link-row {
+                grid-template-columns: 1fr
+            }
+
+            .remove-link {
+                padding: 9px
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <a href="{% url 'clan_profile' clan.id %}" class="back">← Back to Clan</a>
+
+        <div class="card">
+
+            <h1>Create Clan Project</h1>
+
+            <div class="subtitle">Create a project for {{ clan.name }}</div>
+
+            {% if error %}
+            <div class="error">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <label for="title">Project Title</label>
+                <input type="text" id="title" name="title" maxlength="200" placeholder="Enter project title" required>
+
+                <label for="description">Description</label>
+                <textarea id="description" name="description" placeholder="Describe the project..." required></textarea>
+
+
+                <!-- PROJECT MEMBERS -->
+
+                <h2 class="section-title">Project Members</h2>
+
+                <div class="section-description">
+                    Select the clan members who will be part of this project.
+                </div>
+
+                <div class="member-selection">
+
+                    {% for member in clan_members %}
+                    <label class="member-option">
+                        <input type="checkbox" name="project_members" value="{{ member.student.id }}"
+                            class="project-member-checkbox">
+                        <span>{{ member.student.name }}</span>
+                    </label>
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- INITIAL PARTICIPANTS -->
+
+                <h2 class="section-title">Project Started — Participants</h2>
+
+                <div class="section-description">
+                    Select the project members who participated when the project started.
+                </div>
+
+                <div class="member-selection">
+
+                    {% for member in clan_members %}
+                    <label class="member-option initial-participant-option" data-student-id="{{ member.student.id }}">
+
+                        <input type="checkbox" name="initial_participants" value="{{ member.student.id }}" disabled>
+
+                        <span>{{ member.student.name }}</span>
+
+                    </label>
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- COVER -->
+
+                <div class="cover-section">
+
+                    <h2 class="section-title">Project Cover Image</h2>
+
+                    <div class="section-description">
+                        This image will be used as the main cover of the project.
+                    </div>
+
+                    <input type="file" id="cover_image" name="cover_image" accept="image/*">
+
+                    <div class="cover-help">
+                        Choose one image to represent your project.
+                    </div>
+
+                    <div id="cover-preview" class="preview-grid"></div>
+
+                </div>
+
+
+                <!-- LINKS -->
+
+                <h2 class="section-title">Project Links</h2>
+
+                <div class="section-description">
+                    Add any links related to the project.
+                </div>
+
+                <div id="links-container">
+
+                    <div class="link-row">
+
+                        <input type="text" name="link_label[]" placeholder="Label e.g. GitHub">
+
+                        <input type="url" name="link_url[]" placeholder="https://example.com">
+
+                        <button type="button" class="remove-link" onclick="removeLink(this)">
+                            Remove
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <button type="button" class="add-link" onclick="addLink()">
+                    + Add Link
+                </button>
+
+
+                <!-- INITIAL IMAGES -->
+
+                <div class="image-section">
+
+                    <h2 class="section-title">Project Images</h2>
+
+                    <div class="section-description">
+                        Upload the initial project images. These will become the first project update.
+                    </div>
+
+                    <input type="file" id="images" name="images" accept="image/*" multiple required>
+
+                    <div class="image-help">
+                        You can select multiple images at once.
+                    </div>
+
+                    <div id="preview-grid" class="preview-grid"></div>
+
+                </div>
+
+
+                <button type="submit" class="btn">
+                    Create Project
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <script>
+
+        /* PROJECT MEMBERS → PARTICIPANTS */
+
+        const memberBoxes =
+            document.querySelectorAll(".project-member-checkbox");
+
+        const participantOptions =
+            document.querySelectorAll(".initial-participant-option");
+
+        function updateParticipants() {
+
+            const selected = new Set(
+                [...memberBoxes]
+                    .filter(box => box.checked)
+                    .map(box => box.value)
+            );
+
+            participantOptions.forEach(option => {
+
+                const id = option.dataset.studentId;
+                const checkbox = option.querySelector("input");
+
+                if (selected.has(id)) {
+
+                    option.style.display = "flex";
+                    checkbox.disabled = false;
+
+                } else {
+
+                    option.style.display = "none";
+                    checkbox.checked = false;
+                    checkbox.disabled = true;
+
+                }
+
+            });
+        }
+
+        memberBoxes.forEach(box =>
+            box.addEventListener("change", updateParticipants)
+        );
+
+        updateParticipants();
+
+
+        /* ADD LINK */
+
+        function addLink() {
+
+            const container =
+                document.getElementById("links-container");
+
+            const row =
+                document.createElement("div");
+
+            row.className = "link-row";
+
+            row.innerHTML = `
+        <input type="text"
+               name="link_label[]"
+               placeholder="Label e.g. Live Demo">
+
+        <input type="url"
+               name="link_url[]"
+               placeholder="https://example.com">
+
+        <button type="button"
+                class="remove-link"
+                onclick="removeLink(this)">
+            Remove
+        </button>
+    `;
+
+            container.appendChild(row);
+        }
+
+
+        /* REMOVE LINK */
+
+        function removeLink(button) {
+
+            const rows =
+                document.querySelectorAll(".link-row");
+
+            if (rows.length === 1) {
+
+                rows[0]
+                    .querySelectorAll("input")
+                    .forEach(input => input.value = "");
+
+                return;
+            }
+
+            button.parentElement.remove();
+        }
+
+
+        /* IMAGE PREVIEW */
+
+        function previewImages(input, target) {
+
+            target.innerHTML = "";
+
+            [...input.files].forEach(file => {
+
+                if (!file.type.startsWith("image/")) return;
+
+                const reader = new FileReader();
+
+                reader.onload = e => {
+
+                    const item = document.createElement("div");
+
+                    item.className = "preview-item";
+
+                    item.innerHTML = `
+                <img src="${e.target.result}"
+                     alt="Project image">
+            `;
+
+                    target.appendChild(item);
+                };
+
+                reader.readAsDataURL(file);
+            });
+        }
+
+
+        /* INITIAL IMAGES */
+
+        document
+            .getElementById("images")
+            .addEventListener("change", function () {
+
+                previewImages(
+                    this,
+                    document.getElementById("preview-grid")
+                );
+
+            });
+
+
+        /* COVER PREVIEW */
+
+        document
+            .getElementById("cover_image")
+            .addEventListener("change", function () {
+
+                previewImages(
+                    this,
+                    document.getElementById("cover-preview")
+                );
+
+            });
+
+    </script>
+
+</body>
+
+</html>

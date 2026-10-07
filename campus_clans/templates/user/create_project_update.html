@@ -1,0 +1,298 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Add Project Update | Campus Clans</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    color: #222;
+}
+
+.container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px #0001;
+}
+
+h1 {
+    margin-top: 0;
+}
+
+.project-name {
+    color: #666;
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin: 15px 0 7px;
+}
+
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    min-height: 180px;
+    resize: vertical;
+    font-size: 15px;
+}
+
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    background: #fafafa;
+}
+
+.help-text {
+    color: #666;
+    font-size: 14px;
+    margin-top: 6px;
+}
+
+.error {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 12px;
+    border-radius: 7px;
+    margin-bottom: 15px;
+}
+
+.preview-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.preview-container img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.button-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+button,
+.back {
+    padding: 11px 20px;
+    border-radius: 7px;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+button {
+    border: 0;
+    background: #4f46e5;
+    color: white;
+}
+
+button:hover {
+    background: #4338ca;
+}
+
+.back {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #4f46e5;
+    background: white;
+    border: 1px solid #ddd;
+}
+
+.back:hover {
+    background: #f8f8f8;
+}
+
+@media (max-width: 600px) {
+
+    .container {
+        margin: 15px auto;
+        padding: 10px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .button-row {
+        flex-direction: column;
+    }
+
+    button,
+    .back {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<a
+    href="{% url 'student_project_detail' project.id %}"
+    class="back"
+>
+    ← Back to Project
+</a>
+
+<div class="card">
+
+<h1>Add Project Update</h1>
+
+<p class="project-name">
+    {{ project.title }}
+</p>
+
+{% if error %}
+<div class="error">
+    {{ error }}
+</div>
+{% endif %}
+
+<form
+    method="POST"
+    enctype="multipart/form-data"
+>
+
+{% csrf_token %}
+
+<!-- UPDATE CAPTION -->
+
+<label for="caption">
+    Update Caption
+</label>
+
+<textarea
+    id="caption"
+    name="caption"
+    placeholder="Describe what you worked on, what changed, what you learned, or what you achieved..."
+    required
+></textarea>
+
+
+<!-- UPDATE IMAGES -->
+
+<label for="images">
+    Images
+</label>
+
+<input
+    type="file"
+    id="images"
+    name="images"
+    accept="image/*"
+    multiple
+>
+
+<p class="help-text">
+    You can upload multiple images. Images are optional.
+</p>
+
+<div
+    id="preview-container"
+    class="preview-container"
+></div>
+
+
+<!-- BUTTON -->
+
+<div class="button-row">
+
+<button type="submit">
+    Publish Update
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+
+<script>
+
+const imageInput =
+    document.getElementById("images");
+
+const previewContainer =
+    document.getElementById("preview-container");
+
+
+imageInput.addEventListener(
+    "change",
+    function () {
+
+        previewContainer.innerHTML = "";
+
+        const files = this.files;
+
+        for (
+            let index = 0;
+            index < files.length;
+            index++
+        ) {
+
+            const file = files[index];
+
+            const reader =
+                new FileReader();
+
+            reader.onload = function(event) {
+
+                const image =
+                    document.createElement("img");
+
+                image.src =
+                    event.target.result;
+
+                image.alt =
+                    "Update image";
+
+                previewContainer.appendChild(image);
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>

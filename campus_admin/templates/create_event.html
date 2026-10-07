@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Event | Campus Admin</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #d5d9df;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #2563eb;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .media-info {
+            background: #f1f5f9;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #475569;
+        }
+
+        .media-info strong {
+            color: #1e293b;
+        }
+
+        .media-input {
+            padding: 10px;
+            background: #fafafa;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 18px;
+        }
+
+        .preview-item {
+            position: relative;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fafafa;
+        }
+
+        .preview-item img,
+        .preview-item video {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .preview-name {
+            padding: 8px;
+            font-size: 12px;
+            word-break: break-word;
+        }
+
+        .error-box {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 20px;
+        }
+
+        .error-box ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .client-error {
+            display: none;
+            background: #fff7ed;
+            color: #9a3412;
+            border: 1px solid #fed7aa;
+            border-radius: 8px;
+            padding: 14px;
+            margin-top: 15px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        button,
+        .back-btn {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .submit-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .submit-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .back-btn {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .back-btn:hover {
+            background: #d1d5db;
+        }
+
+        .required {
+            color: #dc2626;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px auto;
+                padding: 10px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button,
+            .back-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="card">
+
+            <h1>Create Event</h1>
+
+            <p class="subtitle">
+                Create an event for all Campus Clans.
+            </p>
+
+            {% if errors %}
+            <div class="error-box">
+                <strong>Please fix the following:</strong>
+
+                <ul>
+                    {% for error in errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data" id="eventForm">
+
+                {% csrf_token %}
+
+                <!-- EVENT NAME -->
+
+                <div class="form-group">
+
+                    <label for="name">
+                        Event Name
+                        <span class="required">*</span>
+                    </label>
+
+                    <input type="text" id="name" name="name" maxlength="200" required
+                        value="{{ request.POST.name|default:'' }}" placeholder="Enter event name">
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="form-group">
+
+                    <label for="description">
+                        Description
+                        <span class="required">*</span>
+                    </label>
+
+                    <textarea id="description" name="description" required
+                        placeholder="Describe the event...">{{ request.POST.description|default:'' }}</textarea>
+
+                </div>
+                <label for="participant_type">
+    Who can participate?
+</label>
+
+<select
+    id="participant_type"
+    name="participant_type"
+    required
+>
+    <option value="clan">Clan</option>
+    <option value="student">Student</option>
+    <option value="both">Both</option>
+</select>
+
+<div class="info">
+    <strong>Clan:</strong>
+    Only clans can participate.
+
+    <br>
+
+    <strong>Student:</strong>
+    Students participate individually.
+
+    <br>
+
+    <strong>Both:</strong>
+    Students can choose either clan or individual participation.
+</div>
+
+
+                <!-- START DATE -->
+
+                <div class="form-group">
+
+                    <label for="start_date">
+                        Start Date & Time
+                    </label>
+
+                    <input type="datetime-local" id="start_date" name="start_date"
+                        value="{{ request.POST.start_date|default:'' }}">
+
+                </div>
+
+
+                <!-- END DATE -->
+
+                <div class="form-group">
+
+                    <label for="end_date">
+                        End Date & Time
+                        <span class="required">*</span>
+                    </label>
+
+                    <input type="datetime-local" id="end_date" name="end_date" required
+                        value="{{ request.POST.end_date|default:'' }}">
+
+                </div>
+
+
+                <!-- LINK -->
+
+                <div class="form-group">
+
+                    <label for="link">
+                        Event Link
+                        <span style="font-weight: normal; color: #777;">
+                            (Optional)
+                        </span>
+                    </label>
+
+                    <input type="url" id="link" name="link" value="{{ request.POST.link|default:'' }}"
+                        placeholder="https://example.com">
+
+                </div>
+
+
+                <!-- MEDIA -->
+
+                <div class="form-group">
+
+                    <label for="media">
+                        Event Images / Videos
+                    </label>
+
+                    <div class="media-info">
+
+                        <strong>Media rules:</strong>
+
+                        <br><br>
+
+                        • Multiple images are allowed.<br>
+                        • Multiple videos are allowed.<br>
+                        • Each video must be <strong>50 MB or smaller</strong>.<br>
+                        • Each video must be <strong>60 seconds or shorter</strong>.<br>
+                        • Supported images: JPG, JPEG, PNG, GIF, WEBP, BMP.<br>
+                        • Supported videos: MP4, MOV, M4V, WEBM, AVI, MKV.
+
+                    </div>
+
+                    <input type="file" id="media" name="media" class="media-input" multiple accept="image/*,video/*">
+
+                    <div id="clientError" class="client-error"></div>
+
+                    <div id="previewGrid" class="preview-grid"></div>
+
+                </div>
+
+
+                <!-- BUTTONS -->
+
+                <div class="buttons">
+
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        Create Event
+                    </button>
+
+                    <a href="{% url 'campus_admin_events' %}" class="back-btn">
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        const mediaInput = document.getElementById("media");
+        const previewGrid = document.getElementById("previewGrid");
+        const clientError = document.getElementById("clientError");
+        const eventForm = document.getElementById("eventForm");
+        const submitBtn = document.getElementById("submitBtn");
+
+        const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
+        const MAX_VIDEO_DURATION = 60;
+
+
+        function showError(message) {
+
+            clientError.textContent = message;
+            clientError.style.display = "block";
+
+        }
+
+
+        function clearError() {
+
+            clientError.textContent = "";
+            clientError.style.display = "none";
+
+        }
+
+
+        function createPreview(file) {
+
+            const item = document.createElement("div");
+
+            item.className = "preview-item";
+
+
+            const name = document.createElement("div");
+
+            name.className = "preview-name";
+
+            name.textContent = file.name;
+
+
+            if (file.type.startsWith("image/")) {
+
+                const img = document.createElement("img");
+
+                img.src = URL.createObjectURL(file);
+
+                item.appendChild(img);
+
+            }
+
+            else if (file.type.startsWith("video/")) {
+
+                const video = document.createElement("video");
+
+                video.src = URL.createObjectURL(file);
+
+                video.controls = true;
+
+                video.preload = "metadata";
+
+                video.addEventListener(
+                    "loadedmetadata",
+                    function () {
+
+                        if (video.duration > MAX_VIDEO_DURATION) {
+
+                            showError(
+                                file.name +
+                                " is longer than 60 seconds."
+                            );
+
+                        }
+
+                    }
+                );
+
+                item.appendChild(video);
+
+            }
+
+
+            item.appendChild(name);
+
+            previewGrid.appendChild(item);
+
+        }
+
+
+        mediaInput.addEventListener(
+            "change",
+            function () {
+
+                clearError();
+
+                previewGrid.innerHTML = "";
+
+                const files = Array.from(
+                    mediaInput.files
+                );
+
+
+                for (const file of files) {
+
+                    if (
+                        file.type.startsWith("video/")
+                        &&
+                        file.size > MAX_VIDEO_SIZE
+                    ) {
+
+                        showError(
+                            file.name +
+                            " is larger than 50 MB."
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (
+                        !file.type.startsWith("image/")
+                        &&
+                        !file.type.startsWith("video/")
+                    ) {
+
+                        showError(
+                            file.name +
+                            " is not a supported image or video."
+                        );
+
+                        return;
+
+                    }
+
+
+                    createPreview(file);
+
+                }
+
+            }
+        );
+
+
+        eventForm.addEventListener(
+            "submit",
+            function (event) {
+
+                clearError();
+
+
+                const startInput =
+                    document.getElementById("start_date");
+
+                const endInput =
+                    document.getElementById("end_date");
+
+
+                if (
+                    startInput.value &&
+                    endInput.value
+                ) {
+
+                    const start =
+                        new Date(startInput.value);
+
+                    const end =
+                        new Date(endInput.value);
+
+
+                    if (start >= end) {
+
+                        event.preventDefault();
+
+                        showError(
+                            "Start date must be before end date."
+                        );
+
+                        return;
+
+                    }
+
+                }
+
+
+                const files =
+                    Array.from(mediaInput.files);
+
+
+                for (const file of files) {
+
+                    if (
+                        file.type.startsWith("video/")
+                        &&
+                        file.size > MAX_VIDEO_SIZE
+                    ) {
+
+                        event.preventDefault();
+
+                        showError(
+                            file.name +
+                            " is larger than 50 MB."
+                        );
+
+                        return;
+
+                    }
+
+                }
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

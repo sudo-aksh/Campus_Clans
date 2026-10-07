@@ -1,13 +1,18 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Create Story - {{ clan.name }}</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -29,7 +34,7 @@
             background: white;
             border-radius: 16px;
             padding: 30px;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 5px 25px rgba(0,0,0,.08);
         }
 
         h1 {
@@ -48,8 +53,9 @@
             margin-bottom: 8px;
         }
 
+        select,
         textarea,
-        input[type="text"] {
+        input[type="file"] {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
@@ -60,24 +66,21 @@
         }
 
         textarea {
-            min-height: 180px;
+            min-height: 150px;
             resize: vertical;
         }
 
-        textarea:focus,
-        input[type="text"]:focus {
+        select:focus,
+        textarea:focus {
             border-color: #555;
         }
 
-        .file-box {
-            margin-bottom: 20px;
+        .section {
+            display: none;
         }
 
-        input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px dashed #bbb;
-            border-radius: 10px;
+        .caption-section {
+            display: none;
         }
 
         .hint {
@@ -85,6 +88,31 @@
             color: #777;
             margin-top: -12px;
             margin-bottom: 20px;
+        }
+
+        .error {
+            background: #ffe8e8;
+            color: #b00020;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .preview {
+            display: none;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #111;
+            margin-bottom: 20px;
+        }
+
+        .preview img,
+        .preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .actions {
@@ -113,9 +141,11 @@
         }
 
         .publish:hover {
-            opacity: 0.9;
+            opacity: .9;
         }
+
     </style>
+
 </head>
 
 <body>
@@ -124,52 +154,94 @@
 
     <div class="card">
 
-        <h1>Create Clan Story</h1>
+        <h1>
+            Create Clan Story
+        </h1>
 
         <div class="subtitle">
             {{ clan.name }}
         </div>
 
+        {% if error %}
+            <div class="error">
+                {{ error }}
+            </div>
+        {% endif %}
+
         <form
             method="POST"
             action="{% url 'create_clan_story' clan.id %}"
             enctype="multipart/form-data"
+            id="storyForm"
         >
 
             {% csrf_token %}
 
-            <label for="content">
-                Story
+
+            <!-- STORY TYPE -->
+
+            <label for="story_type">
+                Story Type
             </label>
 
-            <textarea
-                id="content"
-                name="content"
-                placeholder="Write something for your clan..."
-            ></textarea>
+            <select
+                id="story_type"
+                name="story_type"
+                required
+            >
 
-            <div class="hint">
-                You can write a blog/update or upload an image.
+                <option value="">
+                    Select story type
+                </option>
+
+                <option value="text">
+                    Text
+                </option>
+
+                <option value="image">
+                    Image
+                </option>
+
+                <option value="video">
+                    Video
+                </option>
+
+            </select>
+
+
+            <!-- TEXT -->
+
+            <div
+                class="section"
+                id="textSection"
+            >
+
+                <label for="text">
+                    Story Text
+                </label>
+
+                <textarea
+                    id="text"
+                    name="text"
+                    placeholder="Write something for your clan..."
+                ></textarea>
+
+                <div class="hint">
+                    Text stories remain visible for 10 seconds.
+                </div>
+
             </div>
 
 
-            <label for="caption">
-                Image Caption
-            </label>
+            <!-- IMAGE -->
 
-            <input
-                type="text"
-                id="caption"
-                name="caption"
-                maxlength="500"
-                placeholder="Write a caption for your image (optional)"
+            <div
+                class="section"
+                id="imageSection"
             >
 
-
-            <div class="file-box">
-
                 <label for="image">
-                    Image
+                    Story Image
                 </label>
 
                 <input
@@ -178,6 +250,83 @@
                     name="image"
                     accept="image/*"
                 >
+
+                <div class="hint">
+                    Image stories are displayed in a 16:9 viewer
+                    and remain visible for 10 seconds.
+                </div>
+
+
+                <div
+                    class="preview"
+                    id="imagePreviewBox"
+                >
+
+                    <img
+                        id="imagePreview"
+                        alt="Image preview"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- VIDEO -->
+
+            <div
+                class="section"
+                id="videoSection"
+            >
+
+                <label for="video">
+                    Story Video
+                </label>
+
+                <input
+                    type="file"
+                    id="video"
+                    name="video"
+                    accept="video/*"
+                >
+
+                <div class="hint">
+                    Maximum video length: 30 seconds.
+                </div>
+
+
+                <div
+                    class="preview"
+                    id="videoPreviewBox"
+                >
+
+                    <video
+                        id="videoPreview"
+                        controls
+                    ></video>
+
+                </div>
+
+            </div>
+
+
+            <!-- SHARED CAPTION -->
+
+            <div
+                class="caption-section"
+                id="captionSection"
+            >
+
+                <label for="caption">
+                    Caption
+                </label>
+
+                <textarea
+                    id="caption"
+                    name="caption"
+                    maxlength="1000"
+                    placeholder="Write a caption..."
+                ></textarea>
 
             </div>
 
@@ -206,5 +355,173 @@
 
 </div>
 
+
+<script>
+
+const storyType =
+    document.getElementById("story_type");
+
+const textSection =
+    document.getElementById("textSection");
+
+const imageSection =
+    document.getElementById("imageSection");
+
+const videoSection =
+    document.getElementById("videoSection");
+
+const captionSection =
+    document.getElementById("captionSection");
+
+const caption =
+    document.getElementById("caption");
+
+const imageInput =
+    document.getElementById("image");
+
+const videoInput =
+    document.getElementById("video");
+
+const imagePreviewBox =
+    document.getElementById("imagePreviewBox");
+
+const imagePreview =
+    document.getElementById("imagePreview");
+
+const videoPreviewBox =
+    document.getElementById("videoPreviewBox");
+
+const videoPreview =
+    document.getElementById("videoPreview");
+
+
+function updateSections() {
+
+    textSection.style.display = "none";
+    imageSection.style.display = "none";
+    videoSection.style.display = "none";
+
+    captionSection.style.display = "none";
+
+    imagePreviewBox.style.display = "none";
+    videoPreviewBox.style.display = "none";
+
+
+    if (storyType.value === "text") {
+
+        textSection.style.display = "block";
+
+        caption.value = "";
+
+    }
+
+
+    if (storyType.value === "image") {
+
+        imageSection.style.display = "block";
+
+        captionSection.style.display = "block";
+
+        caption.placeholder =
+            "Write a caption for your image...";
+
+    }
+
+
+    if (storyType.value === "video") {
+
+        videoSection.style.display = "block";
+
+        captionSection.style.display = "block";
+
+        caption.placeholder =
+            "Write a caption for your video...";
+
+    }
+
+}
+
+
+storyType.addEventListener(
+    "change",
+    updateSections
+);
+
+
+imageInput.addEventListener(
+    "change",
+    function () {
+
+        const file = this.files[0];
+
+        if (!file) {
+
+            imagePreviewBox.style.display =
+                "none";
+
+            return;
+        }
+
+        imagePreview.src =
+            URL.createObjectURL(file);
+
+        imagePreviewBox.style.display =
+            "block";
+    }
+);
+
+
+videoInput.addEventListener(
+    "change",
+    function () {
+
+        const file = this.files[0];
+
+        if (!file) {
+
+            videoPreviewBox.style.display =
+                "none";
+
+            return;
+        }
+
+        videoPreview.src =
+            URL.createObjectURL(file);
+
+        videoPreviewBox.style.display =
+            "block";
+
+
+        videoPreview.onloadedmetadata =
+            function () {
+
+                if (
+                    videoPreview.duration > 30
+                ) {
+
+                    alert(
+                        "Video must be 30 seconds or shorter."
+                    );
+
+                    videoInput.value = "";
+
+                    videoPreview.removeAttribute(
+                        "src"
+                    );
+
+                    videoPreview.load();
+
+                    videoPreviewBox.style.display =
+                        "none";
+                }
+
+            };
+
+    }
+);
+
+</script>
+
 </body>
+
 </html>

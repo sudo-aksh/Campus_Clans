@@ -1,0 +1,906 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Post - {{ clan.name }}</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f6f8;
+            color: #222;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+
+        .clan-name {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            resize: vertical;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: #555;
+        }
+
+        .section {
+            margin-top: 22px;
+        }
+
+        /* ---------------------------------------
+           ADD MEDIA BUTTON
+        --------------------------------------- */
+
+        .add-media-btn {
+            display: inline-block;
+            padding: 11px 18px;
+            border: none;
+            border-radius: 10px;
+            background: #222;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .add-media-btn:hover {
+            opacity: 0.9;
+        }
+
+        .media-input {
+            display: none;
+        }
+
+        .hint {
+            font-size: 13px;
+            color: #777;
+            margin-top: 8px;
+        }
+
+        /* ---------------------------------------
+           MEDIA PREVIEW
+        --------------------------------------- */
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .preview-item {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #eee;
+        }
+
+        .preview-item img,
+        .preview-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .media-type {
+            position: absolute;
+            left: 6px;
+            bottom: 6px;
+            padding: 4px 7px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 11px;
+        }
+
+        .remove-media {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 26px;
+            height: 26px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.75);
+            color: white;
+            cursor: pointer;
+            font-size: 17px;
+            line-height: 26px;
+            padding: 0;
+            z-index: 2;
+        }
+
+        .remove-media:hover {
+            background: #b00020;
+        }
+
+        .video-error {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #ffe5e5;
+            color: #b00020;
+            font-size: 14px;
+        }
+
+        /* ---------------------------------------
+           BUTTONS
+        --------------------------------------- */
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .cancel {
+            background: #e9e9e9;
+            color: #222;
+        }
+
+        .submit {
+            background: #222;
+            color: white;
+        }
+
+        .submit:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                margin: 20px auto;
+                padding: 12px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .preview-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="card">
+
+            <h1>Create Post</h1>
+
+            <div class="clan-name">
+                {{ clan.name }}
+            </div>
+
+
+            <form
+                method="POST"
+                action="{% url 'create_clan_post' clan.id %}"
+                enctype="multipart/form-data"
+                id="postForm"
+            >
+
+                {% csrf_token %}
+
+
+                <!-- POST CONTENT -->
+
+                <div class="section">
+
+                    <label for="content">
+                        Post
+                    </label>
+
+                    <textarea
+                        id="content"
+                        name="content"
+                        placeholder="Write something about your clan..."
+                    ></textarea>
+
+                </div>
+
+
+                <!-- MEDIA -->
+
+                <div class="section">
+
+                    <label>
+                        Images or Videos
+                    </label>
+
+                    <button
+                        type="button"
+                        class="add-media-btn"
+                        id="addMediaButton"
+                    >
+                        + Add Images or Videos
+                    </button>
+
+                    <input
+                        type="file"
+                        id="mediaInput"
+                        class="media-input"
+                        accept="image/*,video/*"
+                        multiple
+                    >
+
+                    <div class="hint">
+                        You can add multiple images and videos.
+                        Maximum video duration: 60 seconds.
+                    </div>
+
+                    <div
+                        id="videoError"
+                        class="video-error"
+                    ></div>
+
+                    <div
+                        id="mediaPreview"
+                        class="preview-grid"
+                    ></div>
+
+                </div>
+
+
+                <!-- BUTTONS -->
+
+                <div class="buttons">
+
+                    <a
+                        href="{% url 'clan_profile' clan.id %}"
+                        class="btn cancel"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="btn submit"
+                    >
+                        Publish Post
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        const addMediaButton =
+            document.getElementById("addMediaButton");
+
+        const mediaInput =
+            document.getElementById("mediaInput");
+
+        const mediaPreview =
+            document.getElementById("mediaPreview");
+
+        const videoError =
+            document.getElementById("videoError");
+
+        const postForm =
+            document.getElementById("postForm");
+
+
+        /*
+        =====================================================
+        MEDIA STORAGE
+        =====================================================
+
+        This array is the important part.
+
+        Every time the user selects more files,
+        they are ADDED to this array.
+
+        Existing files are NOT replaced.
+        */
+
+        let mediaFiles = [];
+
+
+        /*
+        =====================================================
+        ADD MEDIA BUTTON
+        =====================================================
+        */
+
+        addMediaButton.addEventListener(
+            "click",
+            function () {
+
+                mediaInput.click();
+
+            }
+        );
+
+
+        /*
+        =====================================================
+        MEDIA SELECTION
+        =====================================================
+        */
+
+        mediaInput.addEventListener(
+            "change",
+            async function () {
+
+                const selectedFiles =
+                    Array.from(mediaInput.files);
+
+                /*
+                Clear the actual input.
+
+                This allows the user to select
+                the same file again later if needed.
+                */
+
+                mediaInput.value = "";
+
+                videoError.style.display = "none";
+                videoError.textContent = "";
+
+
+                for (const file of selectedFiles) {
+
+                    /*
+                    -----------------------------------------
+                    IMAGE
+                    -----------------------------------------
+                    */
+
+                    if (file.type.startsWith("image/")) {
+
+                        mediaFiles.push({
+                            file: file,
+                            type: "image"
+                        });
+
+                        continue;
+                    }
+
+
+                    /*
+                    -----------------------------------------
+                    VIDEO
+                    -----------------------------------------
+                    */
+
+                    if (file.type.startsWith("video/")) {
+
+                        const valid =
+                            await validateVideo(file);
+
+                        if (!valid) {
+                            continue;
+                        }
+
+                        mediaFiles.push({
+                            file: file,
+                            type: "video"
+                        });
+
+                    }
+
+                }
+
+
+                renderMedia();
+
+            }
+        );
+
+
+        /*
+        =====================================================
+        VIDEO VALIDATION
+        =====================================================
+        */
+
+        function validateVideo(file) {
+
+            return new Promise(function (resolve) {
+
+                const video =
+                    document.createElement("video");
+
+                video.preload = "metadata";
+
+                const videoURL =
+                    URL.createObjectURL(file);
+
+
+                video.onloadedmetadata = function () {
+
+                    const duration =
+                        video.duration;
+
+                    URL.revokeObjectURL(videoURL);
+
+
+                    /*
+                    Invalid duration
+                    */
+
+                    if (
+                        !Number.isFinite(duration) ||
+                        duration <= 0
+                    ) {
+
+                        videoError.textContent =
+                            "Unable to determine the video duration.";
+
+                        videoError.style.display =
+                            "block";
+
+                        resolve(false);
+
+                        return;
+                    }
+
+
+                    /*
+                    Video too long
+                    */
+
+                    if (duration > 60) {
+
+                        videoError.textContent =
+                            "This video is " +
+                            Math.ceil(duration) +
+                            " seconds long. " +
+                            "The maximum allowed duration is 60 seconds.";
+
+                        videoError.style.display =
+                            "block";
+
+                        resolve(false);
+
+                        return;
+                    }
+
+
+                    resolve(true);
+
+                };
+
+
+                video.onerror = function () {
+
+                    URL.revokeObjectURL(videoURL);
+
+                    videoError.textContent =
+                        "Unable to read this video.";
+
+                    videoError.style.display =
+                        "block";
+
+                    resolve(false);
+
+                };
+
+
+                video.src = videoURL;
+
+            });
+
+        }
+
+
+        /*
+        =====================================================
+        RENDER MEDIA
+        =====================================================
+        */
+
+        function renderMedia() {
+
+            mediaPreview.innerHTML = "";
+
+
+            mediaFiles.forEach(
+                function (media, index) {
+
+                    const item =
+                        document.createElement("div");
+
+                    item.className =
+                        "preview-item";
+
+
+                    /*
+                    -----------------------------------------
+                    IMAGE PREVIEW
+                    -----------------------------------------
+                    */
+
+                    if (media.type === "image") {
+
+                        const image =
+                            document.createElement("img");
+
+                        image.src =
+                            URL.createObjectURL(
+                                media.file
+                            );
+
+                        image.alt =
+                            "Image preview";
+
+                        item.appendChild(image);
+
+
+                        const label =
+                            document.createElement("div");
+
+                        label.className =
+                            "media-type";
+
+                        label.textContent =
+                            "IMAGE";
+
+                        item.appendChild(label);
+
+                    }
+
+
+                    /*
+                    -----------------------------------------
+                    VIDEO PREVIEW
+                    -----------------------------------------
+                    */
+
+                    if (media.type === "video") {
+
+                        const video =
+                            document.createElement("video");
+
+                        video.src =
+                            URL.createObjectURL(
+                                media.file
+                            );
+
+                        video.controls = true;
+
+                        item.appendChild(video);
+
+
+                        const label =
+                            document.createElement("div");
+
+                        label.className =
+                            "media-type";
+
+                        label.textContent =
+                            "VIDEO";
+
+                        item.appendChild(label);
+
+                    }
+
+
+                    /*
+                    -----------------------------------------
+                    REMOVE BUTTON
+                    -----------------------------------------
+                    */
+
+                    const removeButton =
+                        document.createElement("button");
+
+                    removeButton.type =
+                        "button";
+
+                    removeButton.className =
+                        "remove-media";
+
+                    removeButton.textContent =
+                        "×";
+
+
+                    removeButton.addEventListener(
+                        "click",
+                        function () {
+
+                            mediaFiles.splice(
+                                index,
+                                1
+                            );
+
+                            renderMedia();
+
+                        }
+                    );
+
+
+                    item.appendChild(
+                        removeButton
+                    );
+
+
+                    mediaPreview.appendChild(
+                        item
+                    );
+
+                }
+            );
+
+        }
+
+
+        /*
+        =====================================================
+        SUBMIT
+        =====================================================
+        */
+
+        postForm.addEventListener(
+            "submit",
+            function (event) {
+
+                const content =
+                    document
+                        .getElementById("content")
+                        .value
+                        .trim();
+
+
+                /*
+                Prevent completely empty post
+                */
+
+                if (
+                    !content &&
+                    mediaFiles.length === 0
+                ) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please add some text, an image, or a video."
+                    );
+
+                    return;
+                }
+
+
+                /*
+                =================================================
+                CREATE FORM DATA FILE INPUTS
+                =================================================
+
+                The backend currently expects:
+
+                    images = multiple image files
+                    video  = video file
+
+                So before submitting, we create two
+                DataTransfer objects from mediaFiles.
+                */
+
+                const imageTransfer =
+                    new DataTransfer();
+
+                const videoTransfer =
+                    new DataTransfer();
+
+
+                mediaFiles.forEach(
+                    function (media) {
+
+                        if (
+                            media.type === "image"
+                        ) {
+
+                            imageTransfer.items.add(
+                                media.file
+                            );
+
+                        }
+
+                        if (
+                            media.type === "video"
+                        ) {
+
+                            videoTransfer.items.add(
+                                media.file
+                            );
+
+                        }
+
+                    }
+                );
+
+
+                /*
+                =================================================
+                CREATE HIDDEN IMAGE INPUT
+                =================================================
+                */
+
+                let imageInput =
+                    document.getElementById(
+                        "finalImages"
+                    );
+
+                if (!imageInput) {
+
+                    imageInput =
+                        document.createElement(
+                            "input"
+                        );
+
+                    imageInput.type =
+                        "file";
+
+                    imageInput.name =
+                        "images";
+
+                    imageInput.id =
+                        "finalImages";
+
+                    imageInput.multiple =
+                        true;
+
+                    imageInput.style.display =
+                        "none";
+
+                    postForm.appendChild(
+                        imageInput
+                    );
+
+                }
+
+
+                imageInput.files =
+                    imageTransfer.files;
+
+
+                /*
+                =================================================
+                CREATE HIDDEN VIDEO INPUTS
+                =================================================
+
+                Your current Django model supports only ONE
+                video per post.
+
+                Therefore this version allows multiple videos
+                to be selected in the UI, but submits only
+                one video.
+
+                If you want multiple videos saved in one post,
+                we should change the Django model to use a
+                ClanPostVideo model.
+                */
+
+                const existingVideoInputs =
+                    postForm.querySelectorAll(
+                        ".final-video-input"
+                    );
+
+                existingVideoInputs.forEach(
+                    function (input) {
+                        input.remove();
+                    }
+                );
+
+
+                if (
+                    videoTransfer.files.length > 0
+                ) {
+
+                    const videoInput =
+                        document.createElement(
+                            "input"
+                        );
+
+                    videoInput.type =
+                        "file";
+
+                    videoInput.name =
+                        "video";
+
+                    videoInput.className =
+                        "final-video-input";
+
+                    videoInput.style.display =
+                        "none";
+
+                    postForm.appendChild(
+                        videoInput
+                    );
+
+                    videoInput.files =
+                        new DataTransfer().files;
+
+                    const transfer =
+                        new DataTransfer();
+
+                    transfer.items.add(
+                        videoTransfer.files[0]
+                    );
+
+                    videoInput.files =
+                        transfer.files;
+
+                }
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

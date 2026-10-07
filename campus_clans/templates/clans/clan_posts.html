@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ clan.name }} - Posts | Campus Clans</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #222;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .navbar {
+            height: 65px;
+            background: white;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 35px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: #333;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .profile-btn {
+            background: #2563eb;
+            color: white !important;
+            padding: 9px 18px;
+            border-radius: 7px;
+        }
+
+        .profile-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 850px;
+            margin: 30px auto 60px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #2563eb;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            color: #777;
+            line-height: 1.5;
+        }
+
+        .create-post-btn {
+            display: inline-block;
+            margin-top: 16px;
+            background: #2563eb;
+            color: white;
+            padding: 10px 17px;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .create-post-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* =========================
+           POST CARD
+        ========================= */
+
+        .post {
+            background: white;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+
+        /* =========================
+           POST HEADER
+        ========================= */
+
+        .post-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .author-picture {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .author-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .author-info {
+            min-width: 0;
+        }
+
+        .author-name {
+            font-weight: 700;
+            color: #222;
+            overflow-wrap: anywhere;
+        }
+
+        .author-username {
+            color: #777;
+            font-size: 13px;
+            margin-top: 3px;
+            overflow-wrap: anywhere;
+        }
+
+        .post-date {
+            color: #888;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        /* =========================
+           CAPTION
+        ========================= */
+
+        .post-caption {
+            margin: 5px 0 18px;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.5;
+            color: #222;
+            overflow-wrap: anywhere;
+        }
+
+        /* =========================
+           SLIDER
+        ========================= */
+
+        .slider {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 12px;
+            background: #111;
+            touch-action: pan-y;
+        }
+
+        .slides {
+            display: flex;
+            width: 100%;
+            transition: transform 0.35s ease;
+        }
+
+        .slide {
+            min-width: 100%;
+            width: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #111;
+        }
+
+        /* TEXT SLIDE */
+
+        .text-slide {
+            min-height: 350px;
+            width: 100%;
+            padding: 45px;
+            background: #f8fafc;
+            color: #222;
+            text-align: center;
+            font-size: 21px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        /* IMAGE SLIDE */
+
+        .image-slide {
+            display: block;
+            width: 100%;
+            height: 550px;
+            object-fit: contain;
+            background: #111;
+        }
+
+        /* VIDEO SLIDE */
+
+        .video-slide {
+            display: block;
+            width: 100%;
+            height: 550px;
+            object-fit: contain;
+            background: #000;
+        }
+
+        /* =========================
+           SLIDER ARROWS
+        ========================= */
+
+        .slider-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.55);
+            color: white;
+            font-size: 25px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .slider-arrow:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .slider-arrow:active {
+            transform: translateY(-50%) scale(0.94);
+        }
+
+        .prev-btn {
+            left: 12px;
+        }
+
+        .next-btn {
+            right: 12px;
+        }
+
+        /* =========================
+           DOTS
+        ========================= */
+
+        .slider-dots {
+            position: absolute;
+            bottom: 12px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            z-index: 20;
+        }
+
+        .slider-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            border: none;
+            padding: 0;
+            background: rgba(255, 255, 255, 0.45);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .slider-dot.active {
+            background: white;
+            transform: scale(1.35);
+        }
+
+        /* =========================
+           MANAGEMENT
+        ========================= */
+
+        .post-management {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1px solid #eee;
+            flex-wrap: wrap;
+        }
+
+        .post-manage-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .edit-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .delete-btn {
+            background: #dc2626;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #b91c1c;
+        }
+
+        .delete-post-form {
+            margin: 0;
+        }
+
+        .edit-unavailable {
+            color: #777;
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        /* =========================
+           LIKE
+        ========================= */
+
+        .post-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-top: 1px solid #eee;
+            margin-top: 18px;
+            padding-top: 14px;
+        }
+
+        .post-like-form {
+            margin: 0;
+        }
+
+        .like-btn {
+            border: none;
+            background: #f3f4f6;
+            color: #333;
+            padding: 8px 13px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .like-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .like-btn.liked {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .like-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .like-count {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .like-count-button {
+            border: none;
+            background: transparent;
+            padding: 6px 0;
+            color: #777;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .like-count-button:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+
+        /* =========================
+           LIKES MODAL
+        ========================= */
+
+        .likes-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 5000;
+        }
+
+        .likes-modal.show {
+            display: flex;
+        }
+
+        .likes-modal-card {
+            width: 100%;
+            max-width: 430px;
+            max-height: 80vh;
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .likes-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .likes-modal-header h2 {
+            font-size: 19px;
+            margin: 0;
+        }
+
+        .likes-modal-close {
+            width: 34px;
+            height: 34px;
+            border: none;
+            border-radius: 50%;
+            background: #f3f4f6;
+            color: #333;
+            font-size: 21px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .likes-modal-close:hover {
+            background: #e5e7eb;
+        }
+
+        .likes-modal-body {
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        .like-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            text-decoration: none;
+            color: inherit;
+            transition: background 0.2s;
+        }
+
+        .like-user:hover {
+            background: #f8fafc;
+        }
+
+        .like-user-picture {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .like-user-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .like-user-info {
+            min-width: 0;
+        }
+
+        .like-user-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #222;
+            overflow-wrap: anywhere;
+        }
+
+        .like-user-username {
+            color: #777;
+            font-size: 12px;
+            margin-top: 3px;
+            overflow-wrap: anywhere;
+        }
+
+        .likes-loading {
+            padding: 30px 20px;
+            text-align: center;
+            color: #777;
+        }
+
+        .likes-empty {
+            padding: 30px 20px;
+            text-align: center;
+            color: #777;
+        }
+
+        .likes-error {
+            padding: 25px 20px;
+            text-align: center;
+            color: #dc2626;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           EMPTY
+        ========================= */
+
+        .empty-state {
+            background: white;
+            border-radius: 12px;
+            padding: 50px 25px;
+            text-align: center;
+            color: #888;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .empty-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state h2 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            line-height: 1.5;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 650px) {
+
+            .navbar {
+                padding: 0 15px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .nav-links {
+                gap: 10px;
+            }
+
+            .nav-links a:not(.profile-btn) {
+                display: none;
+            }
+
+            .container {
+                width: 95%;
+                margin-top: 20px;
+            }
+
+            .page-header {
+                padding: 18px;
+            }
+
+            .page-header h1 {
+                font-size: 23px;
+            }
+
+            .post {
+                padding: 15px;
+            }
+
+            .post-header {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .post-date {
+                white-space: normal;
+                margin-left: 60px;
+            }
+
+            .text-slide {
+                min-height: 300px;
+                padding: 30px 20px;
+                font-size: 18px;
+            }
+
+            .image-slide,
+            .video-slide {
+                height: 400px;
+            }
+
+            .slider-arrow {
+                width: 36px;
+                height: 36px;
+                font-size: 21px;
+            }
+
+            .prev-btn {
+                left: 8px;
+            }
+
+            .next-btn {
+                right: 8px;
+            }
+
+            .create-post-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .post-management {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .post-manage-btn {
+                width: 100%;
+            }
+
+            .delete-post-form {
+                width: 100%;
+            }
+
+            .edit-unavailable {
+                width: 100%;
+            }
+
+            .likes-modal {
+                padding: 10px;
+            }
+
+            .likes-modal-card {
+                max-height: 85vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <a href="{% url 'home' %}" class="logo">
+            Campus Clans
+        </a>
+
+        <div class="nav-links">
+
+            <a href="{% url 'home' %}">
+                Home
+            </a>
+
+            <a href="#">
+                Discover
+            </a>
+
+            <a href="#">
+                Events
+            </a>
+
+            <a href="#">
+                Clans
+            </a>
+
+            <a href="{% url 'profile' %}" class="profile-btn">
+                Profile
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <div class="container">
+
+        <div class="page-header">
+
+            <a href="{% url 'clan_profile' clan.id %}" class="back-link">
+                ← Back to {{ clan.name }}
+            </a>
+
+            <h1>
+                {{ clan.name }} Posts
+            </h1>
+
+            <p>
+                Posts shared by members of {{ clan.name }}
+            </p>
+
+            {% if can_manage_clan_content %}
+
+            <a href="{% url 'create_clan_post_page' clan.id %}" class="create-post-btn">
+                📝 Create Clan Post
+            </a>
+
+            {% endif %}
+
+        </div>
+
+
+        {% if posts %}
+
+        {% for post in posts %}
+
+        <article class="post">
+
+            <!-- =========================
+                 POST HEADER
+            ========================== -->
+
+            <div class="post-header">
+
+                <div class="author">
+
+                    <div class="author-picture">
+
+                        {% if post.author.profile_picture %}
+
+                        <img src="{{ post.author.profile_picture.url }}" alt="{{ post.author.name }}">
+
+                        {% else %}
+
+                        👤
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="author-info">
+
+                        <div class="author-name">
+                            {{ post.author.name }}
+                        </div>
+
+                        <div class="author-username">
+                            @{{ post.author.user.username }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="post-date">
+
+                    {{ post.created_at|date:"d M Y, h:i A" }}
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 CAPTION
+            ========================== -->
+
+            {% if post.content %}
+
+            <div class="post-caption">
+
+                {{ post.content }}
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- =========================
+                 SLIDER
+            ========================== -->
+
+            <div class="slider">
+
+                <div class="slides">
+
+                    <!-- TEXT SLIDE -->
+
+                    {% if post.text %}
+
+                    <div class="slide">
+
+                        <div class="text-slide">
+
+                            {{ post.text }}
+
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <!-- IMAGE SLIDES -->
+
+                    {% for post_image in post.images.all %}
+
+                    <div class="slide">
+
+                        <img src="{{ post_image.image.url }}" alt="Post image" class="image-slide" loading="lazy">
+
+                    </div>
+
+                    {% endfor %}
+
+
+                    <!-- VIDEO SLIDE -->
+
+                    {% if post.video %}
+
+                    <div class="slide">
+
+                        <video class="video-slide" controls preload="metadata" playsinline>
+
+                            <source src="{{ post.video.url }}" type="video/mp4">
+
+                            Your browser does not support video playback.
+
+                        </video>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ARROWS -->
+
+                <button type="button" class="slider-arrow prev-btn" aria-label="Previous slide">
+                    ‹
+                </button>
+
+                <button type="button" class="slider-arrow next-btn" aria-label="Next slide">
+                    ›
+                </button>
+
+
+                <!-- DOTS -->
+
+                <div class="slider-dots"></div>
+
+            </div>
+
+
+            <!-- =========================
+                 MANAGEMENT
+            ========================== -->
+
+            {% if can_manage_clan_content %}
+
+            <div class="post-management">
+
+                {% if post.id in editable_post_ids %}
+
+                <a href="{% url 'edit_clan_post' post.id %}" class="post-manage-btn edit-btn">
+                    Edit
+                </a>
+
+                {% else %}
+
+                <span class="edit-unavailable">
+                    Editing unavailable after 7 days
+                </span>
+
+                {% endif %}
+
+
+                <form method="POST" action="{% url 'delete_clan_post' post.id %}" class="delete-post-form"
+                    onsubmit="return confirm('Are you sure you want to delete this post?');">
+
+                    {% csrf_token %}
+
+                    <button type="submit" class="post-manage-btn delete-btn">
+                        Delete
+                    </button>
+
+                </form>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- =========================
+                 LIKE
+            ========================== -->
+
+            <div class="post-actions">
+
+                <form method="POST" action="{% url 'toggle_clan_post_like' post.id %}" class="post-like-form">
+
+                    {% csrf_token %}
+
+                    <button type="submit" class="like-btn {% if post.id in liked_post_ids %}liked{% endif %}">
+
+                        {% if post.id in liked_post_ids %}
+
+                        ❤️ Liked
+
+                        {% else %}
+
+                        ♡ Like
+
+                        {% endif %}
+
+                    </button>
+
+                </form>
+
+                {% if is_member %}
+
+                <button type="button" class="like-count like-count-button"
+                    data-likes-url="{% url 'clan_post_likes' post.id %}">
+                    ❤️ <span class="like-count-number">
+                        {{ post.likes.count }}
+                    </span>
+                </button>
+
+                {% else %}
+
+                <span class="like-count">
+                    ❤️ {{ post.likes.count }}
+                </span>
+
+                {% endif %}
+
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                📝
+            </div>
+
+            <h2>
+                No Posts Yet
+            </h2>
+
+            <p>
+                This clan hasn't shared any posts yet.
+            </p>
+
+            {% if can_manage_clan_content %}
+
+            <a href="{% url 'create_clan_post_page' clan.id %}" class="create-post-btn">
+                📝 Create the First Post
+            </a>
+
+            {% endif %}
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         LIKES MODAL
+    ====================================================== -->
+
+    {% if is_member %}
+
+    <div class="likes-modal" id="likesModal" aria-hidden="true">
+
+        <div class="likes-modal-card" role="dialog" aria-modal="true" aria-labelledby="likesModalTitle">
+
+            <div class="likes-modal-header">
+
+                <h2 id="likesModalTitle">
+                    Liked by
+                </h2>
+
+                <button type="button" class="likes-modal-close" id="likesModalClose" aria-label="Close">
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="likes-modal-body" id="likesModalBody">
+
+                <div class="likes-loading">
+                    Loading...
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <script>
+
+        /* =====================================================
+           SLIDER INITIALIZATION
+        ===================================================== */
+
+        document.querySelectorAll(".slider").forEach(function (slider) {
+
+            const slidesContainer =
+                slider.querySelector(".slides");
+
+            const slides =
+                slider.querySelectorAll(".slide");
+
+            const dotsContainer =
+                slider.querySelector(".slider-dots");
+
+            const previousButton =
+                slider.querySelector(".prev-btn");
+
+            const nextButton =
+                slider.querySelector(".next-btn");
+
+
+            if (slides.length === 0) {
+
+                slider.style.display = "none";
+
+                return;
+
+            }
+
+
+            let currentSlide = 0;
+
+
+            slider.dataset.currentSlide = "0";
+
+
+            /* =================================================
+               CREATE DOTS
+            ================================================= */
+
+            slides.forEach(function (slide, index) {
+
+                const dot =
+                    document.createElement("button");
+
+                dot.type = "button";
+
+                dot.className = "slider-dot";
+
+                dot.setAttribute(
+                    "aria-label",
+                    "Go to slide " + (index + 1)
+                );
+
+                if (index === 0) {
+
+                    dot.classList.add("active");
+
+                }
+
+                dot.addEventListener(
+                    "click",
+                    function () {
+
+                        goToSlide(index);
+
+                    }
+                );
+
+                dotsContainer.appendChild(dot);
+
+            });
+
+
+            const dots =
+                dotsContainer.querySelectorAll(".slider-dot");
+
+
+            /* =================================================
+               UPDATE SLIDER
+            ================================================= */
+
+            function updateSlider() {
+
+                slider.dataset.currentSlide =
+                    String(currentSlide);
+
+
+                slidesContainer.style.transform =
+                    "translateX(-" +
+                    (currentSlide * 100) +
+                    "%)";
+
+
+                dots.forEach(
+                    function (dot, index) {
+
+                        dot.classList.toggle(
+                            "active",
+                            index === currentSlide
+                        );
+
+                    }
+                );
+
+
+                if (currentSlide === 0) {
+
+                    previousButton.style.display =
+                        "none";
+
+                } else {
+
+                    previousButton.style.display =
+                        "flex";
+
+                }
+
+
+                if (
+                    currentSlide ===
+                    slides.length - 1
+                ) {
+
+                    nextButton.style.display =
+                        "none";
+
+                } else {
+
+                    nextButton.style.display =
+                        "flex";
+
+                }
+
+
+                /* Pause all videos except current slide */
+
+                slides.forEach(
+                    function (slide, index) {
+
+                        const video =
+                            slide.querySelector("video");
+
+                        if (
+                            video &&
+                            index !== currentSlide
+                        ) {
+
+                            video.pause();
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            /* =================================================
+               GO TO SLIDE
+            ================================================= */
+
+            function goToSlide(index) {
+
+                if (
+                    index < 0 ||
+                    index >= slides.length
+                ) {
+
+                    return;
+
+                }
+
+                currentSlide = index;
+
+                updateSlider();
+
+            }
+
+
+            /* Make functions available to slider */
+
+            slider.sliderGoTo =
+                goToSlide;
+
+
+            updateSlider();
+
+        });
+
+
+        /* =====================================================
+           ARROW CONTROL
+        ===================================================== */
+
+        document.querySelectorAll(
+            ".slider"
+        ).forEach(function (slider) {
+
+            const previousButton =
+                slider.querySelector(".prev-btn");
+
+            const nextButton =
+                slider.querySelector(".next-btn");
+
+
+            previousButton.addEventListener(
+                "click",
+                function () {
+
+                    changeSlide(
+                        slider,
+                        -1
+                    );
+
+                }
+            );
+
+
+            nextButton.addEventListener(
+                "click",
+                function () {
+
+                    changeSlide(
+                        slider,
+                        1
+                    );
+
+                }
+            );
+
+        });
+
+
+        function changeSlide(
+            slider,
+            direction
+        ) {
+
+            const slides =
+                slider.querySelectorAll(".slide");
+
+
+            let currentSlide =
+                parseInt(
+                    slider.dataset.currentSlide ||
+                    "0"
+                );
+
+
+            let nextSlide =
+                currentSlide + direction;
+
+
+            if (nextSlide < 0) {
+
+                nextSlide = 0;
+
+            }
+
+
+            if (
+                nextSlide >=
+                slides.length
+            ) {
+
+                nextSlide =
+                    slides.length - 1;
+
+            }
+
+
+            if (
+                typeof slider.sliderGoTo ===
+                "function"
+            ) {
+
+                slider.sliderGoTo(
+                    nextSlide
+                );
+
+            }
+
+        }
+
+
+        /* =====================================================
+           TOUCH / SWIPE SUPPORT
+        ===================================================== */
+
+        document.querySelectorAll(
+            ".slider"
+        ).forEach(function (slider) {
+
+            let startX = 0;
+
+            let endX = 0;
+
+
+            slider.addEventListener(
+                "touchstart",
+                function (event) {
+
+                    startX =
+                        event.touches[0].clientX;
+
+                },
+                {
+                    passive: true
+                }
+            );
+
+
+            slider.addEventListener(
+                "touchend",
+                function (event) {
+
+                    endX =
+                        event.changedTouches[0].clientX;
+
+
+                    const difference =
+                        startX - endX;
+
+
+                    if (
+                        Math.abs(difference) < 50
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    if (difference > 0) {
+
+                        changeSlide(
+                            slider,
+                            1
+                        );
+
+                    } else {
+
+                        changeSlide(
+                            slider,
+                            -1
+                        );
+
+                    }
+
+                },
+                {
+                    passive: true
+                }
+            );
+
+        });
+
+
+        /* =====================================================
+           LIKE AJAX
+        ===================================================== */
+
+        document.querySelectorAll(
+            ".post-like-form"
+        ).forEach(function (form) {
+
+            form.addEventListener(
+                "submit",
+                async function (event) {
+
+                    event.preventDefault();
+
+
+                    const button =
+                        form.querySelector(".like-btn");
+
+
+                    const postActions =
+                        form.closest(".post-actions");
+
+
+                    const countElement =
+                        postActions.querySelector(
+                            ".like-count"
+                        );
+
+
+                    if (button.disabled) {
+
+                        return;
+
+                    }
+
+
+                    button.disabled = true;
+
+
+                    const csrfInput =
+                        form.querySelector(
+                            'input[name="csrfmiddlewaretoken"]'
+                        );
+
+
+                    if (!csrfInput) {
+
+                        console.error(
+                            "CSRF token not found."
+                        );
+
+                        button.disabled = false;
+
+                        return;
+
+                    }
+
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                form.action,
+                                {
+                                    method: "POST",
+
+                                    headers: {
+                                        "X-CSRFToken":
+                                            csrfInput.value,
+
+                                        "X-Requested-With":
+                                            "XMLHttpRequest",
+
+                                        "Accept":
+                                            "application/json"
+                                    },
+
+                                    credentials:
+                                        "same-origin"
+                                }
+                            );
+
+
+                        let data;
+
+
+                        try {
+
+                            data =
+                                await response.json();
+
+                        } catch (error) {
+
+                            throw new Error(
+                                "Server returned an invalid response."
+                            );
+
+                        }
+
+
+                        if (
+                            !response.ok ||
+                            !data.success
+                        ) {
+
+                            throw new Error(
+                                data.error ||
+                                "Unable to like post."
+                            );
+
+                        }
+
+
+                        if (data.liked) {
+
+                            button.classList.add(
+                                "liked"
+                            );
+
+                            button.innerHTML =
+                                "❤️ Liked";
+
+                        } else {
+
+                            button.classList.remove(
+                                "liked"
+                            );
+
+                            button.innerHTML =
+                                "♡ Like";
+
+                        }
+
+
+                        /*
+                         * Update the visible like count.
+                         */
+
+                        if (
+                            countElement
+                        ) {
+
+                            if (
+                                countElement.classList.contains(
+                                    "like-count-button"
+                                )
+                            ) {
+
+                                const number =
+                                    countElement.querySelector(
+                                        ".like-count-number"
+                                    );
+
+                                if (number) {
+
+                                    number.textContent =
+                                        data.like_count;
+
+                                }
+
+                            } else {
+
+                                countElement.textContent =
+                                    "❤️ " +
+                                    data.like_count;
+
+                            }
+
+                        }
+
+
+                    } catch (error) {
+
+                        console.error(
+                            "Like error:",
+                            error
+                        );
+
+
+                        alert(
+                            error.message ||
+                            "Something went wrong. Please try again."
+                        );
+
+                    } finally {
+
+                        button.disabled = false;
+
+                    }
+
+                }
+            );
+
+        });
+
+
+        /* =====================================================
+           LIKES MODAL
+        ===================================================== */
+
+        const likesModal =
+            document.getElementById(
+                "likesModal"
+            );
+
+
+        const likesModalBody =
+            document.getElementById(
+                "likesModalBody"
+            );
+
+
+        const likesModalClose =
+            document.getElementById(
+                "likesModalClose"
+            );
+
+
+        /* =====================================================
+           OPEN MODAL
+        ===================================================== */
+
+        function openLikesModal() {
+
+            if (!likesModal) {
+
+                return;
+
+            }
+
+
+            likesModal.classList.add(
+                "show"
+            );
+
+
+            likesModal.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+
+            document.body.style.overflow =
+                "hidden";
+
+        }
+
+
+        /* =====================================================
+           CLOSE MODAL
+        ===================================================== */
+
+        function closeLikesModal() {
+
+            if (!likesModal) {
+
+                return;
+
+            }
+
+
+            likesModal.classList.remove(
+                "show"
+            );
+
+
+            likesModal.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+
+            document.body.style.overflow =
+                "";
+
+        }
+
+
+        if (likesModalClose) {
+
+            likesModalClose.addEventListener(
+                "click",
+                closeLikesModal
+            );
+
+        }
+
+
+        /* Close when clicking outside */
+
+        if (likesModal) {
+
+            likesModal.addEventListener(
+                "click",
+                function (event) {
+
+                    if (
+                        event.target ===
+                        likesModal
+                    ) {
+
+                        closeLikesModal();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* Close with Escape */
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Escape" &&
+                    likesModal &&
+                    likesModal.classList.contains(
+                        "show"
+                    )
+                ) {
+
+                    closeLikesModal();
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           LOAD LIKERS
+        ===================================================== */
+
+        document.querySelectorAll(
+            ".like-count-button"
+        ).forEach(function (button) {
+
+            button.addEventListener(
+                "click",
+                async function () {
+
+                    const url =
+                        button.dataset.likesUrl;
+
+
+                    if (!likesModal) {
+
+                        return;
+
+                    }
+
+
+                    likesModalBody.innerHTML = `
+                        <div class="likes-loading">
+                            Loading...
+                        </div>
+                    `;
+
+
+                    openLikesModal();
+
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                url,
+                                {
+                                    method: "GET",
+
+                                    headers: {
+                                        "X-Requested-With":
+                                            "XMLHttpRequest",
+
+                                        "Accept":
+                                            "application/json"
+                                    },
+
+                                    credentials:
+                                        "same-origin"
+                                }
+                            );
+
+
+                        let data;
+
+
+                        try {
+
+                            data =
+                                await response.json();
+
+                        } catch (error) {
+
+                            throw new Error(
+                                "Server returned an invalid response."
+                            );
+
+                        }
+
+
+                        if (
+                            !response.ok ||
+                            !data.success
+                        ) {
+
+                            throw new Error(
+                                data.error ||
+                                "Unable to load likes."
+                            );
+
+                        }
+
+
+                        /* No likes */
+
+                        if (
+                            !data.likes ||
+                            data.likes.length === 0
+                        ) {
+
+                            likesModalBody.innerHTML = `
+                                <div class="likes-empty">
+                                    No one has liked this post yet.
+                                </div>
+                            `;
+
+                            return;
+
+                        }
+
+
+                        likesModalBody.innerHTML =
+                            "";
+
+
+                        /* =================================================
+                           CREATE EACH LIKER
+                        ================================================= */
+
+                        data.likes.forEach(
+                            function (user) {
+
+                                const userLink =
+                                    document.createElement(
+                                        "a"
+                                    );
+
+
+                                userLink.className =
+                                    "like-user";
+
+
+                                /*
+                                 * This URL is returned
+                                 * directly by the backend.
+                                 */
+
+                                userLink.href =
+                                    user.profile_url;
+
+
+                                /* PROFILE PICTURE */
+
+                                const picture =
+                                    document.createElement(
+                                        "div"
+                                    );
+
+
+                                picture.className =
+                                    "like-user-picture";
+
+
+                                if (
+                                    user.profile_picture
+                                ) {
+
+                                    const image =
+                                        document.createElement(
+                                            "img"
+                                        );
+
+
+                                    image.src =
+                                        user.profile_picture;
+
+
+                                    image.alt =
+                                        user.name;
+
+
+                                    image.loading =
+                                        "lazy";
+
+
+                                    picture.appendChild(
+                                        image
+                                    );
+
+                                } else {
+
+                                    picture.textContent =
+                                        "👤";
+
+                                }
+
+
+                                /* USER INFORMATION */
+
+                                const info =
+                                    document.createElement(
+                                        "div"
+                                    );
+
+
+                                info.className =
+                                    "like-user-info";
+
+
+                                const name =
+                                    document.createElement(
+                                        "div"
+                                    );
+
+
+                                name.className =
+                                    "like-user-name";
+
+
+                                name.textContent =
+                                    user.name;
+
+
+                                const username =
+                                    document.createElement(
+                                        "div"
+                                    );
+
+
+                                username.className =
+                                    "like-user-username";
+
+
+                                username.textContent =
+                                    "@" +
+                                    user.username;
+
+
+                                info.appendChild(
+                                    name
+                                );
+
+
+                                info.appendChild(
+                                    username
+                                );
+
+
+                                userLink.appendChild(
+                                    picture
+                                );
+
+
+                                userLink.appendChild(
+                                    info
+                                );
+
+
+                                likesModalBody.appendChild(
+                                    userLink
+                                );
+
+                            }
+                        );
+
+
+                    } catch (error) {
+
+                        console.error(
+                            "Likes error:",
+                            error
+                        );
+
+
+                        likesModalBody.innerHTML = `
+                            <div class="likes-error">
+                                ${escapeHtml(
+                            error.message ||
+                            "Unable to load likes."
+                        )}
+                            </div>
+                        `;
+
+                    }
+
+                }
+            );
+
+        });
+
+
+        /* =====================================================
+           HTML ESCAPE
+        ===================================================== */
+
+        function escapeHtml(value) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.textContent =
+                value;
+
+
+            return div.innerHTML;
+
+        }
+
+    </script>
+
+</body>
+
+</html>

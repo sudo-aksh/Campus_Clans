@@ -1,0 +1,3752 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Events | Campus Clans</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                Arial, sans-serif;
+            background: #f5f7fa;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1180px;
+            margin: auto;
+            padding: 38px 24px 60px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .top-bar h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: #222;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================================================
+           EVENT CARD
+        ========================================================= */
+
+        .event-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .event-main-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .event-title {
+            margin: 0 0 8px;
+            font-size: 23px;
+        }
+
+        .event-description {
+            color: #666;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .event-date {
+            text-align: right;
+            white-space: nowrap;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .event-date strong {
+            display: block;
+            color: #222;
+            margin-bottom: 4px;
+        }
+
+        .event-meta {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .participant-type {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            background: #eef2ff;
+            color: #3949ab;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .event-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #2457a6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .event-link:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================================================
+           ACTIONS
+        ========================================================= */
+
+        .event-actions {
+            margin-top: 18px;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-block;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #222;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: #eef2f7;
+            color: #222;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: #e4f8e8;
+            color: #176b2c;
+        }
+
+        .status-info {
+            background: #e8f1ff;
+            color: #2457a6;
+        }
+
+        .status-warning {
+            background: #fff4d6;
+            color: #8a6500;
+        }
+
+        .status-danger {
+            background: #fde8e8;
+            color: #a61b1b;
+        }
+
+        /* =========================================================
+           REPRESENTATIVE SUMMARY
+        ========================================================= */
+
+        .representative-box {
+            margin-top: 14px;
+            padding: 14px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+        }
+
+        .representative-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #555;
+            margin-bottom: 9px;
+        }
+
+        .representative-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .representative-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #fff;
+            border: 1px solid #dfe3e8;
+            color: #333;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .edit-window {
+            margin-top: 10px;
+            color: #777;
+            font-size: 12px;
+        }
+
+        /* =========================================================
+           EMPTY
+        ========================================================= */
+
+        .empty {
+            background: #fff;
+            padding: 40px;
+            border-radius: 16px;
+            text-align: center;
+            color: #666;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        /* =========================================================
+           MEDIA SLIDER
+        ========================================================= */
+
+        .event-media-slider {
+            position: relative;
+            width: 100%;
+            max-width: 760px;
+            margin: 24px auto 0;
+            overflow: hidden;
+            border-radius: 18px;
+            background: #090b10;
+            border: 1px solid rgba(15, 23, 42, .08);
+            box-shadow: 0 14px 40px rgba(15, 23, 42, .16);
+        }
+
+        .event-media-track {
+            display: flex;
+            width: 100%;
+            transition: transform .38s cubic-bezier(.22, .61, .36, 1);
+        }
+
+        .event-media-slide {
+            position: relative;
+            min-width: 100%;
+            width: 100%;
+            height: 410px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #090b10;
+            overflow: hidden;
+        }
+
+        .event-media-content {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            user-select: none;
+        }
+
+        .event-video-shell {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #050608;
+        }
+
+        .event-video-shell video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            background: #050608;
+        }
+
+        .event-video-controls {
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 10px;
+            border: 1px solid rgba(255,255,255,.14);
+            border-radius: 13px;
+            background: rgba(8,10,15,.78);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            opacity: 0;
+            transform: translateY(6px);
+            pointer-events: none;
+            transition: opacity .2s, transform .2s;
+            z-index: 8;
+        }
+
+        .event-video-shell:hover .event-video-controls,
+        .event-video-shell:focus-within .event-video-controls,
+        .event-video-shell.controls-visible .event-video-controls {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .event-video-control {
+            width: 36px;
+            height: 36px;
+            border: 0;
+            border-radius: 9px;
+            background: rgba(255,255,255,.10);
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background .18s, transform .18s;
+        }
+
+        .event-video-control:hover {
+            background: rgba(255,255,255,.20);
+            transform: translateY(-1px);
+        }
+
+        .event-video-spacer {
+            flex: 1;
+        }
+
+        .event-video-hint {
+            color: rgba(255,255,255,.7);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 0 4px;
+        }
+
+        .event-slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border: 1px solid rgba(255,255,255,.18);
+            border-radius: 50%;
+            background: rgba(10,12,18,.68);
+            color: #fff;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+            line-height: 1;
+            backdrop-filter: blur(10px);
+            transition: background .2s, transform .2s;
+        }
+
+        .event-slider-btn:hover {
+            background: rgba(10,12,18,.9);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .event-slider-prev {
+            left: 14px;
+        }
+
+        .event-slider-next {
+            right: 14px;
+        }
+
+        .event-slider-dots {
+            position: absolute;
+            left: 50%;
+            bottom: 14px;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 10px;
+            border-radius: 20px;
+            background: rgba(8,10,15,.62);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .event-slider-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.45);
+            cursor: pointer;
+            transition: width .2s, background .2s;
+        }
+
+        .event-slider-dot.active {
+            width: 22px;
+            background: #fff;
+        }
+
+        .event-media-count {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            z-index: 9;
+            padding: 6px 9px;
+            border-radius: 999px;
+            color: #fff;
+            background: rgba(8,10,15,.60);
+            backdrop-filter: blur(10px);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* =========================================================
+           MODAL
+        ========================================================= */
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .58);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 99990;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .member-modal {
+            width: 100%;
+            max-width: 620px;
+            max-height: 90vh;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 25px 70px rgba(0,0,0,.25);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .modal-header p {
+            margin: 6px 0 0;
+            color: #777;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border: 0;
+            border-radius: 9px;
+            background: #f1f3f5;
+            cursor: pointer;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .modal-body {
+            padding: 18px 22px;
+            overflow-y: auto;
+        }
+
+        .selection-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 14px;
+            padding: 11px 13px;
+            border-radius: 10px;
+            background: #f7f9fc;
+            border: 1px solid #e5e7eb;
+            font-size: 13px;
+        }
+
+        .selection-count {
+            font-weight: 700;
+        }
+
+        .member-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .member-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: .18s ease;
+        }
+
+        .member-option:hover {
+            background: #f8fafc;
+        }
+
+        .member-option.selected {
+            border-color: #222;
+            background: #f5f5f5;
+        }
+
+        .member-option input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .member-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #e9edf3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #555;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .member-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .member-details {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .member-name {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .member-role {
+            margin-top: 3px;
+            color: #777;
+            font-size: 12px;
+        }
+
+        .modal-footer {
+            padding: 16px 22px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* =========================================================
+           TOAST
+        ========================================================= */
+
+        .ajax-toast {
+            position: fixed;
+            right: 25px;
+            bottom: 25px;
+            z-index: 99999;
+            padding: 14px 20px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            transform: translateY(15px);
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .ajax-toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .ajax-toast.success {
+            background: #16a34a;
+        }
+
+        .ajax-toast.error {
+            background: #dc2626;
+        }
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media(max-width: 800px) {
+
+            .event-media-slide {
+                height: 340px;
+            }
+
+            .event-slider-btn {
+                width: 40px;
+                height: 40px;
+            }
+
+        }
+
+        @media(max-width: 700px) {
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .top-bar {
+                align-items: flex-start;
+                gap: 15px;
+                flex-direction: column;
+            }
+
+            .event-header {
+                flex-direction: column;
+            }
+
+            .event-date {
+                text-align: left;
+            }
+
+            .event-media-slide {
+                height: 260px;
+            }
+
+            .event-video-controls {
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+            }
+
+            .event-video-control {
+                width: 34px;
+                height: 34px;
+            }
+
+            .event-video-hint {
+                display: none;
+            }
+
+            .event-media-count {
+                top: 10px;
+                right: 10px;
+            }
+
+            .ajax-toast {
+                left: 15px;
+                right: 15px;
+                bottom: 15px;
+                text-align: center;
+            }
+
+            .modal-overlay {
+                padding: 10px;
+            }
+
+            .member-modal {
+                max-height: 94vh;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- =========================================================
+         HEADER
+    ========================================================= -->
+
+    <div class="top-bar">
+
+        <h1>
+            Events
+        </h1>
+
+        <a href="{% url 'home' %}" class="back-btn">
+            ← Back to Home
+        </a>
+
+    </div>
+
+
+    <!-- =========================================================
+         EVENTS
+    ========================================================= -->
+
+    {% if events %}
+
+        {% for event in events %}
+
+            <div
+                class="event-card"
+
+                data-event-id="{{ event.id }}"
+
+                data-participant-type="{{ event.participant_type }}"
+
+                data-participate-student-url="{% url 'participate_in_event' event_id=event.id participation_type='student' %}"
+
+                data-participate-clan-url="{% url 'participate_in_event' event_id=event.id participation_type='clan' %}"
+
+                data-cancel-url="{% url 'cancel_event_participation' event_id=event.id %}"
+
+                data-student-participating="{% if event.id in student_participated_event_ids %}true{% else %}false{% endif %}"
+
+                data-clan-participating="{% if event.id in clan_participated_event_ids %}true{% else %}false{% endif %}"
+
+                data-has-clan="{% if my_clan %}true{% else %}false{% endif %}"
+
+                data-can-clan="{% if my_clan and is_clan_leader and not is_my_clan_suspended %}true{% else %}false{% endif %}"
+
+                data-clan-suspended="{% if is_my_clan_suspended %}true{% else %}false{% endif %}"
+
+
+                data-clan-members-url="{% url 'event_clan_members' event_id=event.id %}"
+
+                data-save-clan-members-url="{% url 'save_event_clan_members' event_id=event.id %}"
+
+                data-selection-editable="{% if event.clan_selection_editable %}true{% else %}false{% endif %}"
+
+                data-clan-selection-locked="{% if event.clan_selection_editable %}false{% else %}true{% endif %}"
+            >
+
+
+                <!-- =================================================
+                     EVENT HEADER
+                ================================================= -->
+
+                <div class="event-header">
+
+
+                    <div class="event-main-info">
+
+                        <h2 class="event-title">
+                            {{ event.name }}
+                        </h2>
+
+                        <p class="event-description">
+                            {{ event.description }}
+                        </p>
+
+                    </div>
+
+
+                    <div class="event-date">
+
+                        {% if event.start_date %}
+
+                            <strong>
+                                Starts
+                            </strong>
+
+                            {{ event.start_date|date:"d M Y, h:i A" }}
+
+                            <br><br>
+
+                        {% endif %}
+
+
+                        <strong>
+                            Ends
+                        </strong>
+
+                        {{ event.end_date|date:"d M Y, h:i A" }}
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- =================================================
+                     MEDIA SLIDER
+                ================================================= -->
+
+                {% if event.media.all %}
+
+                    <div class="event-media-slider">
+
+                        <div class="event-media-track">
+
+                            {% for media in event.media.all %}
+
+                                <div class="event-media-slide">
+
+
+                                    {% if media.media_type == "image" %}
+
+                                        <img
+                                            src="{{ media.file.url }}"
+                                            alt="{{ event.name }}"
+                                            class="event-media-content"
+                                            loading="lazy"
+                                        >
+
+                                    {% elif media.media_type == "video" %}
+
+                                        <div class="event-video-shell">
+
+                                            <video
+                                                class="event-media-video"
+                                                preload="metadata"
+                                                playsinline
+                                            >
+
+                                                <source src="{{ media.file.url }}">
+
+                                                Your browser does not support the video tag.
+
+                                            </video>
+
+
+                                            <div class="event-video-controls">
+
+                                                <button
+                                                    type="button"
+                                                    class="event-video-control video-play"
+                                                    aria-label="Play video"
+                                                    title="Play"
+                                                >
+                                                    ▶
+                                                </button>
+
+
+                                                <button
+                                                    type="button"
+                                                    class="event-video-control video-mute"
+                                                    aria-label="Mute video"
+                                                    title="Mute"
+                                                >
+                                                    🔊
+                                                </button>
+
+
+                                                <span class="event-video-spacer"></span>
+
+                                                <span class="event-video-hint">
+                                                    Video
+                                                </span>
+
+
+                                                <button
+                                                    type="button"
+                                                    class="event-video-control video-fullscreen"
+                                                    aria-label="Fullscreen"
+                                                    title="Fullscreen"
+                                                >
+                                                    ⛶
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
+                                    {% endif %}
+
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="event-slider-btn event-slider-prev"
+                            aria-label="Previous media"
+                        >
+                            ‹
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="event-slider-btn event-slider-next"
+                            aria-label="Next media"
+                        >
+                            ›
+                        </button>
+
+
+                        <div class="event-slider-dots">
+
+                            {% for media in event.media.all %}
+
+                                <span
+                                    class="event-slider-dot {% if forloop.first %}active{% endif %}"
+                                    data-slide="{{ forloop.counter0 }}"
+                                    role="button"
+                                    tabindex="0"
+                                    aria-label="Go to media {{ forloop.counter }}"
+                                ></span>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="event-media-count">
+
+                            <span class="event-current-media">
+                                1
+                            </span>
+
+                            /
+
+                            <span class="event-total-media">
+                                {{ event.media.all|length }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- =================================================
+                     PARTICIPANT TYPE
+                ================================================= -->
+
+                <div class="event-meta">
+
+                    <span class="participant-type">
+
+                        {% if event.participant_type == "clan" %}
+
+                            Clan Participation
+
+                        {% elif event.participant_type == "student" %}
+
+                            Individual Participation
+
+                        {% else %}
+
+                            Clan + Individual Participation
+
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+
+                <!-- =================================================
+                     EVENT LINK
+                ================================================= -->
+
+                {% if event.link %}
+
+                    <a
+                        href="{{ event.link }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="event-link"
+                    >
+                        Open Event Link →
+                    </a>
+
+                {% endif %}
+
+
+                <!-- =================================================
+                     ACTIONS
+                ================================================= -->
+
+                <div class="event-actions">
+
+
+                    <!-- =================================================
+                         INDIVIDUAL PARTICIPATING
+                    ================================================= -->
+
+                    {% if event.id in student_participated_event_ids %}
+
+
+                        <div class="action-row">
+
+                            <span class="status status-success">
+
+                                ✓ You are participating as an individual
+
+                            </span>
+
+
+                            <button
+                                type="button"
+                                class="btn btn-danger ajax-cancel"
+                            >
+                                Cancel Participation
+                            </button>
+
+                        </div>
+
+
+                    <!-- =================================================
+                         CLAN PARTICIPATING
+                    ================================================= -->
+
+                    {% elif event.id in clan_participated_event_ids %}
+
+
+                        <div class="action-row">
+
+                            <span class="status status-success">
+
+                                ✓ Your clan is participating
+
+                            </span>
+
+
+                            {% if is_clan_leader %}
+
+                                <button
+                                    type="button"
+                                    class="btn btn-secondary ajax-edit-members"
+                                >
+                                    Edit Representatives
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    class="btn btn-danger ajax-cancel"
+                                >
+                                    Cancel Participation
+                                </button>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- REPRESENTATIVES -->
+
+                        <div class="representative-box">
+
+                            <div class="representative-title">
+
+                                Members representing your clan
+
+                            </div>
+
+
+                            <div class="representative-list">
+
+                                {% for member in event.clan_event_representatives %}
+
+                                    <span class="representative-chip">
+
+                                        {{ member.name }}
+
+                                    </span>
+
+                                {% empty %}
+
+                                    <span style="color:#777;font-size:13px;">
+                                        No representatives selected.
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            {% if event.clan_selection_editable %}
+
+                                <div class="edit-window">
+
+                                    You can edit the representatives until
+                                    24 hours before the event ends.
+
+                                </div>
+
+                            {% else %}
+
+                                <div class="edit-window">
+
+                                    Representative selection is now locked.
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                    <!-- =================================================
+                         NOT PARTICIPATING
+                    ================================================= -->
+
+                    {% else %}
+
+
+                        {% if event.participant_type == "both" %}
+
+                            <div
+                                class="status status-info"
+                                style="margin-bottom:12px;"
+                            >
+
+                                Choose one way to participate.
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- INDIVIDUAL -->
+
+                        {% if event.participant_type == "student" or event.participant_type == "both" %}
+
+                            <button
+                                type="button"
+                                class="btn btn-primary ajax-participate"
+                                data-type="student"
+                            >
+                                Participate as Individual
+                            </button>
+
+                        {% endif %}
+
+
+                        <!-- CLAN -->
+
+                        {% if event.participant_type == "clan" or event.participant_type == "both" %}
+
+
+                            {% if not my_clan %}
+
+                                <div
+                                    class="status status-warning"
+                                    style="margin-top:10px;"
+                                >
+
+                                    Join a clan to participate as a clan.
+
+                                </div>
+
+
+                            {% elif not is_clan_leader %}
+
+                                <div
+                                    class="status status-info"
+                                    style="margin-top:10px;"
+                                >
+
+                                    Only the clan leader or co-leader can
+                                    participate as a clan.
+
+                                </div>
+
+
+                            {% elif is_my_clan_suspended %}
+
+                                <div
+                                    class="status status-warning"
+                                    style="margin-top:10px;"
+                                >
+
+                                    Your clan is currently suspended.
+
+                                </div>
+
+
+                            {% else %}
+
+                                <button
+                                    type="button"
+                                    class="btn btn-primary ajax-participate"
+                                    data-type="clan"
+                                    style="margin-top:10px;"
+                                >
+                                    Participate as Clan
+                                </button>
+
+                            {% endif %}
+
+
+                        {% endif %}
+
+
+                    {% endif %}
+
+
+                </div>
+
+
+            </div>
+
+        {% endfor %}
+
+
+    {% else %}
+
+
+        <div class="empty">
+
+            <h2>
+                No upcoming events
+            </h2>
+
+            <p>
+                There are currently no active or upcoming events.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+
+</div>
+
+
+<!-- =============================================================
+     MEMBER SELECTION MODAL
+============================================================= -->
+
+<div
+    id="member-selection-modal"
+    class="modal-overlay"
+    aria-hidden="true"
+>
+
+
+    <div class="member-modal">
+
+
+        <div class="modal-header">
+
+            <div>
+
+                <h2 id="member-modal-title">
+                    Select Clan Representatives
+                </h2>
+
+                <p>
+                    Select the members who will represent your clan
+                    in this event.
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="modal-close"
+                id="member-modal-close"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+
+            <div class="selection-info">
+
+                <span>
+                    Selected members
+                </span>
+
+                <span class="selection-count">
+                    <span id="selected-member-count">0</span>
+                    selected
+                </span>
+
+            </div>
+
+
+            <div
+                id="member-list"
+                class="member-list"
+            >
+
+                <!-- Members inserted by JavaScript -->
+
+            </div>
+
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                type="button"
+                class="btn btn-secondary"
+                id="member-modal-cancel"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                type="button"
+                class="btn btn-primary"
+                id="save-members-btn"
+            >
+                Confirm Representatives
+            </button>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!-- =============================================================
+     AJAX TOAST
+============================================================= -->
+
+<div
+    id="ajax-toast"
+    class="ajax-toast"
+></div>
+
+<script>
+
+/* =============================================================
+   CSRF
+============================================================= */
+
+function getCookie(name) {
+
+    let cookieValue = null;
+
+    if (document.cookie && document.cookie !== "") {
+
+        const cookies = document.cookie.split(";");
+
+        for (let cookie of cookies) {
+
+            cookie = cookie.trim();
+
+            if (
+                cookie.substring(
+                    0,
+                    name.length + 1
+                ) === name + "="
+            ) {
+
+                cookieValue = decodeURIComponent(
+                    cookie.substring(
+                        name.length + 1
+                    )
+                );
+
+                break;
+            }
+        }
+    }
+
+    return cookieValue;
+}
+
+
+const csrftoken = getCookie("csrftoken");
+
+
+/* =============================================================
+   TOAST
+============================================================= */
+
+let toastTimer = null;
+
+
+function showToast(message, success = true) {
+
+    const toast =
+        document.getElementById("ajax-toast");
+
+    if (!toast) {
+        return;
+    }
+
+    toast.textContent = message;
+
+    toast.classList.remove(
+        "success",
+        "error",
+        "show"
+    );
+
+    toast.classList.add(
+        success ? "success" : "error"
+    );
+
+    requestAnimationFrame(() => {
+        toast.classList.add("show");
+    });
+
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2500);
+}
+
+
+/* =============================================================
+   BUTTON CREATOR
+============================================================= */
+
+function createButton(text, className) {
+
+    const button =
+        document.createElement("button");
+
+    button.type = "button";
+
+    button.className = className;
+
+    button.textContent = text;
+
+    return button;
+}
+
+
+/* =============================================================
+   MEMBER SELECTION STATE
+============================================================= */
+
+let activeEventCard = null;
+
+let activeParticipationType = null;
+
+let availableClanMembers = [];
+
+let selectedMemberIds = new Set();
+
+
+/* =============================================================
+   UPDATE SAVE BUTTON STATE
+============================================================= */
+
+function updateSaveButtonState() {
+
+    const saveButton =
+        document.getElementById(
+            "save-members-btn"
+        );
+
+    if (!saveButton) {
+        return;
+    }
+
+    /*
+     * Enable the button only when at least
+     * one member has been selected.
+     */
+
+    saveButton.disabled =
+        selectedMemberIds.size === 0;
+}
+
+
+/* =============================================================
+   OPEN MEMBER MODAL
+============================================================= */
+
+async function openMemberSelection(
+    card,
+    editMode = false
+) {
+
+    activeEventCard = card;
+    activeParticipationType = "clan";
+
+    const modal = document.getElementById("member-selection-modal");
+    const memberList = document.getElementById("member-list");
+    const saveButton = document.getElementById("save-members-btn");
+
+    if (!modal || !memberList || !saveButton) {
+        console.error("Member selection modal elements are missing.");
+        return;
+    }
+
+    const url = card.dataset.clanMembersUrl;
+
+    if (!url) {
+        showToast("Clan member URL is missing.", false);
+        return;
+    }
+
+    memberList.innerHTML = `
+        <div style="padding:25px;text-align:center;color:#777;">
+            Loading clan members...
+        </div>
+    `;
+
+    saveButton.disabled = true;
+    saveButton.textContent = "Loading...";
+
+    modal.classList.add("show");
+    modal.setAttribute("aria-hidden", "false");
+
+    try {
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "Accept": "application/json"
+            },
+            credentials: "same-origin"
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            showToast(
+                data.message || "Unable to load clan members.",
+                false
+            );
+            closeMemberModal();
+            return;
+        }
+
+        availableClanMembers = data.members || [];
+
+        selectedMemberIds = new Set(
+            (data.selected_member_ids || []).map(id => String(id))
+        );
+
+        /*
+         * The backend is authoritative about the 24-hour lock.
+         *
+         * A late join has no existing participation yet, so the
+         * modal must remain selectable once so representatives can
+         * be confirmed. After confirmation the backend locks them.
+         */
+        const editingLocked = data.editing_locked === true;
+        const hasExistingSelection = selectedMemberIds.size > 0;
+
+        card.dataset.selectionEditable =
+            editingLocked ? "false" : "true";
+
+        card.dataset.clanSelectionLocked =
+            editingLocked ? "true" : "false";
+
+        renderMemberList();
+
+        /*
+         * Existing participation inside the final 24 hours:
+         * display members but do not allow editing.
+         *
+         * New late participation:
+         * no selected members yet, so allow the leader to make the
+         * mandatory initial selection. The save endpoint will lock it.
+         */
+        if (editingLocked && hasExistingSelection) {
+            document
+                .querySelectorAll("#member-list input[type='checkbox']")
+                .forEach(checkbox => {
+                    checkbox.disabled = true;
+                });
+
+            saveButton.disabled = true;
+            saveButton.textContent = "Representatives Locked";
+
+            const notice = document.createElement("div");
+            notice.style.cssText =
+                "margin-top:12px;padding:10px;border-radius:8px;" +
+                "background:#fff4d6;color:#8a6500;font-size:13px;";
+            notice.textContent =
+                "Representative selection is locked because the event ends within 24 hours.";
+            memberList.appendChild(notice);
+
+            return;
+        }
+
+        saveButton.textContent = "Confirm Representatives";
+        updateSaveButtonState();
+
+    } catch (error) {
+        console.error("Member loading error:", error);
+        showToast("Unable to load clan members.", false);
+        closeMemberModal();
+    }
+}
+
+
+/* =============================================================
+   RENDER MEMBER LIST
+============================================================= */
+
+function renderMemberList() {
+
+    const memberList =
+        document.getElementById(
+            "member-list"
+        );
+
+
+    if (!memberList) {
+        return;
+    }
+
+
+    memberList.innerHTML = "";
+
+
+    if (!availableClanMembers.length) {
+
+        memberList.innerHTML = `
+            <div style="
+                padding:25px;
+                text-align:center;
+                color:#777;
+            ">
+                No clan members found.
+            </div>
+        `;
+
+        updateSelectedCount();
+
+        updateSaveButtonState();
+
+        return;
+    }
+
+
+    availableClanMembers.forEach(member => {
+
+        const memberId =
+            String(member.id);
+
+
+        const selected =
+            selectedMemberIds.has(
+                memberId
+            );
+
+
+        const label =
+            document.createElement(
+                "label"
+            );
+
+
+        label.className =
+            "member-option";
+
+
+        if (selected) {
+
+            label.classList.add(
+                "selected"
+            );
+        }
+
+
+        const checkbox =
+            document.createElement(
+                "input"
+            );
+
+
+        checkbox.type =
+            "checkbox";
+
+
+        checkbox.value =
+            memberId;
+
+
+        checkbox.checked =
+            selected;
+
+
+        checkbox.addEventListener(
+            "change",
+            function () {
+
+                if (checkbox.checked) {
+
+                    selectedMemberIds.add(
+                        memberId
+                    );
+
+                    label.classList.add(
+                        "selected"
+                    );
+
+                } else {
+
+                    selectedMemberIds.delete(
+                        memberId
+                    );
+
+                    label.classList.remove(
+                        "selected"
+                    );
+                }
+
+
+                /*
+                 * Update count.
+                 */
+
+                updateSelectedCount();
+
+
+                /*
+                 * Enable/disable confirm
+                 * button immediately.
+                 */
+
+                updateSaveButtonState();
+            }
+        );
+
+
+        /* =====================================================
+           AVATAR
+        ===================================================== */
+
+        const avatar =
+            document.createElement(
+                "div"
+            );
+
+
+        avatar.className =
+            "member-avatar";
+
+
+        if (member.profile_pic) {
+
+            const img =
+                document.createElement(
+                    "img"
+                );
+
+
+            img.src =
+                member.profile_pic;
+
+
+            img.alt =
+                member.name || "Member";
+
+
+            avatar.appendChild(
+                img
+            );
+
+        } else {
+
+            avatar.textContent =
+                member.name
+                    ? member.name
+                        .charAt(0)
+                        .toUpperCase()
+                    : "?";
+        }
+
+
+        /* =====================================================
+           DETAILS
+        ===================================================== */
+
+        const details =
+            document.createElement(
+                "div"
+            );
+
+
+        details.className =
+            "member-details";
+
+
+        const name =
+            document.createElement(
+                "div"
+            );
+
+
+        name.className =
+            "member-name";
+
+
+        name.textContent =
+            member.name;
+
+
+        const role =
+            document.createElement(
+                "div"
+            );
+
+
+        role.className =
+            "member-role";
+
+
+        role.textContent =
+            member.role
+                ? member.role.replace(
+                    "_",
+                    " "
+                )
+                : "Member";
+
+
+        details.appendChild(
+            name
+        );
+
+
+        details.appendChild(
+            role
+        );
+
+
+        /* =====================================================
+           BUILD MEMBER OPTION
+        ===================================================== */
+
+        label.appendChild(
+            checkbox
+        );
+
+
+        label.appendChild(
+            avatar
+        );
+
+
+        label.appendChild(
+            details
+        );
+
+
+        memberList.appendChild(
+            label
+        );
+
+    });
+
+
+    updateSelectedCount();
+
+    updateSaveButtonState();
+}
+
+
+/* =============================================================
+   SELECTED COUNT
+============================================================= */
+
+function updateSelectedCount() {
+
+    const count =
+        document.getElementById(
+            "selected-member-count"
+        );
+
+
+    if (count) {
+
+        count.textContent =
+            selectedMemberIds.size;
+    }
+}
+
+
+/* =============================================================
+   CLOSE MODAL
+============================================================= */
+
+function closeMemberModal() {
+
+    const modal =
+        document.getElementById(
+            "member-selection-modal"
+        );
+
+
+    if (!modal) {
+        return;
+    }
+
+
+    modal.classList.remove(
+        "show"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    activeEventCard = null;
+
+    activeParticipationType = null;
+
+    availableClanMembers = [];
+
+    selectedMemberIds =
+        new Set();
+
+
+    /*
+     * Reset confirm button.
+     */
+
+    const saveButton =
+        document.getElementById(
+            "save-members-btn"
+        );
+
+
+    if (saveButton) {
+        saveButton.disabled = true;
+    }
+
+
+    /*
+     * Reset count.
+     */
+
+    updateSelectedCount();
+}
+
+
+/* =============================================================
+   SAVE CLAN REPRESENTATIVES
+============================================================= */
+
+async function saveClanRepresentatives() {
+
+    const card = activeEventCard;
+
+    if (!card) {
+        showToast("No event selected.", false);
+        return;
+    }
+
+    if (selectedMemberIds.size === 0) {
+        showToast("Select at least one clan member.", false);
+        return;
+    }
+
+    const url = card.dataset.saveClanMembersUrl;
+
+    if (!url) {
+        showToast("Representative save URL is missing.", false);
+        return;
+    }
+
+    const saveButton = document.getElementById("save-members-btn");
+
+    if (saveButton) {
+        saveButton.disabled = true;
+        saveButton.textContent = "Saving...";
+    }
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrftoken,
+                "X-Requested-With": "XMLHttpRequest",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            credentials: "same-origin",
+            body: JSON.stringify({
+                member_ids: Array.from(selectedMemberIds)
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            showToast(
+                data.message || "Unable to save representatives.",
+                false
+            );
+
+            if (saveButton) {
+                saveButton.disabled = false;
+                saveButton.textContent = "Confirm Representatives";
+            }
+            return;
+        }
+
+        /*
+         * The save endpoint may return representatives. If it does not,
+         * build them from the members already loaded in the modal.
+         */
+        let representatives = data.representatives || [];
+
+        if (!representatives.length) {
+            representatives = availableClanMembers
+                .filter(member =>
+                    selectedMemberIds.has(String(member.id))
+                )
+                .map(member => ({
+                    id: member.id,
+                    name: member.name
+                }));
+        }
+
+        card.dataset.clanParticipating = "true";
+
+        /*
+         * Critical late-join behavior:
+         *
+         * If the backend says the selection is locked, update the card
+         * immediately so the Edit Representatives button disappears
+         * without a page reload.
+         */
+        if (data.editing_locked === true) {
+            card.dataset.selectionEditable = "false";
+            card.dataset.clanSelectionLocked = "true";
+        } else {
+            card.dataset.selectionEditable = "true";
+            card.dataset.clanSelectionLocked = "false";
+        }
+
+        closeMemberModal();
+
+        renderClanParticipating(
+            card,
+            representatives
+        );
+
+        showToast(
+            data.editing_locked
+                ? "Clan participation confirmed. Representatives are now locked."
+                : (data.message || "Clan representatives saved successfully."),
+            true
+        );
+
+    } catch (error) {
+        console.error("Representative save error:", error);
+
+        showToast(
+            "Something went wrong. Please try again.",
+            false
+        );
+
+        if (saveButton) {
+            saveButton.disabled = false;
+            saveButton.textContent = "Confirm Representatives";
+        }
+    }
+}
+
+
+/* =============================================================
+   RENDER CLAN PARTICIPATING STATE
+============================================================= */
+
+function renderClanParticipating(
+    card,
+    representatives = []
+) {
+
+    const actions =
+        card.querySelector(
+            ".event-actions"
+        );
+
+
+    if (!actions) {
+        return;
+    }
+
+
+    actions.innerHTML = "";
+
+
+    const row =
+        document.createElement(
+            "div"
+        );
+
+
+    row.className =
+        "action-row";
+
+
+    const status =
+        document.createElement(
+            "span"
+        );
+
+
+    status.className =
+        "status status-success";
+
+
+    status.textContent =
+        "✓ Your clan is participating";
+
+
+    row.appendChild(
+        status
+    );
+
+
+    /*
+     * Edit representatives.
+     */
+
+    if (
+        card.dataset.selectionEditable ===
+        "true" &&
+        card.dataset.clanSelectionLocked !==
+        "true"
+    ) {
+
+        const editButton =
+            createButton(
+                "Edit Representatives",
+                "btn btn-secondary ajax-edit-members"
+            );
+
+
+        row.appendChild(
+            editButton
+        );
+    }
+
+
+    /*
+     * Cancel participation.
+     */
+
+    const cancelButton =
+        createButton(
+            "Cancel Participation",
+            "btn btn-danger ajax-cancel"
+        );
+
+
+    row.appendChild(
+        cancelButton
+    );
+
+
+    actions.appendChild(
+        row
+    );
+
+
+    /*
+     * Representatives box.
+     */
+
+    const representativeBox =
+        document.createElement(
+            "div"
+        );
+
+
+    representativeBox.className =
+        "representative-box";
+
+
+    const title =
+        document.createElement(
+            "div"
+        );
+
+
+    title.className =
+        "representative-title";
+
+
+    title.textContent =
+        "Members representing your clan";
+
+
+    representativeBox.appendChild(
+        title
+    );
+
+
+    const list =
+        document.createElement(
+            "div"
+        );
+
+
+    list.className =
+        "representative-list";
+
+
+    representatives.forEach(
+        member => {
+
+            const chip =
+                document.createElement(
+                    "span"
+                );
+
+
+            chip.className =
+                "representative-chip";
+
+
+            chip.textContent =
+                member.name;
+
+
+            list.appendChild(
+                chip
+            );
+        }
+    );
+
+
+    representativeBox.appendChild(
+        list
+    );
+
+
+    const editWindow =
+        document.createElement(
+            "div"
+        );
+
+
+    editWindow.className =
+        "edit-window";
+
+
+    if (
+        card.dataset.selectionEditable ===
+        "true"
+    ) {
+
+        editWindow.textContent =
+            "You can edit the representatives until 24 hours before the event ends.";
+
+    } else {
+
+        editWindow.textContent =
+            "Representative selection is now locked.";
+    }
+
+
+    representativeBox.appendChild(
+        editWindow
+    );
+
+
+    actions.appendChild(
+        representativeBox
+    );
+}
+
+
+/* =============================================================
+   RENDER DEFAULT ACTIONS
+============================================================= */
+
+function renderDefaultActions(card) {
+
+    const actions =
+        card.querySelector(
+            ".event-actions"
+        );
+
+
+    if (!actions) {
+        return;
+    }
+
+
+    actions.innerHTML = "";
+
+
+    const participantType =
+        card.dataset.participantType;
+
+
+    const hasClan =
+        card.dataset.hasClan ===
+        "true";
+
+
+    const canClan =
+        card.dataset.canClan ===
+        "true";
+
+
+    const clanSuspended =
+        card.dataset.clanSuspended ===
+        "true";
+
+
+    /*
+     * BOTH
+     */
+
+    if (
+        participantType ===
+        "both"
+    ) {
+
+        const chooseMessage =
+            document.createElement(
+                "div"
+            );
+
+
+        chooseMessage.className =
+            "status status-info";
+
+
+        chooseMessage.style.marginBottom =
+            "12px";
+
+
+        chooseMessage.textContent =
+            "Choose one way to participate.";
+
+
+        actions.appendChild(
+            chooseMessage
+        );
+    }
+
+
+    /*
+     * INDIVIDUAL
+     */
+
+    if (
+        participantType === "student" ||
+        participantType === "both"
+    ) {
+
+        const studentButton =
+            createButton(
+                "Participate as Individual",
+                "btn btn-primary ajax-participate"
+            );
+
+
+        studentButton.dataset.type =
+            "student";
+
+
+        actions.appendChild(
+            studentButton
+        );
+    }
+
+
+    /*
+     * CLAN
+     */
+
+    if (
+        participantType === "clan" ||
+        participantType === "both"
+    ) {
+
+        if (canClan) {
+
+            const clanButton =
+                createButton(
+                    "Participate as Clan",
+                    "btn btn-primary ajax-participate"
+                );
+
+
+            clanButton.dataset.type =
+                "clan";
+
+
+            clanButton.style.marginTop =
+                "10px";
+
+
+            actions.appendChild(
+                clanButton
+            );
+
+        } else {
+
+            const message =
+                document.createElement(
+                    "div"
+                );
+
+
+            message.className =
+                "status";
+
+
+            message.style.marginTop =
+                "10px";
+
+
+            if (!hasClan) {
+
+                message.classList.add(
+                    "status-warning"
+                );
+
+
+                message.textContent =
+                    "Join a clan to participate as a clan.";
+
+            }
+
+            else if (clanSuspended) {
+
+                message.classList.add(
+                    "status-warning"
+                );
+
+
+                message.textContent =
+                    "Your clan is currently suspended.";
+
+            }
+
+            else {
+
+                message.classList.add(
+                    "status-info"
+                );
+
+
+                message.textContent =
+                    "Only the clan leader or co-leader can participate as a clan.";
+            }
+
+
+            actions.appendChild(
+                message
+            );
+        }
+    }
+}
+
+
+/* =============================================================
+   PARTICIPATE
+============================================================= */
+
+async function participateInEvent(button) {
+
+    const card =
+        button.closest(
+            ".event-card"
+        );
+
+
+    if (!card) {
+        return;
+    }
+
+
+    const participationType =
+        button.dataset.type;
+
+
+    /*
+     * Clan participation:
+     *
+     * Open representative selection first.
+     */
+
+    if (
+        participationType ===
+        "clan"
+    ) {
+
+        openMemberSelection(
+            card,
+            false
+        );
+
+        return;
+    }
+
+
+    /*
+     * Individual participation.
+     */
+
+    const url =
+        card.dataset.participateStudentUrl;
+
+
+    if (!url) {
+
+        showToast(
+            "Participation URL is missing.",
+            false
+        );
+
+        return;
+    }
+
+
+    button.disabled = true;
+
+
+    try {
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method: "POST",
+
+                    headers: {
+
+                        "X-CSRFToken":
+                            csrftoken,
+
+                        "X-Requested-With":
+                            "XMLHttpRequest",
+
+                        "Accept":
+                            "application/json"
+                    },
+
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            showToast(
+                data.message ||
+                "Something went wrong.",
+                false
+            );
+
+
+            button.disabled =
+                false;
+
+
+            return;
+        }
+
+
+        card.dataset.studentParticipating =
+            "true";
+
+
+        renderStudentParticipating(
+            card
+        );
+
+
+        showToast(
+            data.message ||
+            "Participation successful.",
+            true
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Participation error:",
+            error
+        );
+
+
+        showToast(
+            "Something went wrong. Please try again.",
+            false
+        );
+
+
+        button.disabled =
+            false;
+    }
+}
+
+
+/* =============================================================
+   STUDENT PARTICIPATING
+============================================================= */
+
+function renderStudentParticipating(card) {
+
+    const actions =
+        card.querySelector(
+            ".event-actions"
+        );
+
+
+    if (!actions) {
+        return;
+    }
+
+
+    actions.innerHTML = "";
+
+
+    const row =
+        document.createElement(
+            "div"
+        );
+
+
+    row.className =
+        "action-row";
+
+
+    const status =
+        document.createElement(
+            "span"
+        );
+
+
+    status.className =
+        "status status-success";
+
+
+    status.textContent =
+        "✓ You are participating as an individual";
+
+
+    const cancelButton =
+        createButton(
+            "Cancel Participation",
+            "btn btn-danger ajax-cancel"
+        );
+
+
+    row.appendChild(
+        status
+    );
+
+
+    row.appendChild(
+        cancelButton
+    );
+
+
+    actions.appendChild(
+        row
+    );
+}
+
+
+/* =============================================================
+   CANCEL PARTICIPATION
+============================================================= */
+
+async function cancelParticipation(button) {
+
+    const card =
+        button.closest(
+            ".event-card"
+        );
+
+
+    if (!card) {
+        return;
+    }
+
+
+    const url =
+        card.dataset.cancelUrl;
+
+
+    if (!url) {
+
+        showToast(
+            "Cancellation URL is missing.",
+            false
+        );
+
+        return;
+    }
+
+
+    button.disabled = true;
+
+
+    try {
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method: "POST",
+
+                    headers: {
+
+                        "X-CSRFToken":
+                            csrftoken,
+
+                        "X-Requested-With":
+                            "XMLHttpRequest",
+
+                        "Accept":
+                            "application/json"
+                    },
+
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            showToast(
+                data.message ||
+                "Something went wrong.",
+                false
+            );
+
+
+            button.disabled =
+                false;
+
+
+            return;
+        }
+
+
+        if (
+            data.participation_type ===
+            "student"
+        ) {
+
+            card.dataset.studentParticipating =
+                "false";
+
+        } else {
+
+            card.dataset.clanParticipating =
+                "false";
+        }
+
+
+        renderDefaultActions(
+            card
+        );
+
+
+        showToast(
+            data.message ||
+            "Participation cancelled.",
+            true
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Cancellation error:",
+            error
+        );
+
+
+        showToast(
+            "Something went wrong. Please try again.",
+            false
+        );
+
+
+        button.disabled =
+            false;
+    }
+}
+
+
+/* =============================================================
+   CLICK HANDLER
+============================================================= */
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        /*
+         * PARTICIPATE
+         */
+
+        const participateButton =
+            event.target.closest(
+                ".ajax-participate"
+            );
+
+
+        if (participateButton) {
+
+            participateInEvent(
+                participateButton
+            );
+
+            return;
+        }
+
+
+        /*
+         * EDIT REPRESENTATIVES
+         */
+
+        const editButton =
+            event.target.closest(
+                ".ajax-edit-members"
+            );
+
+
+        if (editButton) {
+
+            const card =
+                editButton.closest(
+                    ".event-card"
+                );
+
+
+            if (
+                card &&
+                card.dataset.selectionEditable ===
+                "true" &&
+                card.dataset.clanSelectionLocked !==
+                "true"
+            ) {
+
+                openMemberSelection(
+                    card,
+                    true
+                );
+
+            } else {
+
+                showToast(
+                    "Representative selection is locked because the event is within 24 hours.",
+                    false
+                );
+            }
+
+
+            return;
+        }
+
+
+        /*
+         * CANCEL
+         */
+
+        const cancelButton =
+            event.target.closest(
+                ".ajax-cancel"
+            );
+
+
+        if (cancelButton) {
+
+            cancelParticipation(
+                cancelButton
+            );
+
+            return;
+        }
+    }
+);
+
+
+/* =============================================================
+   MODAL BUTTONS
+============================================================= */
+
+const memberModalClose =
+    document.getElementById(
+        "member-modal-close"
+    );
+
+
+if (memberModalClose) {
+
+    memberModalClose.addEventListener(
+        "click",
+        closeMemberModal
+    );
+}
+
+
+const memberModalCancel =
+    document.getElementById(
+        "member-modal-cancel"
+    );
+
+
+if (memberModalCancel) {
+
+    memberModalCancel.addEventListener(
+        "click",
+        closeMemberModal
+    );
+}
+
+
+const saveMembersButton =
+    document.getElementById(
+        "save-members-btn"
+    );
+
+
+if (saveMembersButton) {
+
+    saveMembersButton.addEventListener(
+        "click",
+        saveClanRepresentatives
+    );
+}
+
+
+/* =============================================================
+   CLICK OUTSIDE MODAL
+============================================================= */
+
+const memberSelectionModal =
+    document.getElementById(
+        "member-selection-modal"
+    );
+
+
+if (memberSelectionModal) {
+
+    memberSelectionModal.addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target ===
+                this
+            ) {
+
+                closeMemberModal();
+            }
+        }
+    );
+}
+
+
+/* =============================================================
+   ESC
+============================================================= */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            closeMemberModal();
+        }
+    }
+);
+
+</script>
+
+<script>
+
+/* =============================================================
+   EVENT MEDIA SLIDERS + CUSTOM VIDEO CONTROLS
+============================================================= */
+
+function initializeEventMediaSliders() {
+
+    document
+        .querySelectorAll(".event-media-slider")
+        .forEach(function(slider) {
+
+            /*
+             * Prevent initializing the same slider twice.
+             */
+
+            if (slider.dataset.sliderInitialized === "true") {
+                return;
+            }
+
+            slider.dataset.sliderInitialized = "true";
+
+
+            const track =
+                slider.querySelector(
+                    ".event-media-track"
+                );
+
+
+            const slides =
+                slider.querySelectorAll(
+                    ".event-media-slide"
+                );
+
+
+            const prev =
+                slider.querySelector(
+                    ".event-slider-prev"
+                );
+
+
+            const next =
+                slider.querySelector(
+                    ".event-slider-next"
+                );
+
+
+            const dots =
+                slider.querySelectorAll(
+                    ".event-slider-dot"
+                );
+
+
+            const current =
+                slider.querySelector(
+                    ".event-current-media"
+                );
+
+
+            /*
+             * If the slider structure is incomplete,
+             * don't crash the rest of the page.
+             */
+
+            if (!track || !slides.length) {
+
+                console.warn(
+                    "Event media slider is missing track or slides.",
+                    slider
+                );
+
+                return;
+            }
+
+
+            let index = 0;
+
+
+            /* =================================================
+               SHOW SLIDE
+            ================================================= */
+
+            function show(i) {
+
+                if (i < 0) {
+
+                    i =
+                        slides.length - 1;
+                }
+
+
+                if (
+                    i >= slides.length
+                ) {
+
+                    i = 0;
+                }
+
+
+                index = i;
+
+
+                /*
+                 * Move slider.
+                 */
+
+                track.style.transform =
+                    `translateX(-${i * 100}%)`;
+
+
+                /*
+                 * Update dots.
+                 */
+
+                dots.forEach(
+                    function(dot, number) {
+
+                        dot.classList.toggle(
+                            "active",
+                            number === i
+                        );
+
+                    }
+                );
+
+
+                /*
+                 * Update current number.
+                 */
+
+                if (current) {
+
+                    current.textContent =
+                        i + 1;
+                }
+
+
+                /*
+                 * Pause videos that are
+                 * not currently visible.
+                 */
+
+                slides.forEach(
+                    function(slide, number) {
+
+                        if (number === i) {
+                            return;
+                        }
+
+
+                        const video =
+                            slide.querySelector(
+                                "video"
+                            );
+
+
+                        if (video) {
+
+                            video.pause();
+                        }
+
+                    }
+                );
+            }
+
+
+            /* =================================================
+               PREVIOUS
+            ================================================= */
+
+            if (prev) {
+
+                prev.addEventListener(
+                    "click",
+                    function(event) {
+
+                        event.preventDefault();
+
+                        event.stopPropagation();
+
+                        show(index - 1);
+                    }
+                );
+            }
+
+
+            /* =================================================
+               NEXT
+            ================================================= */
+
+            if (next) {
+
+                next.addEventListener(
+                    "click",
+                    function(event) {
+
+                        event.preventDefault();
+
+                        event.stopPropagation();
+
+                        show(index + 1);
+                    }
+                );
+            }
+
+
+            /* =================================================
+               DOTS
+            ================================================= */
+
+            dots.forEach(
+                function(dot) {
+
+                    dot.addEventListener(
+                        "click",
+                        function(event) {
+
+                            event.preventDefault();
+
+                            event.stopPropagation();
+
+
+                            const slideNumber =
+                                parseInt(
+                                    dot.dataset.slide,
+                                    10
+                                );
+
+
+                            if (
+                                Number.isNaN(
+                                    slideNumber
+                                )
+                            ) {
+                                return;
+                            }
+
+
+                            show(
+                                slideNumber
+                            );
+                        }
+                    );
+
+                }
+            );
+
+
+            /* =================================================
+               SINGLE MEDIA
+            ================================================= */
+
+            if (
+                slides.length === 1
+            ) {
+
+                if (prev) {
+
+                    prev.style.display =
+                        "none";
+                }
+
+
+                if (next) {
+
+                    next.style.display =
+                        "none";
+                }
+
+
+                const dotsContainer =
+                    slider.querySelector(
+                        ".event-slider-dots"
+                    );
+
+
+                if (dotsContainer) {
+
+                    dotsContainer.style.display =
+                        "none";
+                }
+            }
+
+
+            /* =================================================
+               VIDEO CONTROLS
+            ================================================= */
+
+            slider
+                .querySelectorAll(
+                    ".event-video-shell"
+                )
+                .forEach(
+                    function(shell) {
+
+                        const video =
+                            shell.querySelector(
+                                "video"
+                            );
+
+
+                        if (!video) {
+                            return;
+                        }
+
+
+                        const play =
+                            shell.querySelector(
+                                ".video-play"
+                            );
+
+
+                        const mute =
+                            shell.querySelector(
+                                ".video-mute"
+                            );
+
+
+                        const full =
+                            shell.querySelector(
+                                ".video-fullscreen"
+                            );
+
+
+                        /* =====================================
+                           UPDATE VIDEO STATE
+                        ===================================== */
+
+                        function updateVideoState() {
+
+                            if (play) {
+
+                                play.textContent =
+                                    video.paused
+                                        ? "▶"
+                                        : "❚❚";
+
+
+                                play.title =
+                                    video.paused
+                                        ? "Play"
+                                        : "Pause";
+                            }
+
+
+                            if (mute) {
+
+                                mute.textContent =
+                                    video.muted
+                                        ? "🔇"
+                                        : "🔊";
+
+
+                                mute.title =
+                                    video.muted
+                                        ? "Unmute"
+                                        : "Mute";
+                            }
+                        }
+
+
+                        /* =====================================
+                           PLAY / PAUSE
+                        ===================================== */
+
+                        if (play) {
+
+                            play.addEventListener(
+                                "click",
+                                function(event) {
+
+                                    event.preventDefault();
+
+                                    event.stopPropagation();
+
+
+                                    if (
+                                        video.paused
+                                    ) {
+
+                                        video
+                                            .play()
+                                            .catch(
+                                                function() {}
+                                            );
+
+                                    } else {
+
+                                        video.pause();
+                                    }
+                                }
+                            );
+                        }
+
+
+                        /* =====================================
+                           MUTE
+                        ===================================== */
+
+                        if (mute) {
+
+                            mute.addEventListener(
+                                "click",
+                                function(event) {
+
+                                    event.preventDefault();
+
+                                    event.stopPropagation();
+
+
+                                    video.muted =
+                                        !video.muted;
+
+
+                                    updateVideoState();
+                                }
+                            );
+                        }
+
+
+                        /* =====================================
+                           FULLSCREEN
+                        ===================================== */
+
+                        if (full) {
+
+                            full.addEventListener(
+                                "click",
+                                function(event) {
+
+                                    event.preventDefault();
+
+                                    event.stopPropagation();
+
+
+                                    if (
+                                        document.fullscreenElement
+                                    ) {
+
+                                        document
+                                            .exitFullscreen()
+                                            .catch(
+                                                function() {}
+                                            );
+
+                                    } else if (
+                                        shell.requestFullscreen
+                                    ) {
+
+                                        shell
+                                            .requestFullscreen()
+                                            .catch(
+                                                function() {}
+                                            );
+
+                                    } else if (
+                                        video.webkitEnterFullscreen
+                                    ) {
+
+                                        video.webkitEnterFullscreen();
+                                    }
+                                }
+                            );
+                        }
+
+
+                        /* =====================================
+                           VIDEO CLICK
+                        ===================================== */
+
+                        video.addEventListener(
+                            "click",
+                            function() {
+
+                                if (
+                                    video.paused
+                                ) {
+
+                                    video
+                                        .play()
+                                        .catch(
+                                            function() {}
+                                        );
+
+                                } else {
+
+                                    video.pause();
+                                }
+                            }
+                        );
+
+
+                        /* =====================================
+                           DOUBLE CLICK FULLSCREEN
+                        ===================================== */
+
+                        video.addEventListener(
+                            "dblclick",
+                            function() {
+
+                                if (
+                                    document.fullscreenElement
+                                ) {
+
+                                    document
+                                        .exitFullscreen()
+                                        .catch(
+                                            function() {}
+                                        );
+
+                                } else if (
+                                    shell.requestFullscreen
+                                ) {
+
+                                    shell
+                                        .requestFullscreen()
+                                        .catch(
+                                            function() {}
+                                        );
+                                }
+                            }
+                        );
+
+
+                        /* =====================================
+                           VIDEO EVENTS
+                        ===================================== */
+
+                        video.addEventListener(
+                            "play",
+                            updateVideoState
+                        );
+
+
+                        video.addEventListener(
+                            "pause",
+                            updateVideoState
+                        );
+
+
+                        video.addEventListener(
+                            "volumechange",
+                            updateVideoState
+                        );
+
+
+                        updateVideoState();
+
+
+                        /* =====================================
+                           VIDEO CONTROL VISIBILITY
+                        ===================================== */
+
+                        let timer = null;
+
+
+                        function revealControls() {
+
+                            shell.classList.add(
+                                "controls-visible"
+                            );
+
+
+                            clearTimeout(
+                                timer
+                            );
+
+
+                            timer =
+                                setTimeout(
+                                    function() {
+
+                                        if (
+                                            !video.paused
+                                        ) {
+
+                                            shell.classList.remove(
+                                                "controls-visible"
+                                            );
+                                        }
+
+                                    },
+                                    2200
+                                );
+                        }
+
+
+                        shell.addEventListener(
+                            "mousemove",
+                            revealControls
+                        );
+
+
+                        shell.addEventListener(
+                            "touchstart",
+                            revealControls,
+                            {
+                                passive: true
+                            }
+                        );
+
+                    }
+                );
+
+
+            /* =================================================
+               KEYBOARD CONTROLS
+            ================================================= */
+
+            slider.tabIndex = 0;
+
+
+            slider.addEventListener(
+                "keydown",
+                function(event) {
+
+                    if (
+                        event.key ===
+                        "ArrowLeft"
+                    ) {
+
+                        event.preventDefault();
+
+                        show(
+                            index - 1
+                        );
+                    }
+
+
+                    if (
+                        event.key ===
+                        "ArrowRight"
+                    ) {
+
+                        event.preventDefault();
+
+                        show(
+                            index + 1
+                        );
+                    }
+                }
+            );
+
+
+            /* =================================================
+               INITIAL SLIDE
+            ================================================= */
+
+            show(0);
+
+        });
+}
+
+
+/* =============================================================
+   INITIALIZE AFTER PAGE LOAD
+============================================================= */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        initializeEventMediaSliders
+    );
+
+} else {
+
+    initializeEventMediaSliders();
+}
+
+</script>
+
+</body>
+
+</html>

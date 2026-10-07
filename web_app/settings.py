@@ -1,5 +1,8 @@
 
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
 
 
 # =========================================================
@@ -8,16 +11,25 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(BASE_DIR / ".env")
+
 
 # =========================================================
 # SECURITY
 # =========================================================
 
-SECRET_KEY = "django-insecure-change-this-later"
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
-DEBUG = True
+if not SECRET_KEY:
+    raise RuntimeError("DJANGO_SECRET_KEY is not set. Create a .env file from .env.example.")
 
-ALLOWED_HOSTS = []
+DEBUG = os.getenv("DJANGO_DEBUG", "True").lower() == "true"
+
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+    if host.strip()
+]
 
 
 # =========================================================
@@ -33,9 +45,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
-    # Campus Clans
     "campus_clans",
+    "campus_admin",
 
 ]
 
@@ -45,21 +56,13 @@ INSTALLED_APPS = [
 # =========================================================
 
 MIDDLEWARE = [
-
     "django.middleware.security.SecurityMiddleware",
-
     "django.contrib.sessions.middleware.SessionMiddleware",
-
     "django.middleware.common.CommonMiddleware",
-
     "django.middleware.csrf.CsrfViewMiddleware",
-
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-
     "django.contrib.messages.middleware.MessageMiddleware",
-
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-
 ]
 
 
@@ -117,11 +120,11 @@ WSGI_APPLICATION = "web_app.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "campus_clans",
-        "USER": "buggu",
-        "PASSWORD": "an290967mb",
-        "HOST": "localhost",
-        "PORT": "3306",
+        "NAME": os.getenv("DB_NAME", "campus_clans"),
+        "USER": os.getenv("DB_USER", ""),
+        "PASSWORD": os.getenv("DB_PASSWORD", ""),
+        "HOST": os.getenv("DB_HOST", "localhost"),
+        "PORT": os.getenv("DB_PORT", "3306"),
     }
 }
 
@@ -173,6 +176,7 @@ USE_TZ = True
 # =========================================================
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
 # =========================================================
@@ -197,11 +201,11 @@ EMAIL_PORT = 587
 
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = "campusclans@gmail.com"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 
-EMAIL_HOST_PASSWORD = "rjofficwyzviohgi"
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
 
 
 # =========================================================
@@ -225,3 +229,32 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin.strip()
+]
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = "DENY"
+
+CAMPUS_ADMIN_USERNAME = os.getenv("CAMPUS_ADMIN_USERNAME", "")
+CAMPUS_ADMIN_PASSWORD = os.getenv("CAMPUS_ADMIN_PASSWORD", "")
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}

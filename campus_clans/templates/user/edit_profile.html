@@ -4,7 +4,7 @@
 
 <head>
 
-    ```
+
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -499,7 +499,7 @@
             }
         }
     </style>
-    ```
+
 
 </head>
 
@@ -507,7 +507,7 @@
 
     <nav class="navbar">
 
-        ```
+
         <a href="{% url 'home' %}" class="logo">
             Campus Clans
         </a>
@@ -523,13 +523,13 @@
             </a>
 
         </div>
-        ```
+
 
     </nav>
 
     <main class="container">
 
-        ```
+
         <div class="page-title">
 
             <h1>
@@ -584,14 +584,13 @@
 
                     <!-- USERNAME -->
 
-                    <div class="field">
+                    <div class="form-group">
+                        <label for="username">Username</label>
 
-                        <label>
-                            Username
-                        </label>
+                        <input type="text" id="username" name="username" value="{{ request.user.username }}" required
+                            autocomplete="username">
 
-                        <input type="text" value="{{ profile.user.username }}" disabled>
-
+                        <div id="username-status"></div>
                     </div>
 
 
@@ -1012,7 +1011,7 @@
             </div>
 
         </form>
-        ```
+
 
     </main>
 
@@ -2164,6 +2163,51 @@
 
         });
 
+    </script>
+
+    <script>
+        const usernameInput = document.getElementById("username");
+        const usernameStatus = document.getElementById("username-status");
+
+        let usernameTimer;
+
+        usernameInput.addEventListener("input", function () {
+
+            clearTimeout(usernameTimer);
+
+            const username = usernameInput.value.trim();
+
+            usernameStatus.textContent = "";
+
+            if (!username) {
+                return;
+            }
+
+            usernameStatus.textContent = "Checking...";
+
+            usernameTimer = setTimeout(() => {
+
+                fetch(`/check-username/?username=${encodeURIComponent(username)}`)
+                    .then(response => response.json())
+                    .then(data => {
+
+                        if (data.available) {
+                            usernameStatus.textContent = "✓ " + data.message;
+                            usernameStatus.style.color = "green";
+                        } else {
+                            usernameStatus.textContent = "✗ " + data.message;
+                            usernameStatus.style.color = "red";
+                        }
+
+                    })
+                    .catch(error => {
+                        console.error("Username check failed:", error);
+                        usernameStatus.textContent = "Unable to check username.";
+                        usernameStatus.style.color = "red";
+                    });
+
+            }, 400);
+        });
     </script>
 
 </body>

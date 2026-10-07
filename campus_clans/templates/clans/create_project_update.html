@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Add Project Update</title>
+
+    <style>
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px
+        }
+
+        .card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, .06)
+        }
+
+        h1 {
+            margin: 0 0 8px
+        }
+
+        .project-name {
+            color: #6b7280;
+            margin-bottom: 25px
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 18px 0 7px
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 170px;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            resize: vertical;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none
+        }
+
+        textarea:focus {
+            border-color: #4f46e5
+        }
+
+        input[type=file] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            background: #fafafa
+        }
+
+        .help {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 7px
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 9px;
+            margin-bottom: 18px
+        }
+
+        .member-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+
+        .member-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            margin: 0;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .member-option:hover {
+            background: #f3f4f6
+        }
+
+        .member-option input {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 14px;
+            margin-top: 18px
+        }
+
+        .preview-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fafafa
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: block
+        }
+
+        .btn {
+            margin-top: 28px;
+            padding: 12px 20px;
+            border: 0;
+            border-radius: 9px;
+            background: #4f46e5;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px
+        }
+
+        .btn:hover {
+            background: #4338ca
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 15px;
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 600
+        }
+
+        .back:hover {
+            text-decoration: underline
+        }
+
+        @media(max-width:600px) {
+            .container {
+                margin: 20px auto;
+                padding: 12px
+            }
+
+            .card {
+                padding: 20px
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <a href="{% url 'clan_project_detail' project.id %}" class="back">
+            ← Back to Project
+        </a>
+
+        <div class="card">
+
+            <h1>Add Project Update</h1>
+
+            <div class="project-name">
+                {{ project.title }}
+            </div>
+
+            {% if error %}
+            <div class="error">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+
+                <!-- UPDATE -->
+
+                <label for="caption">
+                    Update
+                </label>
+
+                <textarea id="caption" name="caption"
+                    placeholder="Describe what has changed, what your clan accomplished, progress made, etc."
+                    required></textarea>
+
+
+                <!-- PARTICIPANTS -->
+
+                <label>
+                    Participants
+                </label>
+
+                <div class="help">
+                    Select the project members who participated in this update.
+                </div>
+
+                <div class="member-selection">
+
+                    {% for member in project_members %}
+
+                    <label class="member-option">
+
+                        <input type="checkbox" name="participants" value="{{ member.id }}">
+
+                        <span>
+                            {{ member.student.name }}
+                        </span>
+
+                    </label>
+
+                    {% empty %}
+
+                    <div class="help">
+                        No project members have been assigned.
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- IMAGES -->
+
+                <label for="images">
+                    Update Images
+                </label>
+
+                <input type="file" id="images" name="images" accept="image/*" multiple>
+
+                <div class="help">
+                    You can upload multiple images with this update.
+                </div>
+
+                <div id="preview-grid" class="preview-grid"></div>
+
+
+                <button type="submit" class="btn">
+                    Post Update
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <script>
+
+        const imageInput = document.getElementById("images");
+        const previewGrid = document.getElementById("preview-grid");
+
+        imageInput.addEventListener("change", function () {
+
+            previewGrid.innerHTML = "";
+
+            Array.from(this.files).forEach(file => {
+
+                if (!file.type.startsWith("image/")) return;
+
+                const reader = new FileReader();
+
+                reader.onload = function (event) {
+
+                    const item = document.createElement("div");
+
+                    item.className = "preview-item";
+
+                    item.innerHTML = `
+                <img
+                    src="${event.target.result}"
+                    alt="Update image"
+                >
+            `;
+
+                    previewGrid.appendChild(item);
+                };
+
+                reader.readAsDataURL(file);
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>

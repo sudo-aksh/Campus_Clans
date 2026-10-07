@@ -1,218 +1,112 @@
-from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Q
 
-
-# ============================================================
-# STUDENT PROFILE
-# ============================================================
 
 class StudentProfile(models.Model):
 
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE
-    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    name = models.CharField(
-        max_length=150
-    )
+    name = models.CharField(max_length=150)
 
-    department = models.CharField(
-        max_length=100
-    )
+    department = models.CharField(max_length=100)
 
-    branch = models.CharField(
-        max_length=150
-    )
+    branch = models.CharField(max_length=150)
 
-    email = models.EmailField(
-        unique=True
-    )
+    email = models.EmailField(unique=True)
 
-    email_verified = models.BooleanField(
-        default=False
-    )
+    email_verified = models.BooleanField(default=False)
 
-    about = models.TextField(
-        blank=True
-    )
+    about = models.TextField(blank=True)
 
-    github = models.URLField(
-        blank=True
-    )
+    github = models.URLField(blank=True)
 
-    linkedin = models.URLField(
-        blank=True
-    )
+    linkedin = models.URLField(blank=True)
 
-    instagram = models.URLField(
-        blank=True
-    )
+    instagram = models.URLField(blank=True)
 
-    youtube = models.URLField(
-        blank=True
-    )
+    youtube = models.URLField(blank=True)
 
     profile_picture = models.ImageField(
-        upload_to="profile_pictures/",
-        blank=True,
-        null=True
+        upload_to="profile_pictures/", blank=True, null=True
     )
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-
-    def __str__(self):
-        return self.user.username
-
-
-# ============================================================
-# SKILL TYPE
-# ============================================================
-
-class SkillType(models.Model):
-
-    name = models.CharField(
-        max_length=100,
-        unique=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
 
 
-# ============================================================
-# SKILL
-# ============================================================
+class SkillType(models.Model):
+
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
 
 class Skill(models.Model):
 
     skill_type = models.ForeignKey(
-        SkillType,
-        on_delete=models.CASCADE,
-        related_name="skills"
+        SkillType, on_delete=models.CASCADE, related_name="skills"
     )
 
-    name = models.CharField(
-        max_length=100
-    )
-
-    class Meta:
-        unique_together = (
-            "skill_type",
-            "name",
-        )
+    name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
 
 
-# ============================================================
-# STUDENT SELECTED SKILL
-# ============================================================
-
 class StudentSkill(models.Model):
 
     student = models.ForeignKey(
-        StudentProfile,
-        on_delete=models.CASCADE,
-        related_name="student_skills"
+        StudentProfile, on_delete=models.CASCADE, related_name="student_skills"
     )
 
     skill = models.ForeignKey(
-        Skill,
-        on_delete=models.CASCADE,
-        related_name="student_skills"
+        Skill, on_delete=models.CASCADE, related_name="student_skills"
     )
 
-    is_highlighted = models.BooleanField(
-        default=False
-    )
+    is_highlighted = models.BooleanField(default=False)
 
     class Meta:
-        unique_together = (
-            "student",
-            "skill",
-        )
+        constraints = [
+            models.UniqueConstraint(
+                fields=["student", "skill"], name="unique_student_skill"
+            )
+        ]
 
     def __str__(self):
-        return (
-            f"{self.student.user.username} - "
-            f"{self.skill.name}"
-        )
+        return f"{self.student.name} - {self.skill.name}"
 
 
 class Clan(models.Model):
 
-    name = models.CharField(
-        max_length=100,
-        unique=True
-    )
+    name = models.CharField(max_length=100, unique=True)
 
-    logo = models.ImageField(
-        upload_to="clan_logos/",
-        blank=True,
-        null=True
-    )
+    logo = models.ImageField(upload_to="clan_logos/", blank=True, null=True)
 
-    banner = models.ImageField(
-        upload_to="clan_banners/",
-        blank=True,
-        null=True
-    )
+    banner = models.ImageField(upload_to="clan_banners/", blank=True, null=True)
 
-    speciality = models.CharField(
-        max_length=150
-    )
+    speciality = models.CharField(max_length=150)
 
-    profile_description = models.CharField(
-        max_length=50
-    )
+    profile_description = models.CharField(max_length=50)
 
     description = models.TextField()
 
     created_by = models.OneToOneField(
         StudentProfile,
-        on_delete=models.CASCADE,
-        related_name="created_clan"
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_clan",
     )
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
 
-class StudentClanRecruitment(models.Model):
-
-    student = models.OneToOneField(
-        StudentProfile,
-        on_delete=models.CASCADE,
-        related_name="clan_recruitment_request"
-    )
-
-    message = models.TextField(
-        blank=True
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-
-    expires_at = models.DateTimeField()
-
-    def __str__(self):
-        return (
-            f"{self.student.name} - "
-            f"Looking for Clan"
-        )
-
-    @property
-    def is_active(self):
-        return timezone.now() < self.expires_at
 
 class ClanMember(models.Model):
 
@@ -222,52 +116,30 @@ class ClanMember(models.Model):
         ("leader", "Leader"),
     ]
 
-    clan = models.ForeignKey(
-        Clan,
-        on_delete=models.CASCADE,
-        related_name="members"
-    )
+    clan = models.ForeignKey(Clan, on_delete=models.CASCADE, related_name="members")
 
     student = models.OneToOneField(
-        StudentProfile,
-        on_delete=models.CASCADE,
-        related_name="clan_membership"
+        StudentProfile, on_delete=models.CASCADE, related_name="clan_membership"
     )
 
-    role = models.CharField(
-        max_length=20,
-        choices=ROLE_CHOICES,
-        default="member"
-    )
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="member")
 
-    joined_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    joined_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [
-
-            # Only ONE leader per clan
             models.UniqueConstraint(
-                fields=["clan"],
-                condition=models.Q(role="leader"),
-                name="one_leader_per_clan"
+                fields=["clan"], condition=Q(role="leader"), name="one_leader_per_clan"
             ),
-
-            # Only ONE co-leader per clan
             models.UniqueConstraint(
                 fields=["clan"],
-                condition=models.Q(role="co_leader"),
-                name="one_co_leader_per_clan"
+                condition=Q(role="co_leader"),
+                name="one_co_leader_per_clan",
             ),
         ]
 
     def __str__(self):
-        return (
-            f"{self.student.name} - "
-            f"{self.clan.name} "
-            f"({self.get_role_display()})"
-        )
+        return f"{self.student.name} - {self.clan.name}"
 
 
 class ClanInvitation(models.Model):
@@ -279,59 +151,41 @@ class ClanInvitation(models.Model):
         ("cancelled", "Cancelled"),
     ]
 
-    clan = models.ForeignKey(
-        Clan,
-        on_delete=models.CASCADE,
-        related_name="invitations"
-    )
+    clan = models.ForeignKey(Clan, on_delete=models.CASCADE, related_name="invitations")
 
     invited_student = models.ForeignKey(
-        StudentProfile,
-        on_delete=models.CASCADE,
-        related_name="clan_invitations"
+        StudentProfile, on_delete=models.CASCADE, related_name="clan_invitations"
     )
 
     invited_by = models.ForeignKey(
-        StudentProfile,
-        on_delete=models.CASCADE,
-        related_name="sent_clan_invitations"
+        StudentProfile, on_delete=models.CASCADE, related_name="sent_clan_invitations"
     )
 
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default="pending"
-    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    responded_at = models.DateTimeField(
-        null=True,
-        blank=True
-    )
+    responded_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=[
-                    "clan",
-                    "invited_student",
-                ],
-                condition=models.Q(status="pending"),
-                name="unique_pending_clan_invitation"
+                fields=["clan", "invited_student"],
+                condition=Q(status="pending"),
+                name="unique_pending_clan_invitation",
             )
         ]
 
     def __str__(self):
-        return (
-            f"{self.clan.name} → "
-            f"{self.invited_student.name} "
-            f"({self.status})"
-        )
+        return f"{self.clan.name} -> {self.invited_student.name}"
+
 
 class ClanJoinRequest(models.Model):
+
+    REQUEST_TYPE_CHOICES = [
+        ("direct", "Direct"),
+        ("global", "Global"),
+    ]
 
     STATUS_CHOICES = [
         ("pending", "Pending"),
@@ -340,70 +194,41 @@ class ClanJoinRequest(models.Model):
         ("cancelled", "Cancelled"),
     ]
 
-    REQUEST_TYPE_CHOICES = [
-        ("direct", "Direct"),
-        ("global", "Global Recruitment"),
-    ]
-
     clan = models.ForeignKey(
-        Clan,
-        on_delete=models.CASCADE,
-        related_name="join_requests"
+        Clan, on_delete=models.CASCADE, related_name="join_requests"
     )
 
     student = models.ForeignKey(
-        StudentProfile,
-        on_delete=models.CASCADE,
-        related_name="clan_join_requests"
+        StudentProfile, on_delete=models.CASCADE, related_name="clan_join_requests"
     )
 
-    request_type = models.CharField(
-        max_length=20,
-        choices=REQUEST_TYPE_CHOICES,
-        default="direct"
-    )
+    request_type = models.CharField(max_length=20, choices=REQUEST_TYPE_CHOICES)
 
     recruitment = models.ForeignKey(
         "ClanRecruitment",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="join_requests"
+        related_name="join_requests",
     )
 
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default="pending"
-    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    responded_at = models.DateTimeField(
-        null=True,
-        blank=True
-    )
+    responded_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=[
-                    "clan",
-                    "student",
-                ],
-                condition=models.Q(status="pending"),
-                name="unique_pending_clan_join_request"
+                fields=["clan", "student"],
+                condition=Q(status="pending"),
+                name="unique_pending_clan_join_request",
             )
         ]
 
     def __str__(self):
-        return (
-            f"{self.student.name} → "
-            f"{self.clan.name} "
-            f"({self.status})"
-        )
+        return f"{self.student.name} -> {self.clan.name}"
 
 
 class ClanLeaveRequest(models.Model):
@@ -416,290 +241,555 @@ class ClanLeaveRequest(models.Model):
     ]
 
     clan = models.ForeignKey(
-        Clan,
-        on_delete=models.CASCADE,
-        related_name="leave_requests"
+        Clan, on_delete=models.CASCADE, related_name="leave_requests"
     )
 
     student = models.ForeignKey(
-        StudentProfile,
-        on_delete=models.CASCADE,
-        related_name="clan_leave_requests"
+        StudentProfile, on_delete=models.CASCADE, related_name="clan_leave_requests"
     )
 
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default="pending"
-    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    responded_at = models.DateTimeField(
-        null=True,
-        blank=True
-    )
+    responded_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=[
-                    "clan",
-                    "student",
-                ],
-                condition=models.Q(status="pending"),
-                name="unique_pending_clan_leave_request"
+                fields=["clan", "student"],
+                condition=Q(status="pending"),
+                name="unique_pending_clan_leave_request",
             )
         ]
 
     def __str__(self):
-        return (
-            f"{self.student.name} → "
-            f"Leave {self.clan.name} "
-            f"({self.status})"
-        )
+        return f"{self.student.name} - {self.clan.name}"
 
 
 class ClanPost(models.Model):
-
-    clan = models.ForeignKey(
-        Clan,
-        on_delete=models.CASCADE,
-        related_name="posts"
-    )
-
+    clan = models.ForeignKey(Clan, on_delete=models.CASCADE, related_name="posts")
     author = models.ForeignKey(
-        StudentProfile,
-        on_delete=models.CASCADE,
-        related_name="clan_posts"
+        StudentProfile, on_delete=models.CASCADE, related_name="clan_posts"
     )
+    content = models.TextField(blank=True)
+    text = models.TextField(blank=True)
+    video = models.FileField(upload_to="clan_posts/videos/", blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    content = models.TextField(
-        blank=True
-    )
 
-    image = models.ImageField(
-        upload_to="clan_posts/",
-        blank=True,
-        null=True
-    )
+class ClanPostImage(models.Model):
 
-    caption = models.CharField(
-        max_length=500,
-        blank=True
-    )
+    post = models.ForeignKey(ClanPost, on_delete=models.CASCADE, related_name="images")
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    image = models.ImageField(upload_to="clan_posts/images/")
 
-    updated_at = models.DateTimeField(
-        auto_now=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return (
-            f"{self.clan.name} - "
-            f"Post"
-        )
+        return f"{self.post.clan.name} - Post {self.post.id} - Image {self.id}"
+
 
 class ClanPostLike(models.Model):
 
-    post = models.ForeignKey(
-        ClanPost,
-        on_delete=models.CASCADE,
-        related_name="likes"
-    )
+    post = models.ForeignKey(ClanPost, on_delete=models.CASCADE, related_name="likes")
 
     student = models.ForeignKey(
-        StudentProfile,
-        on_delete=models.CASCADE,
-        related_name="clan_post_likes"
+        StudentProfile, on_delete=models.CASCADE, related_name="liked_posts"
     )
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(
-                fields=[
-                    "post",
-                    "student",
-                ],
-                name="unique_clan_post_like"
-            )
+            models.UniqueConstraint(fields=["post", "student"], name="unique_post_like")
         ]
 
     def __str__(self):
-        return (
-            f"{self.student.name} liked "
-            f"{self.post.clan.name} post"
-        )
+        return f"{self.student.name} - {self.post.id}"
 
-
-class ClanStory(models.Model):
-
-    clan = models.ForeignKey(
-        Clan,
-        on_delete=models.CASCADE,
-        related_name="stories"
-    )
-
-    author = models.ForeignKey(
-        StudentProfile,
-        on_delete=models.CASCADE,
-        related_name="clan_stories"
-    )
-
-    content = models.TextField(
-        blank=True
-    )
-
-    image = models.ImageField(
-        upload_to="clan_stories/",
-        blank=True,
-        null=True
-    )
-
-    caption = models.CharField(
-        max_length=500,
-        blank=True
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-
-    def __str__(self):
-        return (
-            f"{self.clan.name} - "
-            f"Story"
-        )
-
-    @property
-    def is_expired(self):
-
-        from datetime import timedelta
-
-        return timezone.now() >= (
-            self.created_at + timedelta(hours=24)
-        )
-
-class ClanStoryView(models.Model):
-
-    story = models.ForeignKey(
-        ClanStory,
-        on_delete=models.CASCADE,
-        related_name="views"
-    )
-
-    student = models.ForeignKey(
-        StudentProfile,
-        on_delete=models.CASCADE,
-        related_name="viewed_clan_stories"
-    )
-
-    viewed_at = models.DateTimeField(
-        auto_now_add=True
-    )
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=[
-                    "story",
-                    "student",
-                ],
-                name="unique_story_viewer"
-            )
-        ]
-
-    def __str__(self):
-        return (
-            f"{self.student.name} viewed "
-            f"{self.story.clan.name} story"
-        )
 
 class ClanRecruitment(models.Model):
 
     clan = models.ForeignKey(
-        Clan,
-        on_delete=models.CASCADE,
-        related_name="recruitments"
+        Clan, on_delete=models.CASCADE, related_name="recruitments"
     )
 
     created_by = models.ForeignKey(
-        StudentProfile,
-        on_delete=models.CASCADE,
-        related_name="created_clan_recruitments"
+        StudentProfile, on_delete=models.CASCADE, related_name="created_recruitments"
     )
 
-    title = models.CharField(
-        max_length=150
-    )
+    title = models.CharField(max_length=200)
 
-    description = models.TextField(
-        blank=True
-    )
+    description = models.TextField()
 
-    # Multiple fields can be selected
-    fields = models.ManyToManyField(
-        SkillType,
-        related_name="clan_recruitments",
-        blank=True
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    fields = models.ManyToManyField(SkillType, blank=True, related_name="recruitments")
 
     expires_at = models.DateTimeField()
 
-    updated_at = models.DateTimeField(
-        auto_now=True
-    )
-
-    def __str__(self):
-        return (
-            f"{self.clan.name} - "
-            f"{self.title}"
-        )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     @property
     def is_active(self):
+        from django.utils import timezone
+
         return timezone.now() < self.expires_at
+
+    def __str__(self):
+        return f"{self.clan.name} - {self.title}"
+
 
 class ClanRecruitmentSkill(models.Model):
 
     recruitment = models.ForeignKey(
-        ClanRecruitment,
-        on_delete=models.CASCADE,
-        related_name="required_skills"
+        ClanRecruitment, on_delete=models.CASCADE, related_name="recruitment_skills"
     )
 
     skill = models.ForeignKey(
-        Skill,
-        on_delete=models.CASCADE,
-        related_name="clan_recruitment_skills"
+        Skill, on_delete=models.CASCADE, related_name="recruitment_skills"
     )
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=[
-                    "recruitment",
-                    "skill",
-                ],
-                name="unique_recruitment_skill"
+                fields=["recruitment", "skill"], name="unique_recruitment_skill"
             )
         ]
 
     def __str__(self):
-        return (
-            f"{self.recruitment.title} - "
-            f"{self.skill.name}"
-        )
+        return f"{self.recruitment.title} - {self.skill.name}"
+
+
+class StudentClanRecruitment(models.Model):
+
+    student = models.OneToOneField(
+        StudentProfile, on_delete=models.CASCADE, related_name="student_recruitment"
+    )
+
+    message = models.TextField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    expires_at = models.DateTimeField()
+
+    @property
+    def is_active(self):
+        from django.utils import timezone
+
+        return timezone.now() < self.expires_at
+
+    def __str__(self):
+        return f"{self.student.name} - Recruitment"
+
+
+# =========================================================
+# STUDENT PROJECTS
+# =========================================================
+
+
+class StudentProject(models.Model):
+
+    STATUS_CHOICES = [
+        ("ongoing", "Ongoing"),
+        ("completed", "Completed"),
+    ]
+
+    student = models.ForeignKey(
+        StudentProfile, on_delete=models.CASCADE, related_name="personal_projects"
+    )
+
+    title = models.CharField(max_length=200)
+
+    description = models.TextField()
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="ongoing")
+
+    cover_image = models.ImageField(
+        upload_to="student_project_covers/", null=True, blank=True
+    )
+
+    started_at = models.DateTimeField(auto_now_add=True)
+
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.student.name} - {self.title}"
+
+
+class StudentProjectLink(models.Model):
+
+    project = models.ForeignKey(
+        StudentProject, on_delete=models.CASCADE, related_name="links"
+    )
+
+    label = models.CharField(max_length=100)
+
+    url = models.URLField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.project.title} - {self.label}"
+
+
+class StudentProjectImage(models.Model):
+
+    project = models.ForeignKey(
+        StudentProject, on_delete=models.CASCADE, related_name="images"
+    )
+
+    image = models.ImageField(upload_to="student_projects/")
+
+    is_cover = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.project.title} - Image {self.id}"
+
+
+class StudentProjectUpdate(models.Model):
+
+    project = models.ForeignKey(
+        StudentProject, on_delete=models.CASCADE, related_name="updates"
+    )
+
+    caption = models.TextField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.project.title} - Update {self.id}"
+
+
+class StudentProjectUpdateImage(models.Model):
+
+    update = models.ForeignKey(
+        StudentProjectUpdate, on_delete=models.CASCADE, related_name="images"
+    )
+
+    image = models.ImageField(upload_to="student_project_updates/")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Image - {self.update.project.title} - Update {self.update.id}"
+
+
+class OTPRequestLog(models.Model):
+
+    PURPOSE_CHOICES = [
+        ("registration", "Registration"),
+        ("password_reset", "Password Reset"),
+    ]
+
+    email = models.EmailField()
+
+    purpose = models.CharField(max_length=30, choices=PURPOSE_CHOICES)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [models.Index(fields=["email", "purpose", "created_at"])]
+
+    def __str__(self):
+        return f"{self.email} - {self.purpose} - {self.created_at}"
+
+
+# =========================================================
+# CLAN PROJECTS
+# =========================================================
+
+
+class ClanProject(models.Model):
+
+    STATUS_CHOICES = [
+        ("ongoing", "Ongoing"),
+        ("completed", "Completed"),
+    ]
+
+    clan = models.ForeignKey(Clan, on_delete=models.CASCADE, related_name="projects")
+
+    title = models.CharField(max_length=200)
+
+    description = models.TextField()
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="ongoing")
+
+    cover_image = models.ImageField(
+        upload_to="clan_project_covers/", null=True, blank=True
+    )
+
+    started_at = models.DateTimeField(auto_now_add=True)
+
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.clan.name} - {self.title}"
+
+
+class ClanProjectMember(models.Model):
+
+    project = models.ForeignKey(
+        ClanProject, on_delete=models.CASCADE, related_name="project_members"
+    )
+
+    student = models.ForeignKey(
+        StudentProfile,
+        on_delete=models.CASCADE,
+        related_name="clan_project_memberships",
+    )
+
+    joined_project_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "student"], name="unique_clan_project_member"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.student.name} - {self.project.title}"
+
+
+class ClanProjectLink(models.Model):
+
+    project = models.ForeignKey(
+        ClanProject, on_delete=models.CASCADE, related_name="links"
+    )
+
+    label = models.CharField(max_length=100)
+
+    url = models.URLField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.project.title} - {self.label}"
+
+
+class ClanProjectImage(models.Model):
+
+    project = models.ForeignKey(
+        ClanProject, on_delete=models.CASCADE, related_name="images"
+    )
+
+    image = models.ImageField(upload_to="clan_projects/")
+
+    is_cover = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.project.title} - Image {self.id}"
+
+
+class ClanProjectUpdate(models.Model):
+
+    project = models.ForeignKey(
+        ClanProject, on_delete=models.CASCADE, related_name="updates"
+    )
+
+    caption = models.TextField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.project.title} - Update {self.id}"
+
+
+class ClanProjectUpdateImage(models.Model):
+
+    update = models.ForeignKey(
+        ClanProjectUpdate, on_delete=models.CASCADE, related_name="images"
+    )
+
+    image = models.ImageField(upload_to="clan_project_updates/")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Image - {self.update.project.title} " f"- Update {self.update.id}"
+
+
+class ClanProjectUpdateParticipant(models.Model):
+
+    update = models.ForeignKey(
+        ClanProjectUpdate, on_delete=models.CASCADE, related_name="participants"
+    )
+
+    project_member = models.ForeignKey(
+        ClanProjectMember,
+        on_delete=models.CASCADE,
+        related_name="update_participations",
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["update", "project_member"],
+                name="unique_update_project_participant",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.project_member.student.name} " f"- Update {self.update.id}"
+
+
+# =========================================================
+# CLAN STORIES
+# =========================================================
+
+
+class ClanStory(models.Model):
+
+    STORY_TYPES = [
+        ("text", "Text"),
+        ("image", "Image"),
+        ("video", "Video"),
+    ]
+
+    clan = models.ForeignKey(Clan, on_delete=models.CASCADE, related_name="stories")
+
+    story_type = models.CharField(max_length=10, choices=STORY_TYPES)
+
+    text = models.TextField(blank=True, null=True)
+
+    caption = models.TextField(blank=True, null=True)
+
+    image = models.ImageField(upload_to="clan_stories/images/", blank=True, null=True)
+
+    video = models.FileField(upload_to="clan_stories/videos/", blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    expires_at = models.DateTimeField()
+
+    class Meta:
+        ordering = ["created_at"]
+
+    def __str__(self):
+        return f"{self.clan.name} - {self.story_type}"
+
+
+class ClanStoryView(models.Model):
+
+    story = models.ForeignKey(ClanStory, on_delete=models.CASCADE, related_name="views")
+
+    student = models.ForeignKey(
+        StudentProfile, on_delete=models.CASCADE, related_name="clan_story_views"
+    )
+
+    viewed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["story", "student"], name="unique_clan_story_view"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.student.name} viewed story {self.story.id}"
+
+
+class ClanStoryLike(models.Model):
+
+    story = models.ForeignKey(ClanStory, on_delete=models.CASCADE, related_name="likes")
+
+    student = models.ForeignKey(
+        StudentProfile, on_delete=models.CASCADE, related_name="clan_story_likes"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["story", "student"], name="unique_clan_story_like"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.student.name} liked story {self.story.id}"
+
+
+# ============================================================
+# CAMPUS EVENTS
+# ============================================================
+
+
+class Event(models.Model):
+
+    name = models.CharField(max_length=200)
+
+    description = models.TextField()
+
+    start_date = models.DateTimeField()
+
+    end_date = models.DateTimeField()
+
+    link = models.URLField(blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def is_ended(self):
+        from django.utils import timezone
+
+        return timezone.now() >= self.end_date
+
+    @property
+    def trophy_deadline(self):
+        from datetime import timedelta
+
+        return self.end_date + timedelta(days=2)
+
+    @property
+    def trophy_window_open(self):
+        from django.utils import timezone
+
+        now = timezone.now()
+
+        return self.is_ended and now <= self.trophy_deadline
+
+
+class EventMedia(models.Model):
+
+    MEDIA_TYPE_CHOICES = [
+        ("image", "Image"),
+        ("video", "Video"),
+    ]
+
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="media")
+
+    media_type = models.CharField(max_length=10, choices=MEDIA_TYPE_CHOICES)
+
+    image = models.ImageField(upload_to="events/images/", blank=True, null=True)
+
+    video = models.FileField(upload_to="events/videos/", blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.event.name} - {self.media_type}"

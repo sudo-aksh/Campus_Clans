@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{{ project.title }} | Campus Clans</title>
+
+<style>
+*{
+    box-sizing:border-box
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f6f8;
+    margin:0;
+    color:#222
+}
+
+.container{
+    max-width:1000px;
+    margin:30px auto;
+    padding:20px
+}
+
+.card{
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    margin-bottom:20px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08)
+}
+
+.back{
+    display:inline-block;
+    margin-bottom:20px;
+    text-decoration:none;
+    color:#4f46e5
+}
+
+h1{
+    margin:0 0 12px
+}
+
+h2{
+    margin-top:0
+}
+
+h3{
+    margin-bottom:8px
+}
+
+.status{
+    display:inline-block;
+    padding:6px 14px;
+    border-radius:20px;
+    margin-bottom:20px;
+    font-size:14px;
+    font-weight:bold
+}
+
+.status.ongoing{
+    background:#fef3c7;
+    color:#92400e
+}
+
+.status.completed{
+    background:#dcfce7;
+    color:#166534
+}
+
+.description{
+    line-height:1.7;
+    white-space:pre-line
+}
+
+
+/* PROJECT COVER */
+
+.project-cover-section{
+    margin-top:30px
+}
+
+.project-cover-section h2{
+    margin-bottom:15px
+}
+
+.project-cover{
+    width:100%;
+    max-height:420px;
+    object-fit:cover;
+    border-radius:12px;
+    display:block
+}
+
+.no-cover{
+    width:100%;
+    padding:40px 20px;
+    background:#f3f4f6;
+    border:2px dashed #d1d5db;
+    border-radius:12px;
+    text-align:center;
+    color:#777
+}
+
+.cover-form{
+    margin-top:15px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center
+}
+
+.cover-file{
+    flex:1;
+    min-width:220px;
+    padding:9px;
+    border:1px solid #d1d5db;
+    border-radius:7px;
+    background:#fff
+}
+
+
+/* LINKS */
+
+.links{
+    margin-top:25px
+}
+
+.link-item{
+    display:inline-block;
+    margin:0 10px 10px 0;
+    padding:9px 14px;
+    background:#eef2ff;
+    color:#4f46e5;
+    text-decoration:none;
+    border-radius:7px
+}
+
+.link-item:hover{
+    background:#e0e7ff
+}
+
+.completed-date{
+    color:#166534;
+    margin-top:8px;
+    font-size:14px
+}
+
+
+/* UPDATES */
+
+.update{
+    border-top:1px solid #ddd;
+    padding-top:20px;
+    margin-top:20px
+}
+
+.update:first-child{
+    border-top:none;
+    padding-top:0;
+    margin-top:0
+}
+
+.update-caption{
+    white-space:pre-line;
+    line-height:1.6
+}
+
+.update-date{
+    color:#777;
+    font-size:13px
+}
+
+.update-images{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+    gap:12px;
+    margin-top:15px
+}
+
+.update-image-wrapper{
+    position:relative
+}
+
+.update-images img{
+    width:100%;
+    height:150px;
+    object-fit:cover;
+    border-radius:8px;
+    display:block
+}
+
+
+/* ACTIONS */
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:25px
+}
+
+button,
+.action-link{
+    padding:10px 18px;
+    border:0;
+    border-radius:7px;
+    color:white;
+    cursor:pointer;
+    text-decoration:none;
+    font-size:14px
+}
+
+.primary{
+    background:#4f46e5
+}
+
+.primary:hover{
+    background:#4338ca
+}
+
+.success{
+    background:#16a34a
+}
+
+.success:hover{
+    background:#15803d
+}
+
+.danger{
+    background:#dc2626
+}
+
+.danger:hover{
+    background:#b91c1c
+}
+
+.inline-form{
+    display:inline
+}
+
+.empty{
+    color:#777;
+    padding:20px 0
+}
+
+
+/* CUSTOM CONFIRM MODAL */
+
+.confirm-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    z-index:1000;
+    align-items:center;
+    justify-content:center;
+    padding:20px
+}
+
+.confirm-modal.show{
+    display:flex
+}
+
+.confirm-box{
+    width:100%;
+    max-width:400px;
+    background:#fff;
+    border-radius:14px;
+    padding:24px;
+    box-shadow:0 20px 50px rgba(0,0,0,.2)
+}
+
+.confirm-box h3{
+    font-size:19px;
+    margin:0 0 10px;
+    color:#111827
+}
+
+.confirm-box p{
+    color:#4b5563;
+    font-size:14px;
+    line-height:1.6;
+    margin:0
+}
+
+.confirm-warning{
+    margin-top:7px!important;
+    color:#dc2626!important;
+    font-size:12px!important
+}
+
+.confirm-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:9px;
+    margin-top:20px
+}
+
+.confirm-cancel,
+.confirm-danger,
+.confirm-success{
+    border:none;
+    border-radius:8px;
+    padding:9px 14px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer
+}
+
+.confirm-cancel{
+    background:#e5e7eb;
+    color:#374151
+}
+
+.confirm-cancel:hover{
+    background:#d1d5db
+}
+
+.confirm-danger{
+    background:#dc2626;
+    color:white
+}
+
+.confirm-danger:hover{
+    background:#b91c1c
+}
+
+.confirm-success{
+    background:#16a34a;
+    color:white
+}
+
+.confirm-success:hover{
+    background:#15803d
+}
+
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+    .container{
+        margin:15px auto;
+        padding:10px
+    }
+
+    .card{
+        padding:20px
+    }
+
+    .project-cover{
+        max-height:280px
+    }
+
+    .update-images{
+        grid-template-columns:repeat(2,1fr)
+    }
+
+    .update-images img{
+        height:120px
+    }
+
+    .actions{
+        flex-direction:column
+    }
+
+    .actions button,
+    .actions .action-link{
+        width:100%;
+        text-align:center
+    }
+
+    .cover-form{
+        flex-direction:column;
+        align-items:stretch
+    }
+
+    .cover-file{
+        width:100%
+    }
+
+    .cover-form button{
+        width:100%
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<a href="{% url 'profile' %}" class="back">
+    ← Back to Profile
+</a>
+
+
+<!-- PROJECT INFORMATION -->
+
+<div class="card">
+
+    <h1>{{ project.title }}</h1>
+
+    <span class="status {{ project.status }}">
+        {{ project.get_status_display }}
+    </span>
+
+    {% if project.status == "completed" and project.completed_at %}
+    <p class="completed-date">
+        Completed on {{ project.completed_at|date:"d M Y, h:i A" }}
+    </p>
+    {% endif %}
+
+    <p class="description">
+        {{ project.description }}
+    </p>
+
+
+    <!-- PROJECT COVER -->
+
+    <div class="project-cover-section">
+
+        <h2>Project Cover</h2>
+
+        {% if project.cover_image %}
+
+        <img
+            src="{{ project.cover_image.url }}"
+            alt="{{ project.title }}"
+            class="project-cover"
+        >
+
+        {% else %}
+
+        <div class="no-cover">
+            No project cover image added yet.
+        </div>
+
+        {% endif %}
+
+
+        <!-- CHANGE / ADD COVER -->
+
+        {% if is_owner %}
+
+        <form
+            method="POST"
+            action="{% url 'change_student_project_cover' project.id %}"
+            enctype="multipart/form-data"
+            class="cover-form"
+        >
+
+            {% csrf_token %}
+
+            <input
+                type="file"
+                name="cover_image"
+                accept="image/*"
+                class="cover-file"
+                required
+            >
+
+            <button
+                type="submit"
+                class="primary"
+            >
+                {% if project.cover_image %}
+                    Change Cover Image
+                {% else %}
+                    Add Cover Image
+                {% endif %}
+            </button>
+
+        </form>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- PROJECT LINKS -->
+
+    {% if links %}
+
+    <div class="links">
+
+        <h2>Project Links</h2>
+
+        {% for link in links %}
+
+        <a
+            href="{{ link.url }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="link-item"
+        >
+            {{ link.label }}
+        </a>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- PROJECT UPDATES -->
+
+<div class="card">
+
+    <h2>Project Updates</h2>
+
+
+    {% for update in updates %}
+
+    <div class="update">
+
+
+        <!-- OLDEST UPDATE = PROJECT STARTED -->
+
+        {% if forloop.last %}
+
+        <h3>
+            Project Started
+        </h3>
+
+        {% else %}
+
+        <h3>
+            Update
+        </h3>
+
+        {% endif %}
+
+
+        <p class="update-caption">
+            {{ update.caption }}
+        </p>
+
+
+        <small class="update-date">
+            {{ update.created_at|date:"d M Y, h:i A" }}
+        </small>
+
+
+        <!-- UPDATE IMAGES -->
+
+        {% if update.images.all %}
+
+        <div class="update-images">
+
+            {% for image in update.images.all %}
+
+            <div class="update-image-wrapper">
+
+                <img
+                    src="{{ image.image.url }}"
+                    alt="Project update"
+                >
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- DELETE UPDATE -->
+
+        {% if is_owner %}
+
+        <div class="actions">
+
+            <form
+                method="POST"
+                action="{% url 'delete_student_project_update' update.id %}"
+                class="inline-form update-delete-form"
+            >
+
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="danger"
+                >
+                    Delete Update
+                </button>
+
+            </form>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    {% empty %}
+
+    <p class="empty">
+        No updates yet.
+    </p>
+
+    {% endfor %}
+
+
+    <!-- PROJECT ACTIONS -->
+
+    {% if is_owner %}
+
+    <div class="actions">
+
+        <a
+            href="{% url 'create_student_project_update' project.id %}"
+            class="action-link primary"
+        >
+            + Add Update
+        </a>
+
+
+        {% if project.status == "ongoing" %}
+
+        <form
+            method="POST"
+            action="{% url 'complete_student_project' project.id %}"
+            class="inline-form complete-project-form"
+        >
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="success"
+            >
+                Complete Project
+            </button>
+
+        </form>
+
+        {% endif %}
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- DELETE PROJECT -->
+
+{% if is_owner %}
+
+<div class="card">
+
+    <h2>
+        Delete Project
+    </h2>
+
+    <p style="color:#777;margin-bottom:15px;">
+        Deleting this project will permanently delete its cover image,
+        update images, and all project updates.
+    </p>
+
+    <form
+        method="POST"
+        action="{% url 'delete_student_project' project.id %}"
+        class="delete-project-form"
+    >
+
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="danger"
+        >
+            Delete Project
+        </button>
+
+    </form>
+
+</div>
+
+{% endif %}
+
+</div>
+
+
+<!-- CUSTOM CONFIRM MODAL -->
+
+<div id="confirmModal" class="confirm-modal">
+
+    <div class="confirm-box">
+
+        <h3 id="confirmTitle">
+            Confirm Action
+        </h3>
+
+        <p id="confirmMessage">
+            Are you sure?
+        </p>
+
+        <p
+            id="confirmWarning"
+            class="confirm-warning"
+        ></p>
+
+        <div class="confirm-actions">
+
+            <button
+                type="button"
+                id="confirmCancel"
+                class="confirm-cancel"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                id="confirmAction"
+                class="confirm-danger"
+            >
+                Confirm
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const modal = document.getElementById("confirmModal");
+
+const title = document.getElementById("confirmTitle");
+
+const message = document.getElementById("confirmMessage");
+
+const warning = document.getElementById("confirmWarning");
+
+const cancelBtn = document.getElementById("confirmCancel");
+
+const actionBtn = document.getElementById("confirmAction");
+
+let activeForm = null;
+
+
+function openConfirm(
+    form,
+    actionTitle,
+    actionMessage,
+    actionWarning,
+    buttonClass
+){
+
+    activeForm = form;
+
+    title.textContent = actionTitle;
+
+    message.textContent = actionMessage;
+
+    warning.textContent = actionWarning || "";
+
+    actionBtn.className = buttonClass;
+
+    modal.classList.add("show");
+}
+
+
+function closeConfirm(){
+
+    modal.classList.remove("show");
+
+    activeForm = null;
+}
+
+
+/* DELETE UPDATE */
+
+document
+.querySelectorAll(".update-delete-form")
+.forEach(function(form){
+
+    form.addEventListener("submit",function(e){
+
+        e.preventDefault();
+
+        openConfirm(
+            form,
+            "Delete Update?",
+            "Are you sure you want to permanently delete this project update?",
+            "This action cannot be undone.",
+            "confirm-danger"
+        );
+
+    });
+
+});
+
+
+/* COMPLETE PROJECT */
+
+document
+.querySelectorAll(".complete-project-form")
+.forEach(function(form){
+
+    form.addEventListener("submit",function(e){
+
+        e.preventDefault();
+
+        openConfirm(
+            form,
+            "Complete Project?",
+            "Are you sure you want to mark this project as completed?",
+            "You can still add updates after completing the project.",
+            "confirm-success"
+        );
+
+    });
+
+});
+
+
+/* DELETE PROJECT */
+
+document
+.querySelectorAll(".delete-project-form")
+.forEach(function(form){
+
+    form.addEventListener("submit",function(e){
+
+        e.preventDefault();
+
+        openConfirm(
+            form,
+            "Delete Project?",
+            "Are you sure you want to permanently delete this entire project?",
+            "This will also permanently delete the project cover, all project images, and all updates.",
+            "confirm-danger"
+        );
+
+    });
+
+});
+
+
+/* CANCEL */
+
+cancelBtn.addEventListener(
+    "click",
+    closeConfirm
+);
+
+
+/* CONFIRM */
+
+actionBtn.addEventListener(
+    "click",
+    function(){
+
+        if(activeForm){
+
+            activeForm.submit();
+
+        }
+
+    }
+);
+
+
+/* CLICK OUTSIDE */
+
+modal.addEventListener(
+    "click",
+    function(e){
+
+        if(e.target === modal){
+
+            closeConfirm();
+
+        }
+
+    }
+);
+
+
+/* ESCAPE */
+
+document.addEventListener(
+    "keydown",
+    function(e){
+
+        if(e.key === "Escape"){
+
+            closeConfirm();
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>

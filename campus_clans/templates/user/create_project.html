@@ -1,0 +1,583 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Project | Campus Clans</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6f8;
+            color: #222;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 850px;
+            margin: 40px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin-bottom: 8px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #d0d5db;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #4f46e5;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .section-title {
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* LINKS */
+
+        .link-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .link-row input:first-child {
+            width: 30%;
+        }
+
+        .link-row input:nth-child(2) {
+            width: 70%;
+        }
+
+        .remove-link {
+            border: none;
+            background: #ef4444;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .remove-link:hover {
+            background: #dc2626;
+        }
+
+        .add-link {
+            border: 1px solid #4f46e5;
+            background: white;
+            color: #4f46e5;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .add-link:hover {
+            background: #eef2ff;
+        }
+
+        /* IMAGES */
+
+        .image-section {
+            margin-top: 30px;
+        }
+
+        .image-help {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .image-input {
+            padding: 10px;
+            background: #fafafa;
+        }
+
+        .preview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .preview-item {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 8px;
+            background: #fff;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 7px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .cover-option {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .cover-option input {
+            width: auto;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        button,
+        .cancel-btn {
+            padding: 12px 22px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .submit-btn {
+            border: none;
+            background: #4f46e5;
+            color: white;
+        }
+
+        .submit-btn:hover {
+            background: #4338ca;
+        }
+
+        .cancel-btn {
+            border: 1px solid #ccc;
+            color: #333;
+            background: #fff;
+        }
+
+        .cancel-btn:hover {
+            background: #f1f1f1;
+        }
+
+        .required {
+            color: red;
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                width: 95%;
+                margin: 20px auto;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .link-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .link-row input:first-child,
+            .link-row input:nth-child(2) {
+                width: 100%;
+            }
+
+            .remove-link {
+                width: 100%;
+            }
+
+            .button-row {
+                flex-direction: column;
+            }
+
+            .submit-btn,
+            .cancel-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>Create Personal Project</h1>
+
+        <p class="subtitle">
+            Showcase your practical work, skills, and achievements.
+        </p>
+
+        {% if error %}
+            <div class="error">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <!-- PROJECT TITLE -->
+
+            <div class="form-group">
+
+                <label for="title">
+                    Project Title <span class="required">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    placeholder="Enter your project title"
+                    maxlength="200"
+                    required
+                >
+
+            </div>
+
+
+            <!-- PROJECT DESCRIPTION -->
+
+            <div class="form-group">
+
+                <label for="description">
+                    Project Description <span class="required">*</span>
+                </label>
+
+                <textarea
+                    id="description"
+                    name="description"
+                    placeholder="Describe what your project is about, what problem it solves, technologies used, etc."
+                    required
+                ></textarea>
+
+            </div>
+
+
+            <!-- PROJECT LINKS -->
+
+            <h2 class="section-title">
+                Project Links
+            </h2>
+
+            <p class="image-help">
+                Add links such as GitHub, Live Demo, Figma, YouTube, Portfolio, etc.
+            </p>
+
+            <div id="links-container">
+
+                <div class="link-row">
+
+                    <input
+                        type="text"
+                        name="link_label"
+                        placeholder="Label (e.g. GitHub)"
+                    >
+
+                    <input
+                        type="url"
+                        name="link_url"
+                        placeholder="https://..."
+                    >
+
+                    <button
+                        type="button"
+                        class="remove-link"
+                        onclick="removeLink(this)"
+                    >
+                        Remove
+                    </button>
+
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="add-link"
+                onclick="addLink()"
+            >
+                + Add Another Link
+            </button>
+
+
+            <!-- PROJECT IMAGES -->
+
+            <div class="image-section">
+
+                <h2 class="section-title">
+                    Project Images
+                </h2>
+
+                <p class="image-help">
+                    Upload multiple images. Select one image as the project cover.
+                </p>
+
+                <div class="form-group">
+
+                    <label for="images">
+                        Select Images <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="file"
+                        id="images"
+                        name="images"
+                        class="image-input"
+                        accept="image/*"
+                        multiple
+                        required
+                    >
+
+                </div>
+
+                <div
+                    id="preview-container"
+                    class="preview-container"
+                ></div>
+
+            </div>
+
+
+            <!-- BUTTONS -->
+
+            <div class="button-row">
+
+                <button
+                    type="submit"
+                    class="submit-btn"
+                >
+                    Create Project
+                </button>
+
+                <a
+                    href="{% url 'profile' %}"
+                    class="cancel-btn"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* =========================
+       ADD LINK
+       ========================= */
+
+    function addLink() {
+
+        const container =
+            document.getElementById("links-container");
+
+        const row =
+            document.createElement("div");
+
+        row.className = "link-row";
+
+        row.innerHTML = `
+            <input
+                type="text"
+                name="link_label"
+                placeholder="Label (e.g. GitHub)"
+            >
+
+            <input
+                type="url"
+                name="link_url"
+                placeholder="https://..."
+            >
+
+            <button
+                type="button"
+                class="remove-link"
+                onclick="removeLink(this)"
+            >
+                Remove
+            </button>
+        `;
+
+        container.appendChild(row);
+    }
+
+
+    /* =========================
+       REMOVE LINK
+       ========================= */
+
+    function removeLink(button) {
+
+        const container =
+            document.getElementById("links-container");
+
+        const rows =
+            container.querySelectorAll(".link-row");
+
+        /*
+         * Keep at least one link row.
+         */
+        if (rows.length === 1) {
+
+            rows[0].querySelector(
+                'input[name="link_label"]'
+            ).value = "";
+
+            rows[0].querySelector(
+                'input[name="link_url"]'
+            ).value = "";
+
+            return;
+        }
+
+        button.parentElement.remove();
+    }
+
+
+    /* =========================
+       IMAGE PREVIEW
+       ========================= */
+
+    const imageInput =
+        document.getElementById("images");
+
+    const previewContainer =
+        document.getElementById("preview-container");
+
+
+    imageInput.addEventListener(
+        "change",
+        function () {
+
+            previewContainer.innerHTML = "";
+
+            const files = this.files;
+
+            if (!files.length) {
+                return;
+            }
+
+            for (
+                let index = 0;
+                index < files.length;
+                index++
+            ) {
+
+                const file = files[index];
+
+                const reader =
+                    new FileReader();
+
+                reader.onload = function (event) {
+
+                    const item =
+                        document.createElement("div");
+
+                    item.className =
+                        "preview-item";
+
+                    item.innerHTML = `
+                        <img
+                            src="${event.target.result}"
+                            alt="Project image"
+                        >
+
+                        <label class="cover-option">
+
+                            <input
+                                type="radio"
+                                name="cover_index"
+                                value="${index}"
+                                ${index === 0 ? "checked" : ""}
+                            >
+
+                            Project Cover
+
+                        </label>
+                    `;
+
+                    previewContainer.appendChild(item);
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+    );
+
+</script>
+
+</body>
+</html>

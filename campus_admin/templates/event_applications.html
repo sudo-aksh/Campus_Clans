@@ -1,0 +1,843 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{{ event.name }} - Participation</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            color: #222;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: auto;
+            padding: 25px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 15px;
+            color: #222;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 14px;
+            margin: 15px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .card h2 {
+            margin-top: 0;
+        }
+
+        .event-info {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .event-meta {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .meta-box {
+            background: #f7f8fa;
+            padding: 14px;
+            border-radius: 10px;
+        }
+
+        .meta-label {
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 5px;
+        }
+
+        .meta-value {
+            font-weight: 600;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            background: #e4f8e8;
+            color: #176b2c;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status.ended {
+            background: #f1f1f1;
+            color: #666;
+        }
+
+        .status.upcoming {
+            background: #e8f0ff;
+            color: #2455a6;
+        }
+
+        .status.active {
+            background: #fff4d6;
+            color: #8a6500;
+        }
+
+        .row {
+            border-bottom: 1px solid #eee;
+            padding: 18px 5px;
+        }
+
+        .row:last-child {
+            border-bottom: none;
+        }
+
+        .row-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .username {
+            color: #555;
+            font-size: 14px;
+            margin-top: 3px;
+        }
+
+        .joined {
+            color: #666;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .representatives {
+            margin-top: 15px;
+            background: #f7f8fa;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .representatives h3 {
+            margin: 0 0 10px;
+            font-size: 15px;
+        }
+
+        .representative {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .representative:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .representative:first-child {
+            padding-top: 0;
+        }
+
+        .rep-name {
+            font-weight: 600;
+        }
+
+        .rep-username {
+            color: #666;
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+        .rep-number {
+            color: #888;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .count {
+            color: #777;
+            font-size: 14px;
+            font-weight: normal;
+            margin-left: 5px;
+        }
+
+        .empty {
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            color: #666;
+        }
+
+        .warning {
+            padding: 12px 14px;
+            background: #fff4d6;
+            color: #795900;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 9px 13px;
+            background: #222;
+            color: #fff;
+            border: 0;
+            border-radius: 7px;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
+        .trophy {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 12px;
+            background: #fafafa;
+        }
+
+        .trophy:first-child {
+            margin-top: 0;
+        }
+
+        .trophy-name {
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .trophy-clan {
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .trophy-description {
+            margin-top: 8px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .trophy-date {
+            margin-top: 8px;
+            color: #888;
+            font-size: 13px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .summary-box {
+            background: #f7f8fa;
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .summary-number {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .summary-label {
+            margin-top: 5px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        @media (max-width: 700px) {
+
+            .wrap {
+                padding: 15px;
+            }
+
+            .event-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .row-top {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .representative {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+    <a
+        class="back"
+        href="{% url 'campus_admin_events' %}"
+    >
+        ← Events
+    </a>
+
+
+    <h1>{{ event.name }}</h1>
+
+
+    <!-- =========================
+         EVENT INFORMATION
+    ========================== -->
+
+    <div class="card">
+
+        <h2>Event Information</h2>
+
+        <p class="event-info">
+            {{ event.description }}
+        </p>
+
+        <div class="event-meta">
+
+            {% if event.start_date %}
+            <div class="meta-box">
+                <div class="meta-label">
+                    Start date
+                </div>
+
+                <div class="meta-value">
+                    {{ event.start_date }}
+                </div>
+            </div>
+            {% endif %}
+
+
+            <div class="meta-box">
+
+                <div class="meta-label">
+                    End date
+                </div>
+
+                <div class="meta-value">
+                    {{ event.end_date }}
+                </div>
+
+            </div>
+
+
+            <div class="meta-box">
+
+                <div class="meta-label">
+                    Participant type
+                </div>
+
+                <div class="meta-value">
+                    {{ event.get_participant_type_display }}
+                </div>
+
+            </div>
+
+
+            <div class="meta-box">
+
+                <div class="meta-label">
+                    Event status
+                </div>
+
+                <div class="meta-value">
+
+                    {% if now < event.end_date %}
+
+                        {% if event.start_date and now < event.start_date %}
+
+                            <span class="status upcoming">
+                                Upcoming
+                            </span>
+
+                        {% else %}
+
+                            <span class="status active">
+                                Active
+                            </span>
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <span class="status ended">
+                            Ended
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {% if event.link %}
+
+        <p>
+            <strong>Event link:</strong>
+
+            <a
+                href="{{ event.link }}"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Open Link
+            </a>
+        </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =========================
+         PARTICIPATING CLANS
+    ========================== -->
+
+    <div class="card">
+
+        <h2>
+            Participating Clans
+
+            <span class="count">
+                ({{ clan_participations|length }})
+            </span>
+        </h2>
+
+
+        {% for p in clan_participations %}
+
+        <div class="row">
+
+            <div class="row-top">
+
+                <div>
+
+                    <div class="name">
+                        {{ p.clan.name }}
+                    </div>
+
+                    <div class="joined">
+                        Participation registered:
+                        {{ p.participated_at }}
+                    </div>
+
+                </div>
+
+                <div class="status">
+                    ✓ Participating
+                </div>
+
+            </div>
+
+
+            <!-- REPRESENTATIVES -->
+
+            <div class="representatives">
+
+                <h3>
+                    Clan Representatives
+
+                    <span class="count">
+                        ({{ p.selected_members.all|length }})
+                    </span>
+                </h3>
+
+
+                {% for selected in p.selected_members.all %}
+
+                <div class="representative">
+
+                    <div>
+
+                        <div class="rep-name">
+                            {{ selected.student.name }}
+                        </div>
+
+                        {% if selected.student.user.username %}
+
+                        <div class="rep-username">
+                            @{{ selected.student.user.username }}
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="rep-number">
+                        Representative #{{ forloop.counter }}
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <div class="empty">
+                    No representatives have been selected for this clan.
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="empty">
+            No clan has participated in this event yet.
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- =========================
+         INDIVIDUAL PARTICIPANTS
+    ========================== -->
+
+    <div class="card">
+
+        <h2>
+            Individual Participants
+
+            <span class="count">
+                ({{ student_participations|length }})
+            </span>
+        </h2>
+
+
+        {% for p in student_participations %}
+
+        <div class="row">
+
+            <div class="row-top">
+
+                <div>
+
+                    <div class="name">
+                        {{ p.student.name }}
+                    </div>
+
+                    {% if p.student.user.username %}
+
+                    <div class="username">
+                        @{{ p.student.user.username }}
+                    </div>
+
+                    {% endif %}
+
+                    <div class="joined">
+                        Participation registered:
+                        {{ p.participated_at }}
+                    </div>
+
+                </div>
+
+                <div class="status">
+                    ✓ Participating
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="empty">
+            No individual student has participated in this event yet.
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- =========================
+         PARTICIPATION SUMMARY
+    ========================== -->
+
+    <div class="card">
+
+        <h2>
+            Participation Summary
+        </h2>
+
+        <div class="summary-grid">
+
+            <div class="summary-box">
+
+                <div class="summary-number">
+                    {{ clan_participations|length }}
+                </div>
+
+                <div class="summary-label">
+                    Participating Clans
+                </div>
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <div class="summary-number">
+                    {{ student_participations|length }}
+                </div>
+
+                <div class="summary-label">
+                    Individual Participants
+                </div>
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <div class="summary-number">
+                    {{ participations|length }}
+                </div>
+
+                <div class="summary-label">
+                    Participation Records
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         TROPHIES
+    ========================== -->
+
+    <div class="card">
+
+        <h2>
+            Trophies
+
+            <span class="count">
+                ({{ event.trophies.all|length }})
+            </span>
+        </h2>
+
+
+        {% for trophy in event.trophies.all %}
+
+        <div class="trophy">
+
+            <div class="trophy-name">
+                🏆 {{ trophy.award_name }}
+            </div>
+
+
+            <div class="trophy-clan">
+                Clan: {{ trophy.clan.name }}
+            </div>
+
+
+            {% if trophy.description %}
+
+            <div class="trophy-description">
+                {{ trophy.description }}
+            </div>
+
+            {% endif %}
+
+
+            <div class="trophy-date">
+                Awarded:
+                {{ trophy.awarded_at }}
+            </div>
+
+
+            <!-- REPRESENTATIVES WHO EARNED THIS TROPHY -->
+
+            {% for p in clan_participations %}
+
+                {% if p.clan.id == trophy.clan.id %}
+
+                <div class="representatives">
+
+                    <h3>
+                        Clan Representatives
+                    </h3>
+
+
+                    {% for selected in p.selected_members.all %}
+
+                    <div class="representative">
+
+                        <div>
+
+                            <div class="rep-name">
+                                {{ selected.student.name }}
+                            </div>
+
+                            {% if selected.student.user.username %}
+
+                            <div class="rep-username">
+                                @{{ selected.student.user.username }}
+                            </div>
+
+                            {% endif %}
+
+                        </div>
+
+                        <div class="rep-number">
+                            Representative #{{ forloop.counter }}
+                        </div>
+
+                    </div>
+
+                    {% empty %}
+
+                    <div class="empty">
+                        No representative records are available.
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+        {% empty %}
+
+        <div class="empty">
+            No trophies have been awarded for this event yet.
+        </div>
+
+        {% endfor %}
+
+
+        {% if event.trophy_window_open %}
+
+        <div class="warning">
+            The event has ended. Trophy awarding is currently available
+            during the 48-hour trophy window.
+        </div>
+
+
+        <a
+            class="btn"
+            href="{% url 'campus_admin_event_trophies' event.id %}"
+        >
+            Manage Trophies
+        </a>
+
+        {% elif now > event.end_date %}
+
+        <div class="warning">
+            The 48-hour trophy awarding window has ended.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =========================
+         LEGACY APPLICATIONS
+    ========================== -->
+
+    {% if applications %}
+
+    <div class="card">
+
+        <h2>
+            Legacy Clan Applications
+
+            <span class="count">
+                ({{ applications|length }})
+            </span>
+        </h2>
+
+        <p class="event-info">
+            These are records from the older clan event application
+            system. They are kept separately from the current
+            participation system.
+        </p>
+
+
+        {% for application in applications %}
+
+        <div class="row">
+
+            <div>
+
+                <div class="name">
+                    {{ application.clan.name }}
+                </div>
+
+                <div class="joined">
+                    Applied:
+                    {{ application.applied_at }}
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Account Suspended</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            background: #f5f6f8;
+        }
+
+        .card {
+            width: 90%;
+            max-width: 550px;
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        p {
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h1>Account Suspended</h1>
+
+    <p>
+        Your Campus Clans account is temporarily suspended.
+    </p>
+
+    <p>
+        You can still log in, but you cannot perform
+        student actions while the suspension is active.
+    </p>
+
+    {% if suspension.reason %}
+        <p>
+            <strong>Reason:</strong><br>
+            {{ suspension.reason }}
+        </p>
+    {% endif %}
+
+    <p>
+        <strong>Suspended until:</strong><br>
+        {{ suspension.end_date|date:"d M Y, h:i A" }}
+    </p>
+
+    <p>
+        Please contact the campus administration if you
+        believe this suspension was made in error.
+    </p>
+
+</div>
+
+</body>
+</html>
